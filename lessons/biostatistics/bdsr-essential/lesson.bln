@@ -1,76 +1,97 @@
-# Essential statistics with NHANES
+# 8 Essential statistics with NHANES
 
-This optional lab is an independent BioLang companion to Stephen D. Turner's [Essential statistics](https://bdsr.stephenturner.us/stats.html) chapter in *Biological Data Science with R* (BDSR). The [canonical BDSR source](https://github.com/stephenturner/bdsr) is © 2019 Stephen D. Turner, Ph.D. and licensed [CC BY-NC 4.0](https://github.com/stephenturner/bdsr/blob/main/LICENSE). OriClabs independently wrote this notebook's BioLang code, explanations, and figures under MIT. The upstream BDSR prose, R code, tables, and figures are not copied or relicensed here, and its non-commercial condition still matters if upstream material is reused directly. This is not an official BDSR publication or endorsement.
+This is an independent BioLang companion to Stephen D. Turner's [Essential statistics](https://bdsr.stephenturner.us/stats.html) chapter in *Biological Data Science with R*. It follows the chapter's 8.1-8.7.3 learning order so that readers can compare what the same workflow looks like in BioLang. The explanations, BioLang code, and figures here were independently produced under MIT; the original BDSR chapter and repository are copyright Stephen D. Turner and licensed CC BY-NC 4.0.
 
-Use the linked BDSR chapter for the original R lesson and its surrounding explanation. This notebook focuses on learning the same statistical ideas through BioLang and records where its numerical methods differ.
+Select **Prepare all** once before running. Studio downloads the two declared files and verifies their exact size and SHA-256.
 
-Select **Prepare** for both declared files before running. Studio verifies their exact size and SHA-256.
+## 8.1 Our data: NHANES
 
-## Inspect before analysing
+### 8.1.1 About NHANES
 
-Each row is a person and each column is a measurement or label. Confirm that assumption and consult the dictionary before choosing a method.
+NHANES combines interviews with physical and laboratory measurements. This lesson uses a resampled teaching extract of 5,000 people and 32 variables. It is useful for learning, but it is not a substitute for a survey-weighted analysis of the original NHANES sample.
+
+### 8.1.2 Import & inspect
+
+Load the observations and their data dictionary. Rows are people; columns are measurements or labels.
 
 ```biolang
-let nhanes = read_csv("nhanes.csv")
+let nh = read_csv("nhanes.csv")
 let dictionary = read_csv("nhanes_dd.csv")
-println({people: nrow(nhanes), variables: ncol(nhanes)})
-head(nhanes, 6)
+{people: nrow(nh), variables: ncol(nh)}
+```
+
+```biolang
+head(nh, 6)
 ```
 
 ```biolang
 head(dictionary, 12)
 ```
 
-## Centre, spread, and missing values
+## 8.2 Descriptive statistics
 
-The mean is the equal-share centre; the median is the halfway value after sorting. SD is a typical distance from the mean. Variance is SD squared, so it has squared units.
+Begin with the values and their scale. The mean is the equal-share centre, the median is the halfway observation after sorting, and quartiles describe the middle half.
 
 ```biolang
-let age = nhanes |> col("Age")
-let observed_pulse = nhanes |> drop_null("Pulse") |> col("Pulse")
-let observed_income = nhanes |> drop_null("Income") |> col("Income")
+let age = nh |> col("Age")
 {
-    age: summary(age),
-    age_q1: quantile(age, 0.25),
-    age_q3: quantile(age, 0.75),
-    mean_pulse: mean(observed_pulse),
-    income_variance: variance(observed_income),
-    income_sd: stdev(observed_income)
+    race_levels: unique(nh |> col("Race")),
+    age_mean: mean(age),
+    age_median: median(age),
+    age_summary: summary(age),
+    age_quartiles: [quantile(age, 0.25), quantile(age, 0.5), quantile(age, 0.75)]
 }
 ```
 
-The numeric summary reports how many non-missing observations it used. Missing values are unknown measurements, not zeros.
+The same ideas answer the chapter exercises for pulse, blood pressure, age, and income.
 
 ```biolang
+let pulse = nh |> drop_null("Pulse") |> col("Pulse")
+let diastolic = nh |> drop_null("BPDia") |> col("BPDia")
+let income = nh |> drop_null("Income") |> col("Income")
 {
-    all_rows: nrow(nhanes),
-    bmi_observed: summary(nhanes |> col("BMI")).count,
-    income_observed: summary(nhanes |> col("Income")).count
+    mean_pulse: mean(pulse),
+    diastolic_range: [summary(diastolic).min, summary(diastolic).max],
+    age_quartiles: [quantile(age, 0.25), quantile(age, 0.5), quantile(age, 0.75)],
+    income_variance: variance(income),
+    income_sd: stdev(income)
 }
 ```
 
-## Look at shape
+### 8.2.1 Missing data
 
-**Figure provenance:** Every chart below is rendered independently by BioLang from the checksum-verified, source-hosted BDSR teaching data. No plot image, plotting code, or rendered figure from the original BDSR chapter is included. See the attribution above for the original chapter, author, repository, and licence.
-
-The BMI histogram reveals a long right tail and extreme observations. Bin width changes the appearance, so use the plot as a diagnostic view rather than proof of a distribution.
+Missing means unknown, not zero. Count it first, then make the omission explicit before calculating a statistic.
 
 ```biolang
-histogram(nhanes |> col("BMI"), {
+let income_summary = summary(nh |> col("Income"))
+{
+    total_rows: nrow(nh),
+    observed_income: income_summary.count,
+    missing_income: nrow(nh) - income_summary.count,
+    mean_observed_income: mean(income)
+}
+```
+
+### 8.2.2 EDA
+
+Exploratory plots reveal shape, unusual values, groups, and relationships before a test compresses the data to a few numbers. They are diagnostics, not proof.
+
+#### 8.2.2.1 Histograms
+
+These are the same four data views used in the source lesson. Every SVG is newly rendered by BioLang from the verified CSV.
+
+```biolang
+histogram(nh |> col("BMI"), {
     bins: 30, format: "svg", theme: "ggplot", bin_rule: "ggplot",
-    title: "BMI: one main mound with a long right tail",
-    x_label: "BMI (kg/m²)", y_label: "People"
+    title: "BMI", x_label: "BMI (kg/m^2)", y_label: "People"
 })
 ```
 
-The same body weights can be displayed in kilograms or pounds. Changing units moves the horizontal scale but must not change the distribution's shape. More bins reveal finer structure but can also exaggerate noise.
-
 ```biolang
-let observed_weight = nhanes |> drop_null("Weight") |> col("Weight")
+let observed_weight = nh |> drop_null("Weight") |> col("Weight")
 histogram(observed_weight, {
     bins: 30, format: "svg", theme: "ggplot", bin_rule: "ggplot",
-    title: "Body weight in kilograms",
-    x_label: "Weight (kg)", y_label: "People"
+    title: "Weight in kilograms", x_label: "Weight (kg)", y_label: "People"
 })
 ```
 
@@ -78,185 +99,442 @@ histogram(observed_weight, {
 let weight_pounds = observed_weight |> map(|value| value * 2.2)
 histogram(weight_pounds, {
     bins: 80, format: "svg", theme: "ggplot", bin_rule: "ggplot",
-    title: "The same body weights in pounds, with finer bins",
-    x_label: "Weight (lb)", y_label: "People"
+    title: "The same weight data in pounds", x_label: "Weight (lb)", y_label: "People"
 })
 ```
 
 ```biolang
-histogram(nhanes |> col("Age"), {
+histogram(age, {
     bins: 30, format: "svg", theme: "ggplot", bin_rule: "ggplot",
-    title: "Age: children and adults are both present",
-    x_label: "Age (years)", y_label: "People"
+    title: "Age", x_label: "Age (years)", y_label: "People"
 })
 ```
 
-## Compare two independent groups
+#### 8.2.2.2 Scatterplots
 
-Among adults, the female and male groups contain different people. Welch's test compares their means without assuming equal variance.
-
-```biolang
-let adults = nhanes |> filter(|row| row.Age >= 18)
-let female_age = adults |> filter(|row| row.Gender == "female") |> col("Age")
-let male_age = adults |> filter(|row| row.Gender == "male") |> col("Age")
-ttest(female_age, male_age, {variance: "welch"})
-```
-
-The estimated difference is about 1.10 years; the 95% interval crosses zero and p≈0.0559. This is weak evidence against equal population means, not proof of equality.
-
-## Use ranks when the data story calls for them
-
-Alcohol days are skewed and tied at common values. A rank-sum test asks whether observations in one group tend to rank above the other; it is not simply a test of means.
+First show all ages with gender mapped to colour and no fitted model.
 
 ```biolang
-let alcohol = adults |> drop_null("RelationshipStatus") |> drop_null("AlcoholYear")
-let committed = alcohol |> filter(|row| row.RelationshipStatus == "Committed") |> col("AlcoholYear")
-let single = alcohol |> filter(|row| row.RelationshipStatus == "Single") |> col("AlcoholYear")
-histogram(adults |> drop_null("AlcoholYear") |> col("AlcoholYear"), {
-    bins: 30, format: "svg", theme: "ggplot", bin_rule: "ggplot",
-    title: "Alcohol days per year: skew and many ties",
-    x_label: "Days in the previous year", y_label: "People"
-})
-```
-
-```biolang
-wilcoxon(committed, single, {method: "normal", continuity: true})
-```
-
-The p-value is about 0.000166, matching the published R calculation after selecting the same approximation and correction. Effect size and the distributions still matter.
-
-The source chapter also uses a boxplot to compare BMI across smoking-status groups. BioLang's grouped diagnostic adds lightly jittered observations so group size, overlap, and unusual values remain visible instead of reducing each group to five summary numbers.
-
-```biolang
-let smoking_bmi = adults |> drop_null("SmokingStatus") |> drop_null("BMI")
-stats_group_plot(
-    smoking_bmi |> col("BMI"), smoking_bmi |> col("SmokingStatus"),
-    {theme: "classic", points: "jitter", title: "Adult BMI by smoking status", y_label: "BMI (kg/m^2)"}
-)
-```
-
-## Describe a continuous relationship
-
-Look at every participant first. Children and adults together produce a curved band rather than one straight relationship, which is the reason the rest of this section restricts to adults.
-
-```biolang
-let everyone = nhanes |> drop_null("Height") |> drop_null("Weight")
+let everyone = nh |> drop_null("Height") |> drop_null("Weight") |> drop_null("Gender")
 stats_relationship_plot(
     everyone |> col("Height"), everyone |> col("Weight"),
     {
-        group: everyone |> col("Gender"),
-        interval: "none",
-        theme: "ggplot",
-        title: "Height and weight at every age",
-        x_label: "Height (cm)", y_label: "Weight (kg)",
-        legend_title: "Gender"
+        group: everyone |> col("Gender"), fit: false, interval: "none",
+        theme: "ggplot", title: "Height and weight",
+        x_label: "Height", y_label: "Weight", legend_title: "Gender"
     }
 )
 ```
+
+Now retain adults and fit one line per gender. Coral and teal identify the two groups; the grey ribbons are 95% confidence intervals for their mean lines.
+
+```biolang
+let adults = nh |> filter(|row| row.Age >= 18)
+let adult_height_weight = adults |> drop_null("Height") |> drop_null("Weight") |> drop_null("Gender")
+stats_relationship_plot(
+    adult_height_weight |> col("Height"), adult_height_weight |> col("Weight"),
+    {
+        group: adult_height_weight |> col("Gender"), interval: "confidence",
+        confidence: 0.95, theme: "ggplot", title: "Adult height and weight",
+        x_label: "Height", y_label: "Weight", legend_title: "Gender"
+    }
+)
+```
+
+## 8.3 Continuous variables
+
+The outcome in this section is numeric. The method changes with the number and type of predictors and with the assumptions the data can support.
+
+### 8.3.1 T-tests
+
+Welch's two-sample test compares two independent means without requiring equal variances. The three examples below follow the source order.
+
+```biolang
+let age_gender = adults |> drop_null("Age") |> drop_null("Gender")
+let female_age = age_gender |> filter(|row| row.Gender == "female") |> col("Age")
+let male_age = age_gender |> filter(|row| row.Gender == "male") |> col("Age")
+ttest(female_age, male_age, {variance: "welch"})
+```
+
+```biolang
+let bmi_diabetes = adults |> drop_null("BMI") |> drop_null("Diabetes")
+let bmi_diabetic = bmi_diabetes |> filter(|row| row.Diabetes == "Yes") |> col("BMI")
+let bmi_not_diabetic = bmi_diabetes |> filter(|row| row.Diabetes == "No") |> col("BMI")
+ttest(bmi_diabetic, bmi_not_diabetic, {variance: "welch"})
+```
+
+```biolang
+let alcohol_relationship = adults |> drop_null("AlcoholYear") |> drop_null("RelationshipStatus")
+let alcohol_committed = alcohol_relationship
+    |> filter(|row| row.RelationshipStatus == "Committed") |> col("AlcoholYear")
+let alcohol_single = alcohol_relationship
+    |> filter(|row| row.RelationshipStatus == "Single") |> col("AlcoholYear")
+ttest(alcohol_committed, alcohol_single, {variance: "welch"})
+```
+
+These are unpaired tests because the groups contain different people. Repeated measurements of the same biological unit require a paired or repeated-measures method instead.
+
+### 8.3.2 Wilcoxon test
+
+Alcohol days are strongly skewed and tied at common values. The rank-sum test asks whether one group tends to have higher observations without treating a difference in means as the only possible question.
+
+```biolang
+histogram(alcohol_relationship |> col("AlcoholYear"), {
+    bins: 30, format: "svg", theme: "ggplot", bin_rule: "ggplot",
+    title: "Alcohol days in the previous year", x_label: "Days", y_label: "People"
+})
+```
+
+```biolang
+wilcoxon(alcohol_committed, alcohol_single, {method: "normal", continuity: true})
+```
+
+### 8.3.3 Linear models
+
+A two-group equal-variance t-test, a one-way ANOVA with two groups, and a linear model with one 0/1 indicator express the same comparison in different forms.
+
+```biolang
+let bmi_relationship = adults |> drop_null("BMI") |> drop_null("RelationshipStatus")
+let committed_bmi = bmi_relationship
+    |> filter(|row| row.RelationshipStatus == "Committed") |> col("BMI")
+let single_bmi = bmi_relationship
+    |> filter(|row| row.RelationshipStatus == "Single") |> col("BMI")
+let single_indicator = bmi_relationship |> col("RelationshipStatus")
+    |> map(|status| if status == "Single" { 1 } else { 0 })
+{
+    equal_variance_t: ttest(committed_bmi, single_bmi, {variance: "equal"}),
+    two_group_anova: anova([committed_bmi, single_bmi], {variance: "equal"}),
+    indicator_model: lm(single_indicator, bmi_relationship |> col("BMI"))
+}
+```
+
+The intercept is the committed-group mean; the indicator coefficient is how much the single-group mean differs from it. This is association, not causation.
+
+### 8.3.4 ANOVA
+
+ANOVA extends the mean-comparison question to more than two groups. The omnibus test asks whether at least one smoking-status mean differs; Tukey's procedure then compares pairs while controlling the family-wise error rate.
+
+```biolang
+let smoking_complete = adults |> drop_null("BMI") |> drop_null("SmokingStatus")
+let current_bmi = smoking_complete |> filter(|row| row.SmokingStatus == "Current") |> col("BMI")
+let former_bmi = smoking_complete |> filter(|row| row.SmokingStatus == "Former") |> col("BMI")
+let never_bmi = smoking_complete |> filter(|row| row.SmokingStatus == "Never") |> col("BMI")
+let smoking_groups = [never_bmi, former_bmi, current_bmi]
+{
+    anova: anova(smoking_groups, {variance: "equal"}),
+    tukey: tukey_hsd(smoking_groups)
+}
+```
+
+The source plot also displays people whose smoking status is missing. They are useful to see but are not included in the fitted ANOVA.
+
+```biolang
+let smoking_bmi = adults |> drop_null("BMI")
+stats_group_plot(
+    smoking_bmi |> col("BMI"), smoking_bmi |> col("SmokingStatus"),
+    {
+        theme: "classic", points: "outliers", missing_label: "NA",
+        title: "Adult BMI by smoking status", y_label: "BMI (kg/m^2)"
+    }
+)
+```
+
+### 8.3.5 Linear regression
+
+For two continuous variables, a fitted line estimates the average change in weight for a one-unit change in height.
 
 ```biolang
 let height_weight = adults |> drop_null("Height") |> drop_null("Weight")
+let height_weight_fit = lm(height_weight |> col("Height"), height_weight |> col("Weight"))
+height_weight_fit
+```
+
+```biolang
 stats_relationship_plot(
     height_weight |> col("Height"), height_weight |> col("Weight"),
     {
-        group: height_weight |> col("Gender"),
-        interval: "confidence",
-        confidence: 0.95,
-        theme: "ggplot",
-        title: "Adult height and weight by gender",
-        x_label: "Height (cm)", y_label: "Weight (kg)",
-        legend_title: "Gender"
+        interval: "confidence", confidence: 0.95, theme: "ggplot",
+        title: "Adult weight against height", x_label: "Height", y_label: "Weight"
     }
 )
 ```
 
-This reproduces the source exercise's figure: coral points and a fitted line for female participants, teal points and a fitted line for male participants, and a grey 95% confidence band around each estimated mean line. Mapping colour to gender leaves the band fill unmapped, which is why both bands are grey rather than group-coloured. The colours identify groups; the vertical spread of the points still shows that knowing height and gender does not determine one person's weight.
+A line is evidence only over the observed range. Extending it to height zero exposes the nonsensical negative intercept and demonstrates why extrapolation is unsafe.
 
 ```biolang
-let female_height_weight = height_weight |> filter(|row| row.Gender == "female")
-let male_height_weight = height_weight |> filter(|row| row.Gender == "male")
+stats_relationship_plot(
+    height_weight |> col("Height"), height_weight |> col("Weight"),
+    {
+        interval: "confidence", fullrange: true, x_limits: [0, nil],
+        theme: "ggplot", title: "Do not extrapolate beyond observed height",
+        x_label: "Height", y_label: "Weight"
+    }
+)
+```
+
+### 8.3.6 Multiple regression
+
+Start with physical activity alone, then add age and gender. The coefficient table shows how an association can change after accounting for other measured predictors.
+
+```biolang
+let testosterone = adults |> col("Testosterone")
+let testosterone_activity = stats_multiple_linear_diagnostics(
+    table({PhysActive: adults |> col("PhysActive")}), testosterone,
+    {validation_folds: 0, include_values: false}
+)
+testosterone_activity.coefficients
+```
+
+```biolang
+let testosterone_age = stats_multiple_linear_diagnostics(
+    table({
+        PhysActive: adults |> col("PhysActive"),
+        Age: adults |> col("Age")
+    }), testosterone,
+    {validation_folds: 0, include_values: false}
+)
+testosterone_age.coefficients
+```
+
+```biolang
+let testosterone_full = stats_multiple_linear_diagnostics(
+    table({
+        PhysActive: adults |> col("PhysActive"),
+        Age: adults |> col("Age"),
+        Gender: adults |> col("Gender")
+    }), testosterone,
+    {validation_folds: 0, include_values: true}
+)
+testosterone_full.coefficients
+```
+
+## 8.4 Discrete variables
+
+Here both the observed outcome and the explanatory labels are categories rather than continuous measurements.
+
+### 8.4.1 Contingency tables
+
+Begin with gender and diabetes. The table, chi-square test, Fisher exact test, and mosaic plot all use the same 2x2 counts.
+
+```biolang
+let gender_diabetes_rows = adults |> drop_null("Gender") |> drop_null("Diabetes")
+let gender_diabetes = gender_diabetes_rows
+    |> cross_tab("Gender", "Diabetes", {
+        row_order: ["female", "male"], col_order: ["No", "Yes"]
+    })
+gender_diabetes
+```
+
+```biolang
+let diabetes_no = gender_diabetes |> col("No")
+let diabetes_yes = gender_diabetes |> col("Yes")
 {
-    female: lm(female_height_weight |> col("Height"), female_height_weight |> col("Weight")),
-    male: lm(male_height_weight |> col("Height"), male_height_weight |> col("Weight"))
+    chi_square: chi_square_contingency(gender_diabetes |> drop_cols("Gender")),
+    fisher: fisher_exact(diabetes_no[0], diabetes_yes[0], diabetes_no[1], diabetes_yes[1])
 }
 ```
 
 ```biolang
-stats_linear_diagnostic_plot(
-    height_weight |> col("Height"), height_weight |> col("Weight"),
-    {view: "residuals", theme: "ggplot", title: "Height-weight model: residuals versus fitted"}
-)
+let gender_diabetes_mosaic = gender_diabetes_rows
+    |> cross_tab("Gender", "Diabetes", {
+        row_order: ["female", "male"], col_order: ["Yes", "No"]
+    })
+mosaic_plot(gender_diabetes_mosaic, {
+    row: "Gender", title: "Gender and diabetes", view: "count",
+    show_values: true, format: "svg"
+})
 ```
 
-A fitted line describes the range it was fitted over and nothing outside it. Extending this one down to zero height predicts a weight of about -74 kg, which is the clearest possible sign that extrapolation is not a free operation. `fullrange` and `x_limits` exist to make that visible; leave them off for any figure meant to be read as a result.
+Now repeat the workflow for race and insurance. The row and column order is explicit, so the table, expected counts, and plot follow the source order exactly.
 
 ```biolang
-stats_relationship_plot(
-    height_weight |> col("Height"), height_weight |> col("Weight"),
-    {
-        interval: "confidence",
-        fullrange: true,
-        x_limits: [0, nil],
-        theme: "ggplot",
-        title: "A fitted line says nothing beyond the data it saw",
-        x_label: "Height (cm)", y_label: "Weight (kg)"
-    }
-)
-```
-
-A residual chart carries more than one variable at a time. Colour and size can each be mapped to a column, so a diagnostic can show whether the model misses in a way that tracks something it never used.
-
-```biolang
-let male_adults = adults
-    |> filter(|row| row.Gender == "male")
-    |> drop_null("Height") |> drop_null("Weight") |> drop_null("PhysActive")
-stats_linear_diagnostic_plot(
-    male_adults |> col("Height"), male_adults |> col("Weight"),
-    {
-        view: "residuals",
-        color: male_adults |> col("PhysActive"),
-        color_title: "PhysActive",
-        size: male_adults |> col("Age"),
-        theme: "ggplot",
-        title: "Male residuals by physical activity, sized by age"
-    }
-)
-```
-
-Point area, not radius, is proportional to age, which is how a size scale has to work if the eye is to read it correctly. Colour and size here are description, not evidence: neither variable is in the model.
-
-The measured slopes are about 0.756 kg/cm for female participants and 0.941 kg/cm for male participants. The residual chart above deliberately shows the simpler pooled model as a first diagnostic; use group-specific residuals when the two fitted lines are the model you intend to report. These are associations within the observed range—not causation, and not permission to extrapolate to impossible heights.
-
-## Compare two categorical labels
-
-```biolang
-let race_insured = adults |> drop_null("Race") |> drop_null("Insured") |> cross_tab("Race", "Insured")
+let race_order = ["Asian", "Black", "Hispanic", "Mexican", "Other", "White"]
+let race_insured = adults |> drop_null("Race") |> drop_null("Insured")
+    |> cross_tab("Race", "Insured", {
+        row_order: race_order, col_order: ["No", "Yes"]
+    })
 race_insured
 ```
 
-The BDSR chapter uses a mosaic plot, so this companion now uses the same visual idea. The width of each race group shows its share of adults; each coloured slice then shows the insured split inside that group. Multiply the width by the slice height and you get that cell's share of the full table.
+```biolang
+let race_insurance_test = chi_square_contingency(race_insured |> drop_cols("Race"))
+race_insurance_test
+```
 
 ```biolang
-mosaic_plot(race_insured, {
-    row: "Race",
-    title: "Race and insurance",
-    subtitle: "Area shows people; colour shows insurance category",
+let race_insured_mosaic = adults |> drop_null("Race") |> drop_null("Insured")
+    |> cross_tab("Race", "Insured", {
+        row_order: race_order, col_order: ["Yes", "No"]
+    })
+mosaic_plot(race_insured_mosaic, {
+    row: "Race", title: "Race and insurance", view: "count",
+    show_values: true, format: "svg"
+})
+```
+
+The mosaic's area represents count. A strong association does not identify a cause, and this teaching extract does not carry the original survey design.
+
+### 8.4.2 Logistic regression
+
+Insurance is binary, so logistic regression models its log odds. The first model uses race alone; the second adds age, income, and hours slept so each coefficient is conditional on the others.
+
+```biolang
+let insured = adults |> col("Insured")
+    |> map(|value| if value == "Yes" { 1 } else if value == "No" { 0 } else { nil })
+let insured_by_race = stats_glm_diagnostics(
+    table({Race: adults |> col("Race")}), insured,
+    {family: "binomial", include_values: false}
+)
+insured_by_race.coefficients
+```
+
+```biolang
+let insured_adjusted = stats_glm_diagnostics(
+    table({
+        Age: adults |> col("Age"),
+        Income: adults |> col("Income"),
+        SleepHrsNight: adults |> col("SleepHrsNight"),
+        Race: adults |> col("Race")
+    }), insured,
+    {family: "binomial", include_values: false}
+)
+insured_adjusted.coefficients
+```
+
+Exponentiating a coefficient gives a conditional odds ratio. It is not a risk difference, and statistical adjustment does not by itself establish causation.
+
+## 8.5 Power & sample size
+
+Power connects effect size, variability, sample size, and the chosen significance threshold. A calculation is only as credible as those design assumptions.
+
+### 8.5.1 T-test power/N
+
+Use `{n: ...}` to calculate achieved power, or omit it and provide the target power to solve for the required sample size per group.
+
+```biolang
+power_t_test(2.0 / 2.3, 0.05, nil, {n: 20})
+```
+
+```biolang
+power_t_test(0.8 / 1.5, 0.05, 0.8)
+```
+
+The gene-expression exercise uses a two-fold change as 1 on the log2 scale.
+
+```biolang
+{
+    power_with_three_per_group: power_t_test(1.0 / 0.7, 0.05, nil, {n: 3}),
+    required_for_80_percent: power_t_test(1.0 / 0.7, 0.05, 0.8)
+}
+```
+
+### 8.5.2 Proportions power/N
+
+For infected proportions of 0.8 and 0.2, first calculate power with five observations per group, then the sample size needed for 90% power.
+
+```biolang
+power_prop_test(0.8, 0.2, {n: 5})
+```
+
+```biolang
+power_prop_test(0.8, 0.2, {power: 0.9})
+```
+
+## 8.6 Tidying models
+
+BioLang's diagnostic functions already return named records and row-like coefficient lists. You can display only the reusable part instead of parsing console text.
+
+```biolang
+testosterone_full.coefficients
+```
+
+```biolang
+{
+    complete_rows: testosterone_full.complete_rows,
+    excluded_rows: testosterone_full.excluded_rows,
+    r_squared: testosterone_full.r_squared,
+    adjusted_r_squared: testosterone_full.adjusted_r_squared,
+    residual_mse: testosterone_full.residual_mse
+}
+```
+
+```biolang
+let adult_gender = adults |> col("Gender")
+let adult_activity = adults |> col("PhysActive")
+let adult_age = adults |> col("Age")
+let male_model_points = testosterone_full.fitted_intervals
+    |> filter(|point| adult_gender[point.row] == "male")
+let male_fitted = male_model_points |> map(|point| point.fitted)
+let male_residuals = male_model_points |> map(|point| point.residual)
+let male_activity = male_model_points |> map(|point| adult_activity[point.row])
+let male_age = male_model_points |> map(|point| adult_age[point.row])
+
+stats_relationship_plot(male_fitted, male_residuals, {
+    group: male_activity, size: male_age, fit: false,
+    theme: "ggplot", legend_title: "Physical activity",
+    size_legend_title: "Age",
+    title: "Model residuals for males",
+    x_label: "Fitted testosterone", y_label: "Residual"
+})
+```
+
+Each point is one male participant used by the fitted model. Colour separates physical-activity groups; larger circles represent older participants. The horizontal position is the model's prediction and the vertical position is its error, so a pattern rather than a shapeless cloud is a clue that the model may be missing structure.
+
+## 8.7 Additional topics & recommended reading
+
+The final three topics are design checks. No statistical function can repair a study in which the biological question and the independent experimental units were never separated correctly.
+
+### 8.7.1 1. Batch effects
+
+A batch is a technical grouping such as day, reagent lot, operator, or sequencing run. Cross-tabulate it with treatment before fitting a model: if each treatment occurs in only one batch, their effects cannot be separated.
+
+```biolang
+let design = table({
+    treatment: ["control", "control", "drug", "drug"],
+    batch: ["day1", "day2", "day1", "day2"]
+})
+let treatment_by_batch = cross_tab(design, "treatment", "batch", {
+    row_order: ["control", "drug"], col_order: ["day1", "day2"]
+})
+treatment_by_batch
+```
+
+```biolang
+mosaic_plot(treatment_by_batch, {
+    row: "treatment", title: "A balanced treatment-by-batch design",
     view: "count", show_values: true, format: "svg"
 })
 ```
 
-Use `{shade: "residual"}` when the question changes from “how many?” to “which cells drive the association?”. Blue and red then show fewer or more people than independence would predict. Keep the ordinary category colours for a first reading because they are easier to explain.
+### 8.7.2 2. What's my n?
+
+The number of rows is not always the sample size. Count independently assigned biological units at the level where treatment or sampling was performed.
 
 ```biolang
-chi_square_contingency(race_insured |> drop_cols("Race"))
+let repeated_measurements = table({
+    donor: ["D1", "D1", "D2", "D2", "D3", "D3"],
+    technical_run: [1, 2, 1, 2, 1, 2]
+})
+{
+    measurement_rows: nrow(repeated_measurements),
+    independent_donors: len(unique(repeated_measurements |> col("donor")))
+}
 ```
 
-The chi-square statistic is about 323.30 with 5 degrees of freedom. It describes association in this teaching extract; it neither identifies a cause nor replaces survey-weighted analysis of original NHANES.
+### 8.7.3 3. Technical versus biological replicates
 
-## Plan sample size openly
+Technical replicates repeat a measurement on the same material and help measure assay precision. Biological replicates are distinct experimental units and support inference about biological variation. Averaging technical repeats may produce one value per biological unit; it does not turn those repeats into extra independent samples.
 
 ```biolang
-power_t_test(1.0 / 0.7, 0.05, 0.8)
+let replicates = table({
+    biological_unit: ["mouse1", "mouse1", "mouse2", "mouse2", "mouse3", "mouse3"],
+    technical_repeat: [1, 2, 1, 2, 1, 2],
+    expression: [10.1, 10.3, 8.9, 9.0, 12.2, 12.0]
+})
+{
+    assay_measurements: nrow(replicates),
+    biological_n: len(unique(replicates |> col("biological_unit")))
+}
 ```
 
-BioLang now defaults to an independently implemented noncentral-t calculation: 8.764693 per group, rounded up to 9. Base R `stats::power.t.test` prints 8.764711, also rounded up to 9. The raw roots differ by only 0.000017 because R stops its root finder at a looser tolerance; substituting BioLang's root back into R gives power 0.80000000000025. Use `{method: "normal"}` only when you deliberately want the earlier large-sample approximation, 7.691902 rounded to 8.
+Use the original BDSR chapter for its complete R discussion and references. This companion's purpose is to make the corresponding BioLang path runnable and visible.

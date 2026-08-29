@@ -20,16 +20,25 @@
     {"name": "male height-weight slope", "biolang": 0.9406852522, "reference": 0.9406852522, "status": "R 4.5.2 numeric match"},
     {"name": "race-insurance chi square", "biolang": 323.3016487, "reference": 323.3, "status": "rounded match"},
     {"name": "race-insurance chi-square p", "biolang": 9.754237575941022e-68, "reference": 9.754238e-68, "status": "rounded match"},
-    {"name": "two-sample power required n", "biolang": 9, "biolangUnrounded": 8.764693251026905, "reference": 8.764711, "status": "same required integer; noncentral-t roots agree within 0.00002", "note": "Both use a noncentral-t power calculation. R's printed root has achieved power 0.80000089669358; BioLang's tighter root has achieved power 0.80000000000025. The optional normal approximation remains available as {method: 'normal'} and gives 7.691902, rounded to 8."}
+    {"name": "two-sample t power with n=20, delta=2, sd=2.3", "biolang": 0.7641685207, "reference": 0.7641668, "status": "absolute difference 0.0000017; independently recomputed with noncentral t"},
+    {"name": "two-sample power required n", "biolang": 9, "biolangUnrounded": 8.764693251026905, "reference": 8.764711, "status": "same required integer; noncentral-t roots agree within 0.00002", "note": "Both use a noncentral-t power calculation. R's printed root has achieved power 0.80000089669358; BioLang's tighter root has achieved power 0.80000000000025. The optional normal approximation remains available as {method: 'normal'} and gives 7.691902, rounded to 8."},
+    {"name": "two-proportion power with n=5, p1=.8, p2=.2", "biolang": 0.4688159, "reference": 0.4688159, "status": "rounded match to R 4.5.2 stats::power.prop.test"},
+    {"name": "two-proportion required n for 90% power", "biolang": 12.37701, "reference": 12.37701, "status": "rounded match to R 4.5.2 stats::power.prop.test; both round up to 13 per group"}
   ],
   "visuals": [
     {"question": "BMI distribution", "biolang": "30-bin histogram", "status": "same statistical view, independently rendered"},
     {"question": "weight in kg and lb", "biolang": "30-bin kg and 80-bin lb histograms", "status": "same statistical views, independently rendered"},
     {"question": "age distribution", "biolang": "30-bin histogram", "status": "same statistical view, independently rendered"},
     {"question": "alcohol-use distribution", "biolang": "35-bin histogram", "status": "same statistical view, independently rendered"},
-    {"question": "BMI by smoking status", "biolang": "grouped box-and-jitter diagnostic", "status": "BioLang enhancement; not copied geometry"},
+    {"question": "BMI by smoking status", "biolang": "four grouped Tukey boxplots (Current, Former, Never and missing/NA) with outliers, using a classic theme", "status": "same statistical encoding and presentation, independently rendered; missing smoking status is retained as the fourth discrete group"},
+    {"question": "height and weight by gender at every age", "biolang": "one point-only scatterplot with coral/teal gender groups and a legend", "status": "same statistical encoding and ggplot-style presentation, independently rendered"},
     {"question": "adult height and weight by gender", "biolang": "one scatterplot with coral/teal group points, separate least-squares lines, separate 95% confidence bands, and a gender legend", "status": "same statistical encoding and ggplot-style presentation, independently rendered; 3676 complete rows and both group slopes rechecked against R 4.5.2"},
     {"question": "linear-model diagnostics", "biolang": "residuals-versus-fitted plot", "status": "same diagnostic question, independently rendered"},
-    {"question": "race and insurance contingency", "biolang": "native mosaic plot with inspectable count geometry", "status": "area-exact geometry verified on synthetic tables; BDSR real-data visual rerun pending"}
-  ]
+    {"question": "race and insurance contingency", "biolang": "native mosaic plot with inspectable count geometry in Asian, Black, Hispanic, Mexican, Other, White order", "status": "area-exact geometry verified on synthetic tables; source row order is pinned and the real-data notebook path executes end to end"}
+  ],
+  "chapterCoverage": {
+    "from": "8.1 Our data: NHANES",
+    "through": "8.7.3 3. Technical versus biological replicates",
+    "status": "all source headings represented in source order with independently written BioLang explanations and executable BioLang equivalents"
+  }
 }
