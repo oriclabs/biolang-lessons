@@ -1,0 +1,64 @@
+# 2. Risk, relative risk, and odds ratios
+
+Adapted for BioLang from Avril Coghlan's [CC BY 3.0 booklet](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/). Changes include rewritten explanations, BioLang functions, explicit estimator labels, and new interpretation guidance.
+
+Risk is the fraction of a group that has the outcome. Odds compare outcome to no outcome. They are related, but they are not interchangeable when an outcome is common.
+
+```biolang
+fn risk(events, non_events) {
+    1.0 * events / (events + non_events)
+}
+
+fn relative_risk(a, b, c, d, confidence = 0.95) {
+    let estimate = risk(a, b) / risk(c, d)
+    let alpha = 1.0 - confidence
+    let z = qnorm(1.0 - alpha / 2.0)
+    let se_log = sqrt(1.0/a - 1.0/(a+b) + 1.0/c - 1.0/(c+d))
+    {
+        estimate: estimate,
+        lower: estimate * exp(-z * se_log),
+        upper: estimate * exp(z * se_log),
+        confidence: confidence
+    }
+}
+
+fn sample_odds_ratio(a, b, c, d, confidence = 0.95) {
+    let estimate = 1.0 * a * d / (b * c)
+    let alpha = 1.0 - confidence
+    let z = qnorm(1.0 - alpha / 2.0)
+    let se_log = sqrt(1.0/a + 1.0/b + 1.0/c + 1.0/d)
+    {
+        estimate: estimate,
+        lower: estimate * exp(-z * se_log),
+        upper: estimate * exp(z * se_log),
+        confidence: confidence
+    }
+}
+```
+
+The table is arranged as exposed disease `a`, exposed control `b`, unexposed disease `c`, and unexposed control `d`.
+
+```biolang
+let a = 156
+let b = 9421
+let c = 1531
+let d = 14797
+{
+    exposed_risk: risk(a, b),
+    unexposed_risk: risk(c, d),
+    relative_risk_99: relative_risk(a, b, c, d, 0.99),
+    sample_odds_ratio_95: sample_odds_ratio(a, b, c, d, 0.95)
+}
+```
+
+The source example gives RR ≈ 0.174 with a 99% interval of about 0.140–0.215, and sample OR ≈ 0.160 with a 95% interval of about 0.135–0.189. Both are below one: disease is less frequent among the exposed group in this table. That wording describes association; it does not by itself prove protection or causation.
+
+BioLang's exact test deliberately labels two odds-ratio estimators. `odds_ratio` is the sample cross-product above; `conditional_odds_ratio` is the conditional estimate conventionally reported by R's `fisher.test()`.
+
+```biolang
+fisher_exact(a, b, c, d, {confidence: 0.95})
+```
+
+## What to report
+
+Report the group risks when the design permits them, the effect estimate, its interval, the group counts, and the study design. “The interval excludes 1” is incomplete without the effect's direction and practical size.

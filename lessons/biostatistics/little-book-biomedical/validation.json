@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "source": "A Little Book of R for Biomedical Statistics",
+  "checked": [
+    { "metric": "relative_risk", "expected": 0.173721236521721, "tolerance": 1e-12 },
+    { "metric": "odds_ratio", "expected": 0.160039091621751, "tolerance": 1e-12 },
+    { "metric": "matched_odds_ratio", "expected": 4.38461538461539, "tolerance": 1e-12 },
+    { "metric": "dose_trend_p_value", "expected": 0.00659217584881777, "tolerance": 1e-8 },
+    { "metric": "sample_size_per_group", "expected": 1214, "tolerance": 0 },
+    { "metric": "sample_size_with_ten_percent_loss", "expected": 1349, "tolerance": 0 },
+    { "metric": "trial_power", "expected": 0.73303725668939, "tolerance": 1e-8 },
+    { "metric": "meta_analysis_cochran_q", "expected": 8.690895696772234, "tolerance": 1e-10 },
+    { "metric": "meta_analysis_q_p_value", "expected": 0.19172259579209794, "tolerance": 1e-10 },
+    { "metric": "sex_strata_tarone_p_value", "expected": 0.627420741721689, "tolerance": 1e-10 },
+    { "metric": "seven_trial_tarone_statistic", "expected": 8.715213252308063, "tolerance": 1e-10 },
+    { "metric": "seven_trial_tarone_p_value", "expected": 0.190239054737704, "tolerance": 1e-10 }
+  ],
+  "independentOracle": {
+    "runtime": "R 4.5.2 with base stats, jsonlite, and validation-only metafor",
+    "script": "validation/compare-with-r.mjs",
+    "result": "74 numerical values match, including both Tarone-adjusted homogeneity examples, all five dose-response plot points, all seven forest-plot estimates, confidence limits, standard errors, and precisions, plus the fixed-effect meta-analysis geometry. The BioLang oracle also asserts that the forest plot renders as SVG with study labels."
+  },
+  "notes": "Notebook execution is also checked directly. Figure data and interval geometry match the independent R calculation; renderer pixels and theme intentionally differ. Tarone's adjusted Breslow-Day result is checked independently against R and remains distinct from Cochran Q. Fisher exact estimates are labelled because R's conditional OR and BioLang's sample cross-product OR are different estimators."
+}

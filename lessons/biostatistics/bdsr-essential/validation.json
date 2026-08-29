@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "reference": "https://bdsr.stephenturner.us/stats.html",
+  "attribution": "Stephen D. Turner, Ph.D., Biological Data Science with R — Essential statistics, © 2019, https://github.com/stephenturner/bdsr, CC BY-NC 4.0 (https://github.com/stephenturner/bdsr/blob/main/LICENSE). Independent OriClabs BioLang implementation under MIT; upstream prose, R code, tables, and figures are not copied or relicensed.",
+  "checked": "2026-08-28",
+  "datasetSha256": "82150bdf7d167e56e5f68552f49b6de85a1abfac2396ab5642bd90c945488c81",
+  "metrics": [
+    {"name": "dimensions", "biolang": [5000, 32], "reference": [5000, 32], "status": "exact"},
+    {"name": "mean age", "biolang": 36.708, "reference": null, "status": "computed from checksum-verified CSV; expression shown but result not printed upstream"},
+    {"name": "adult age by gender Welch t", "biolang": 1.9122057083, "reference": 1.9122, "status": "rounded match"},
+    {"name": "adult age by gender Welch df", "biolang": 3697.193960355615, "reference": 3697.2, "status": "rounded match"},
+    {"name": "adult age by gender p", "biolang": 0.055927017, "reference": 0.05593, "status": "rounded match"},
+    {"name": "alcohol by relationship Wilcoxon W", "biolang": 1067954.5, "reference": 1067954, "status": "chapter display match; tie-aware R 4.5.2 and BioLang recomputation are 1067954.5"},
+    {"name": "alcohol by relationship Wilcoxon p", "biolang": 0.0001658551, "reference": 0.0001659, "status": "rounded match"},
+    {"name": "weight-height intercept", "biolang": -73.7058963, "reference": -73.70590, "status": "rounded match"},
+    {"name": "weight-height slope", "biolang": 0.9199613842, "reference": 0.91996, "status": "rounded match"},
+    {"name": "weight-height multiple R squared", "biolang": 0.203447610741768, "reference": 0.2034, "status": "rounded match"},
+    {"name": "complete adult height-weight-gender rows", "biolang": 3676, "reference": 3676, "status": "exact"},
+    {"name": "female height-weight slope", "biolang": 0.7555470407, "reference": 0.7555470407, "status": "R 4.5.2 numeric match"},
+    {"name": "male height-weight slope", "biolang": 0.9406852522, "reference": 0.9406852522, "status": "R 4.5.2 numeric match"},
+    {"name": "race-insurance chi square", "biolang": 323.3016487, "reference": 323.3, "status": "rounded match"},
+    {"name": "race-insurance chi-square p", "biolang": 9.754237575941022e-68, "reference": 9.754238e-68, "status": "rounded match"},
+    {"name": "two-sample power required n", "biolang": 9, "biolangUnrounded": 8.764693251026905, "reference": 8.764711, "status": "same required integer; noncentral-t roots agree within 0.00002", "note": "Both use a noncentral-t power calculation. R's printed root has achieved power 0.80000089669358; BioLang's tighter root has achieved power 0.80000000000025. The optional normal approximation remains available as {method: 'normal'} and gives 7.691902, rounded to 8."}
+  ],
+  "visuals": [
+    {"question": "BMI distribution", "biolang": "30-bin histogram", "status": "same statistical view, independently rendered"},
+    {"question": "weight in kg and lb", "biolang": "30-bin kg and 80-bin lb histograms", "status": "same statistical views, independently rendered"},
+    {"question": "age distribution", "biolang": "30-bin histogram", "status": "same statistical view, independently rendered"},
+    {"question": "alcohol-use distribution", "biolang": "35-bin histogram", "status": "same statistical view, independently rendered"},
+    {"question": "BMI by smoking status", "biolang": "grouped box-and-jitter diagnostic", "status": "BioLang enhancement; not copied geometry"},
+    {"question": "adult height and weight by gender", "biolang": "one scatterplot with coral/teal group points, separate least-squares lines, separate 95% confidence bands, and a gender legend", "status": "same statistical encoding and ggplot-style presentation, independently rendered; 3676 complete rows and both group slopes rechecked against R 4.5.2"},
+    {"question": "linear-model diagnostics", "biolang": "residuals-versus-fitted plot", "status": "same diagnostic question, independently rendered"},
+    {"question": "race and insurance contingency", "biolang": "native mosaic plot with inspectable count geometry", "status": "area-exact geometry verified on synthetic tables; BDSR real-data visual rerun pending"}
+  ]
+}

@@ -1,0 +1,46 @@
+# 1. Start with the study design
+
+Adapted for BioLang from Avril Coghlan's [*A Little Book of R for Biomedical Statistics*](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). OriClabs reorganised and expanded the explanation, translated the examples, and added new checks and figures.
+
+The calculation comes second. First ask how people entered the data. That choice decides which quantities are meaningful.
+
+| Design | How the groups arise | A useful question | Main caution |
+|---|---|---|---|
+| Cohort | Start with exposed and unexposed people, then observe disease | How many times larger is risk? | Loss to follow-up and confounding |
+| Case-control | Start with cases and controls, then look back at exposure | Are the exposure odds different? | Ordinary disease risk cannot be estimated from the sampled rows |
+| Matched case-control | Each case has a deliberately similar control | Do discordant pairs favour one exposure direction? | Pairs are not independent rows |
+| Randomised trial | Assignment is random | What treatment effect is compatible with the data? | Adherence, attrition, harms, and analysis plan |
+| Meta-analysis | Combine estimates from several studies | What is the overall pattern and heterogeneity? | A pooled number cannot repair biased studies |
+
+## One table, two different stories
+
+The arithmetic below counts disease among exposed and unexposed people. It is a risk calculation only if the rows came from a cohort or trial whose denominators represent the populations followed.
+
+```biolang
+let exposed_disease = 156
+let exposed_control = 9421
+let unexposed_disease = 1531
+let unexposed_control = 14797
+
+let risk_exposed = exposed_disease / (exposed_disease + exposed_control)
+let risk_unexposed = unexposed_disease / (unexposed_disease + unexposed_control)
+{
+    exposed_people: exposed_disease + exposed_control,
+    unexposed_people: unexposed_disease + unexposed_control,
+    risk_exposed: risk_exposed,
+    risk_unexposed: risk_unexposed
+}
+```
+
+If investigators deliberately sampled a fixed number of cases and controls, those two displayed risks describe the sampling scheme, not population disease incidence. The odds ratio remains usable under the usual case-control assumptions; relative risk does not.
+
+## A decision habit
+
+Before running a test, write four lines in plain language:
+
+1. Who could enter the study?
+2. What created the groups?
+3. What is the independent observational unit: person, matched pair, clinic, or study?
+4. Is the goal description, association, causal effect, prediction, or planning?
+
+The later lessons reuse the same small tables so you can see how the design changes the correct interpretation even when the numbers do not change.

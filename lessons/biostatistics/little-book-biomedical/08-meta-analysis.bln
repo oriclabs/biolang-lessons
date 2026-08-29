@@ -1,0 +1,86 @@
+# 8. Meta-analysis and forest plots
+
+Adapted for BioLang from Avril Coghlan's [CC BY 3.0 booklet](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/). The plot is generated afresh by BioLang and the interpretation is expanded.
+
+A forest plot should show each study's estimate and uncertainty before it shows a pooled answer. Similar-looking point estimates can carry very different precision.
+
+```biolang
+fn log_or_report(label, a, b, c, d) {
+    let estimate = 1.0 * a * d / (b * c)
+    let se = sqrt(1.0/a + 1.0/b + 1.0/c + 1.0/d)
+    let z = qnorm(0.975)
+    {
+        label: label,
+        estimate: estimate,
+        lower: estimate * exp(-z * se),
+        upper: estimate * exp(z * se),
+        log_estimate: log(estimate),
+        standard_error: se,
+        precision: 1.0 / (se ** 2.0)
+    }
+}
+
+let s1 = log_or_report("Trial 1", 198, 728, 128, 576)
+let s2 = log_or_report("Trial 2", 96, 437, 101, 342)
+let s3 = log_or_report("Trial 3", 1105, 4243, 1645, 6703)
+let s4 = log_or_report("Trial 4", 741, 2905, 594, 2418)
+let s5 = log_or_report("Trial 5", 264, 1091, 907, 3671)
+let s6 = log_or_report("Trial 6", 105, 408, 348, 1248)
+let s7 = log_or_report("Trial 7", 138, 431, 436, 1576)
+
+let trial_results = table([s1, s2, s3, s4, s5, s6, s7])
+trial_results
+```
+
+```biolang
+forest_plot(trial_results, {
+    label: "label",
+    estimate: "estimate",
+    lower: "lower",
+    upper: "upper",
+    weight: "precision",
+    reference: 1.0,
+    scale: "log",
+    format: "svg",
+    title: "Odds ratios from seven trials"
+})
+```
+
+BioLang can pool the log odds ratios using their variances (the squared standard errors). Read heterogeneity alongside the pooled estimate.
+
+```biolang
+let log_effects = [s1.log_estimate, s2.log_estimate, s3.log_estimate, s4.log_estimate, s5.log_estimate, s6.log_estimate, s7.log_estimate]
+let standard_errors = [s1.standard_error, s2.standard_error, s3.standard_error, s4.standard_error, s5.standard_error, s6.standard_error, s7.standard_error]
+let variances = map(standard_errors, |se| se ** 2.0)
+meta_analysis(log_effects, variances)
+```
+
+The heterogeneity result above is the usual inverse-variance meta-analysis Q
+view. Because these seven studies are also available as 2x2 tables, we can run
+the source's Tarone-adjusted Breslow-Day homogeneity test directly.
+
+```biolang
+let trial_strata = [
+    [[198, 728], [128, 576]],
+    [[96, 437], [101, 342]],
+    [[1105, 4243], [1645, 6703]],
+    [[741, 2905], [594, 2418]],
+    [[264, 1091], [907, 3671]],
+    [[105, 408], [348, 1248]],
+    [[138, 431], [436, 1576]]
+]
+let tarone = breslow_day_test(trial_strata)
+{
+    common_odds_ratio: tarone.common_odds_ratio,
+    statistic: tarone.tarone_statistic,
+    p_value: tarone.tarone_p_value,
+    degrees_of_freedom: tarone.df
+}
+```
+
+The adjusted statistic is about 8.715 with 6 degrees of freedom, giving
+p about 0.190. That is the source method and result. It is close to the
+inverse-variance Q p-value here, but the tests are built from different inputs
+and must not be renamed as one another.
+
+Pooling is justified by a question and a defensible study set, not by the availability of software. Check study design, risk of bias, outcome definitions, follow-up, and heterogeneity. A narrow pooled interval can still be precisely wrong when the contributing studies share bias.

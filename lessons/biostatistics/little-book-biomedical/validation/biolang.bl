@@ -1,0 +1,93 @@
+fn forest_row(label, a, b, c, d) {
+    let estimate = 1.0 * a * d / (b * c)
+    let se = sqrt(1.0/a + 1.0/b + 1.0/c + 1.0/d)
+    let z = qnorm(0.975)
+    {
+        label: label,
+        estimate: estimate,
+        lower: estimate * exp(-z * se),
+        upper: estimate * exp(z * se),
+        log_estimate: log(estimate),
+        standard_error: se,
+        precision: 1.0 / (se ** 2.0)
+    }
+}
+
+let a = 156.0
+let b = 9421.0
+let c = 1531.0
+let d = 14797.0
+let women = {a: 4.0, b: 5.0, c: 5.0, d: 103.0}
+let men = {a: 10.0, b: 3.0, c: 5.0, d: 43.0}
+let nw = women.a + women.b + women.c + women.d
+let nm = men.a + men.b + men.c + men.d
+
+let association = chi_square_contingency([[30, 24], [76, 241], [82, 509]], {correct: false})
+let doses = [2.0, 9.5, 19.5, 37.0, 50.0]
+let log_odds = [log(35.0/82.0), log(250.0/293.0), log(196.0/190.0), log(136.0/71.0), log(32.0/13.0)]
+let trend = lm(doses, log_odds)
+let z_alpha = qnorm(0.975)
+let z_power = qnorm(0.90)
+let average_risk = 0.175
+let sample_size = ceil(2.0 * (z_alpha + z_power) ** 2.0 * average_risk * (1.0-average_risk) / (0.15-0.20) ** 2.0)
+
+let s1 = forest_row("Trial 1", 198, 728, 128, 576)
+let s2 = forest_row("Trial 2", 96, 437, 101, 342)
+let s3 = forest_row("Trial 3", 1105, 4243, 1645, 6703)
+let s4 = forest_row("Trial 4", 741, 2905, 594, 2418)
+let s5 = forest_row("Trial 5", 264, 1091, 907, 3671)
+let s6 = forest_row("Trial 6", 105, 408, 348, 1248)
+let s7 = forest_row("Trial 7", 138, 431, 436, 1576)
+let forest = [s1, s2, s3, s4, s5, s6, s7]
+let effects = map(forest, |row| row.log_estimate)
+let variances = map(forest, |row| row.standard_error ** 2.0)
+let meta = meta_analysis(effects, variances)
+let sex_tarone = breslow_day_test([[[4, 5], [5, 103]], [[10, 3], [5, 43]]])
+let trial_tarone = breslow_day_test([
+    [[198, 728], [128, 576]], [[96, 437], [101, 342]],
+    [[1105, 4243], [1645, 6703]], [[741, 2905], [594, 2418]],
+    [[264, 1091], [907, 3671]], [[105, 408], [348, 1248]],
+    [[138, 431], [436, 1576]]
+])
+let forest_svg = forest_plot(table(forest), {
+    label: "label", estimate: "estimate", lower: "lower", upper: "upper",
+    weight: "precision", reference: 1.0, scale: "log", format: "svg",
+    title: "Odds ratios from seven trials"
+})
+assert contains(forest_svg, "<svg"), "forest plot renders as SVG"
+assert contains(forest_svg, "Trial 1"), "forest plot retains study labels"
+
+println(json_stringify({
+    relative_risk: (a / (a + b)) / (c / (c + d)),
+    odds_ratio: a * d / (b * c),
+    mantel_haenszel_or: (women.a*women.d/nw + men.a*men.d/nm) / (women.b*women.c/nw + men.b*men.c/nm),
+    tarone: {
+        sex: {
+            common_odds_ratio: sex_tarone.common_odds_ratio,
+            statistic: sex_tarone.tarone_statistic,
+            p_value: sex_tarone.tarone_p_value
+        },
+        trials: {
+            common_odds_ratio: trial_tarone.common_odds_ratio,
+            statistic: trial_tarone.tarone_statistic,
+            p_value: trial_tarone.tarone_p_value
+        }
+    },
+    matched_odds_ratio: 57.0 / 13.0,
+    association_chi_square: association.chi2,
+    association_p_value: association.p_value,
+    dose_trend_p_value: trend.p_value,
+    dose_plot: map(range(0, len(doses)), |i| {dose: doses[i], log_odds: log_odds[i]}),
+    sample_size_per_group: sample_size,
+    sample_size_with_ten_percent_loss: ceil(sample_size / 0.9),
+    trial_power: pnorm(abs(0.20-0.30) * sqrt(250.0/(2.0*0.25*(1.0-0.25))) - z_alpha),
+    forest: forest,
+    meta: {
+        pooled_effect: meta.pooled_effect,
+        se: meta.se,
+        ci_lower: meta.ci_lower,
+        ci_upper: meta.ci_upper,
+        q_stat: meta.q_stat,
+        p_q: meta.p_q
+    }
+}))

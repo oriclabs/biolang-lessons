@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "id": "bdsr-essential-statistics",
+  "title": "Essential statistics with NHANES",
+  "summary": "A practical BioLang companion using the BDSR NHANES teaching extract.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 20,
+  "attribution": "ATTRIBUTION.md",
+  "source": {
+    "title": "Stephen D. Turner, Ph.D. — Biological Data Science with R: Essential statistics",
+    "url": "https://bdsr.stephenturner.us/stats.html",
+    "repository": "https://github.com/stephenturner/bdsr",
+    "copyright": "© 2019 Stephen D. Turner, Ph.D.",
+    "licence": "CC BY-NC 4.0",
+    "licenceUrl": "https://github.com/stephenturner/bdsr/blob/main/LICENSE",
+    "note": "Independent OriClabs BioLang companion under MIT. The upstream BDSR source is CC BY-NC 4.0; upstream prose, R code, tables, and figures are not copied or relicensed here. The non-commercial condition matters if upstream material is reused directly. This is not an official BDSR publication or endorsement."
+  },
+  "datasets": [
+    {
+      "id": "nhanes",
+      "title": "NHANES resampled teaching data",
+      "path": "nhanes.csv",
+      "url": "https://bdsr.stephenturner.us/data/nhanes.csv",
+      "bytes": 731489,
+      "sha256": "82150bdf7d167e56e5f68552f49b6de85a1abfac2396ab5642bd90c945488c81",
+      "mediaType": "text/csv",
+      "source": "Stephen Turner's BDSR teaching extract derived from NHANES 2011–2012",
+      "citation": "CDC National Health and Nutrition Examination Survey; resampled teaching extract distributed with Biological Data Science with R (https://bdsr.stephenturner.us/stats.html)",
+      "rights": "Referenced from the source host and downloaded on demand; not redistributed here."
+    },
+    {
+      "id": "dictionary",
+      "title": "NHANES teaching data dictionary",
+      "path": "nhanes_dd.csv",
+      "url": "https://bdsr.stephenturner.us/data/nhanes_dd.csv",
+      "bytes": 3557,
+      "sha256": "71a4b8b9ba76588f2f174b2bf9521d78b9dfcb48fd084619edeafb371cffe20f",
+      "mediaType": "text/csv",
+      "source": "Stephen Turner's BDSR NHANES teaching data dictionary",
+      "citation": "Biological Data Science with R NHANES teaching extract data dictionary (https://bdsr.stephenturner.us/stats.html)",
+      "rights": "Referenced from the source host and downloaded on demand."
+    }
+  ],
+  "validation": "validation.json",
+  "tags": ["statistics", "NHANES", "EDA", "inference", "regression"]
+}

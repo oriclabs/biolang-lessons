@@ -1,0 +1,32 @@
+{
+  "schema": 2,
+  "id": "little-book-biomedical-statistics",
+  "title": "Biomedical statistics in BioLang",
+  "summary": "Eight practical lessons on study design, risk, association, confounding, matched studies, dose response, trial planning, and meta-analysis.",
+  "runtime": "browser",
+  "estimatedMemoryMb": 8,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "A Little Book of R for Biomedical Statistics by Avril Coghlan",
+    "url": "https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/",
+    "repository": "https://github.com/avrilcoghlan",
+    "copyright": "Copyright 2010 Avril Coghlan",
+    "licence": "CC BY 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
+    "note": "Adapted for BioLang by OriClabs. The lessons reorganise and expand the explanations, translate the computations to BioLang, add new interpretation guidance, and generate new plots. This is not an official publication or endorsement by the original author."
+  },
+  "datasets": [],
+  "lessons": [
+    { "id": "biomedical-01-study-design", "title": "Start with the study design", "summary": "Recognise cohort, case-control, matched, trial, and meta-analysis questions before calculating.", "entry": "01-study-design.bln" },
+    { "id": "biomedical-02-risk-and-odds", "title": "Risk, relative risk, and odds ratios", "summary": "Turn a 2x2 table into risks, an RR, an OR, and confidence intervals.", "entry": "02-risk-and-odds.bln" },
+    { "id": "biomedical-03-association", "title": "Evidence of association", "summary": "Choose chi-square or Fisher's exact test and separate evidence from effect size.", "entry": "03-association.bln" },
+    { "id": "biomedical-04-stratification", "title": "Stratification and confounding", "summary": "Compare stratum-specific, pooled, and Mantel-Haenszel odds ratios.", "entry": "04-stratification.bln" },
+    { "id": "biomedical-05-matched-studies", "title": "Matched case-control studies", "summary": "Use discordant pairs for the matched odds ratio and McNemar test.", "entry": "05-matched-studies.bln" },
+    { "id": "biomedical-06-dose-response", "title": "Dose-response", "summary": "Inspect dose-specific odds and model a trend in log odds.", "entry": "06-dose-response.bln" },
+    { "id": "biomedical-07-trial-planning", "title": "Sample size and power", "summary": "See how effect size, alpha, power, and loss to follow-up determine trial size.", "entry": "07-trial-planning.bln" },
+    { "id": "biomedical-08-meta-analysis", "title": "Meta-analysis and forest plots", "summary": "Calculate study odds ratios, inspect uncertainty, and make a BioLang forest plot.", "entry": "08-meta-analysis.bln" }
+  ],
+  "validation": "validation.json",
+  "tags": ["biomedical statistics", "epidemiology", "risk", "odds ratio", "clinical trials", "meta-analysis", "CC BY"]
+}

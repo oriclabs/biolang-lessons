@@ -1,0 +1,35 @@
+# Run from this directory after placing the checksum-verified source file at nhanes.csv.
+let nhanes = read_csv("nhanes.csv")
+let adults = nhanes |> filter(|row| row.Age >= 18)
+let female_age = adults |> filter(|row| row.Gender == "female") |> col("Age")
+let male_age = adults |> filter(|row| row.Gender == "male") |> col("Age")
+let alcohol = adults |> drop_null("RelationshipStatus") |> drop_null("AlcoholYear")
+let committed = alcohol |> filter(|row| row.RelationshipStatus == "Committed") |> col("AlcoholYear")
+let single = alcohol |> filter(|row| row.RelationshipStatus == "Single") |> col("AlcoholYear")
+let height_weight = adults |> drop_null("Height") |> drop_null("Weight")
+let race_insured = adults |> drop_null("Race") |> drop_null("Insured") |> cross_tab("Race", "Insured")
+let welch = ttest(female_age, male_age, {variance: "welch"})
+let ranked = wilcoxon(committed, single, {method: "normal", continuity: true})
+let height_weight_fit = lm(height_weight |> col("Height"), height_weight |> col("Weight"))
+let race_insurance = chi_square_contingency(race_insured |> drop_cols("Race"))
+let planned_power = power_t_test(1.0 / 0.7, 0.05, 0.8)
+
+# These four quantities are printed by the upstream chapter. The half-unit in
+# W comes from tied ranks: R 4.5.2 and BioLang both recompute 1067954.5, while
+# the rendered chapter displays 1067954.
+assert abs(welch.df - 3697.1939603556143) < 1e-9, "Welch degrees of freedom must match the verified NHANES reference"
+assert abs(ranked.u_group_a - 1067954.5) < 1e-9, "Wilcoxon W must match the tie-aware R 4.5.2 recomputation"
+assert abs(height_weight_fit.r_squared - 0.20344761074176798) < 1e-12, "linear-model R squared must match the verified reference"
+assert abs(race_insurance.p_value / 9.754237575941016e-68 - 1.0) < 1e-12, "chi-square p-value must match the verified reference"
+assert planned_power.n == 9, "noncentral-t power planning must require 9 participants per group"
+assert abs(planned_power.n_raw - 8.76471066481821) < 2e-5, "continuous sample-size root must agree with base R within its solver tolerance"
+
+{
+    dimensions: [nrow(nhanes), ncol(nhanes)],
+    mean_age: mean(nhanes |> col("Age")),
+    age_gender_welch: welch,
+    alcohol_rank_sum: ranked,
+    height_weight: height_weight_fit,
+    race_insurance: race_insurance,
+    power: planned_power
+}

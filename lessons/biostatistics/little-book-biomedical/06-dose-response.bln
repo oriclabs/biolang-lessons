@@ -1,0 +1,47 @@
+# 6. Dose-response
+
+Adapted for BioLang from Avril Coghlan's [CC BY 3.0 booklet](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/). The lesson adds a visual trend check and separates the descriptive odds ratios from the model assumption.
+
+Increasing outcome odds with increasing dose is a useful clue. It is not automatically linear, causal, or free from confounding.
+
+```biolang
+let doses = [2.0, 9.5, 19.5, 37.0, 50.0]
+let disease = [35.0, 250.0, 196.0, 136.0, 32.0]
+let controls = [82.0, 293.0, 190.0, 71.0, 13.0]
+
+let log_odds = [
+    log(disease[0] / controls[0]),
+    log(disease[1] / controls[1]),
+    log(disease[2] / controls[2]),
+    log(disease[3] / controls[3]),
+    log(disease[4] / controls[4])
+]
+
+let baseline_odds = disease[0] / controls[0]
+let dose_odds_ratios = [
+    (disease[0] / controls[0]) / baseline_odds,
+    (disease[1] / controls[1]) / baseline_odds,
+    (disease[2] / controls[2]) / baseline_odds,
+    (disease[3] / controls[3]) / baseline_odds,
+    (disease[4] / controls[4]) / baseline_odds
+]
+table({dose: doses, disease: disease, control: controls, odds_ratio_vs_lowest: dose_odds_ratios, log_odds: log_odds})
+```
+
+The ORs rise from 1 to about 2.00, 2.42, 4.49, and 5.77. Plot the underlying log odds rather than only the fitted line.
+
+```biolang
+stats_relationship_plot(doses, log_odds, {
+    format: "svg",
+    title: "Dose and observed log odds",
+    x_label: "Dose",
+    y_label: "log(disease / control)"
+})
+```
+
+```biolang
+let trend = lm(doses, log_odds)
+trend
+```
+
+The slope test gives p ≈ 0.00659 for this simple linear model, matching the source calculation. Before trusting it, inspect curvature, influential dose groups, group sizes, uncertainty, and whether dose was assigned or merely observed.

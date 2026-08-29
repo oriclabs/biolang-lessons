@@ -1,0 +1,40 @@
+# 3. Evidence of association
+
+Adapted for BioLang from Avril Coghlan's [CC BY 3.0 biomedical-statistics booklet](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/). The explanation and plots are newly organised for interpretation rather than R command memorisation.
+
+A test asks whether the table is surprising under a stated null model. It does not measure clinical importance, eliminate bias, or show causation.
+
+## A table with three exposure levels
+
+```biolang
+let exposure_table = [
+    [30, 24],
+    [76, 241],
+    [82, 509]
+]
+
+let association = chi_square_contingency(exposure_table, {correct: false})
+association
+```
+
+The chi-square test compares observed counts with the counts expected if exposure category and disease status were independent. Here χ² ≈ 60.58 on 2 degrees of freedom and the p-value is extremely small.
+
+```biolang
+association.expected
+```
+
+Look at the expected cells. Chi-square is an approximation; very small expected counts weaken it. For a 2×2 table with sparse cells, Fisher's exact test is often the safer default.
+
+```biolang
+let sparse = fisher_exact(4, 1, 2, 7)
+sparse
+```
+
+## Choose the test from the data structure
+
+- Independent count table, adequate expected cells: chi-square independence test.
+- Independent 2×2 table, sparse cells: Fisher's exact test.
+- Matched pairs: neither ordinary chi-square nor ordinary Fisher; use the discordant pairs (next lessons).
+- Adjusted association: stratified or regression methods, not a single pooled table.
+
+A small p-value means the observed table is hard to reconcile with the particular null model. It does not tell you why the association exists. Always show an RR or OR with an interval beside the test.

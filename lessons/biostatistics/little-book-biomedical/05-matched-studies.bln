@@ -1,0 +1,38 @@
+# 5. Matched case-control studies
+
+Adapted for BioLang from Avril Coghlan's [CC BY 3.0 biomedical-statistics booklet](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/). The BioLang code and explanatory structure are adapted and expanded.
+
+Matching makes each case-control pair the observational unit. Pairs where both people have the same exposure do not tell us which side is more exposed. The evidence comes from the two discordant cells.
+
+| | Control exposed | Control unexposed |
+|---|---:|---:|
+| Case exposed | 10 | 57 |
+| Case unexposed | 13 | 95 |
+
+```biolang
+let case_exposed_control_unexposed = 57
+let case_unexposed_control_exposed = 13
+let matched_or = 1.0 * case_exposed_control_unexposed / case_unexposed_control_exposed
+
+let z = qnorm(0.975)
+let se_log = sqrt(1.0/case_exposed_control_unexposed + 1.0/case_unexposed_control_exposed)
+{
+    matched_odds_ratio: matched_or,
+    lower_95: matched_or * exp(-z * se_log),
+    upper_95: matched_or * exp(z * se_log)
+}
+```
+
+The matched OR is about 4.38 with a 95% interval of about 2.40–8.01. It uses `57/13`, not the four-cell cross-product used for independent samples.
+
+McNemar's continuity-corrected statistic also uses only the discordant counts.
+
+```biolang
+let b = case_exposed_control_unexposed
+let c = case_unexposed_control_exposed
+let mcnemar_chi2 = (abs(b - c) - 1.0) ** 2.0 / (b + c)
+let mcnemar_p = 2.0 * (1.0 - pnorm(sqrt(mcnemar_chi2)))
+{chi2: mcnemar_chi2, df: 1, p_value: mcnemar_p}
+```
+
+This reproduces χ² ≈ 26.41 and p ≈ 2.76×10⁻⁷. The paired design created dependence; an ordinary independent-table test would answer a different question.

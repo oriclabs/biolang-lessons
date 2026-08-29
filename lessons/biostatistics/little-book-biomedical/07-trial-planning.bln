@@ -1,0 +1,38 @@
+# 7. Sample size and power
+
+Adapted for BioLang from Avril Coghlan's [CC BY 3.0 biomedical-statistics booklet](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/). The formulas are translated and the assumptions are made explicit.
+
+Sample size is not a property of “the test” alone. It depends on the smallest worthwhile effect, expected control risk, alpha, desired power, allocation, analysis method, and likely missing outcomes.
+
+```biolang
+fn rct_sample_size(alpha, power, treatment_risk, control_risk, loss_fraction = 0.0) {
+    let z_alpha = qnorm(1.0 - alpha / 2.0)
+    let z_power = qnorm(power)
+    let average_risk = (treatment_risk + control_risk) / 2.0
+    let numerator = 2.0 * (z_alpha + z_power) ** 2.0 * average_risk * (1.0 - average_risk)
+    let denominator = (treatment_risk - control_risk) ** 2.0
+    ceil(ceil(numerator / denominator) / (1.0 - loss_fraction))
+}
+
+{
+    per_group_complete: rct_sample_size(0.05, 0.90, 0.15, 0.20),
+    per_group_with_10_percent_loss: rct_sample_size(0.05, 0.90, 0.15, 0.20, 0.10)
+}
+```
+
+This approximation gives 1,214 per group before attrition and 1,349 after allowing 10% loss, matching the source example.
+
+If the available sample is fixed, solve the same approximation for power.
+
+```biolang
+fn rct_power(alpha, treatment_risk, control_risk, n_per_group) {
+    let z_alpha = qnorm(1.0 - alpha / 2.0)
+    let average_risk = (treatment_risk + control_risk) / 2.0
+    let information = n_per_group / (2.0 * average_risk * (1.0 - average_risk))
+    pnorm(abs(treatment_risk - control_risk) * sqrt(information) - z_alpha)
+}
+
+rct_power(0.05, 0.20, 0.30, 250)
+```
+
+The approximate power is 0.733. Do not choose the expected effect merely to make the sample affordable. Pre-specify a scientifically meaningful effect and use a method aligned with the planned primary analysis; clustered, repeated, survival, non-inferiority, and adaptive designs need different calculations.

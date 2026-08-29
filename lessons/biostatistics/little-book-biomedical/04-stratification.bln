@@ -1,0 +1,71 @@
+# 4. Stratification and confounding
+
+Adapted for BioLang from Avril Coghlan's [CC BY 3.0 booklet](https://a-little-book-of-r-for-biomedical-statistics.readthedocs.io/en/latest/). OriClabs rewrote the teaching sequence and translated the calculations.
+
+A pooled table can mix groups that have different baseline risks or exposure patterns. Stratification asks whether the association looks similar within those groups.
+
+```biolang
+fn odds_ratio(a, b, c, d) { 1.0 * a * d / (b * c) }
+
+# Women: exposed disease/control, then unexposed disease/control
+let women = {a: 4, b: 5, c: 5, d: 103}
+let men = {a: 10, b: 3, c: 5, d: 43}
+
+{
+    women_or: odds_ratio(women.a, women.b, women.c, women.d),
+    men_or: odds_ratio(men.a, men.b, men.c, men.d)
+}
+```
+
+Both stratum-specific odds ratios are large (about 16.48 and 28.67). The Mantel-Haenszel estimate combines the cross-products while preserving each stratum's size.
+
+```biolang
+fn mh_n(s) { s.a + s.b + s.c + s.d }
+let mh_numerator = 1.0 * women.a * women.d / mh_n(women) + 1.0 * men.a * men.d / mh_n(men)
+let mh_denominator = 1.0 * women.b * women.c / mh_n(women) + 1.0 * men.b * men.c / mh_n(men)
+let mh_or = mh_numerator / mh_denominator
+
+let pooled_a = women.a + men.a
+let pooled_b = women.b + men.b
+let pooled_c = women.c + men.c
+let pooled_d = women.d + men.d
+{
+    mantel_haenszel_or: mh_or,
+    pooled_or: odds_ratio(pooled_a, pooled_b, pooled_c, pooled_d)
+}
+```
+
+The source reports MH OR ≈ 23.00 and pooled OR ≈ 25.55. Their difference shows why preserving strata can matter.
+
+Before treating 23.00 as one shared association, check whether the odds ratio is
+reasonably similar across the strata. The Breslow-Day test compares each table
+with the counts expected under one common odds ratio; Tarone's adjustment
+improves that test's centring.
+
+```biolang
+let sex_strata = [
+    [[women.a, women.b], [women.c, women.d]],
+    [[men.a, men.b], [men.c, men.d]]
+]
+let homogeneity = breslow_day_test(sex_strata)
+{
+    common_odds_ratio: homogeneity.common_odds_ratio,
+    tarone_statistic: homogeneity.tarone_statistic,
+    p_value: homogeneity.tarone_p_value,
+    degrees_of_freedom: homogeneity.df
+}
+```
+
+Here the adjusted p-value is about 0.627. The data do not provide evidence that
+the two stratum-specific odds ratios differ, but that is not proof that they are
+identical. With only two strata and modest counts, the test may miss a real
+difference.
+
+## Confounding or effect modification?
+
+These are different questions:
+
+- **Confounding:** adjustment changes the combined estimate because the stratifying variable mixed unlike groups.
+- **Effect modification:** the true association itself differs meaningfully between strata.
+
+Do not decide by glancing at two point estimates alone. Inspect intervals and use a planned homogeneity/interaction analysis. When strata disagree strongly, one pooled number can hide the most important result. The inverse-variance Cochran Q returned by `meta_analysis()` works from study effect estimates and variances; it is not a substitute for this stratified 2x2-table homogeneity test.

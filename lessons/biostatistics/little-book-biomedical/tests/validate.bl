@@ -1,0 +1,71 @@
+fn test_source_example_metrics() {
+    let a = 156.0
+    let b = 9421.0
+    let c = 1531.0
+    let d = 14797.0
+    let rr = (a / (a + b)) / (c / (c + d))
+    let odds_ratio = a * d / (b * c)
+    assert abs(rr - 0.173721236521721) < 1e-12, "relative risk"
+    assert abs(odds_ratio - 0.160039091621751) < 1e-12, "odds ratio"
+
+    let women = {a: 4.0, b: 5.0, c: 5.0, d: 103.0}
+    let men = {a: 10.0, b: 3.0, c: 5.0, d: 43.0}
+    let nw = women.a + women.b + women.c + women.d
+    let nm = men.a + men.b + men.c + men.d
+    let mh = (women.a*women.d/nw + men.a*men.d/nm) /
+             (women.b*women.c/nw + men.b*men.c/nm)
+    assert abs(mh - 23.00060975609756) < 1e-10, "Mantel-Haenszel odds ratio"
+
+    let sex_homogeneity = breslow_day_test([
+        [[4, 5], [5, 103]],
+        [[10, 3], [5, 43]]
+    ])
+    assert abs(sex_homogeneity.tarone_p_value - 0.627420741721689) < 1e-10, "sex-stratified Tarone p-value"
+
+    let matched = 57.0 / 13.0
+    assert abs(matched - 4.38461538461539) < 1e-12, "matched odds ratio"
+
+    let doses = [2.0, 9.5, 19.5, 37.0, 50.0]
+    let log_odds = [log(35.0/82.0), log(250.0/293.0), log(196.0/190.0), log(136.0/71.0), log(32.0/13.0)]
+    let trend = lm(doses, log_odds)
+    assert abs(trend.p_value - 0.00659217584881777) < 1e-10, "dose trend p-value"
+
+    let z_alpha = qnorm(0.975)
+    let z_power = qnorm(0.90)
+    let average_risk = 0.175
+    let n = ceil(2.0 * (z_alpha + z_power) ** 2.0 * average_risk * (1.0-average_risk) / (0.15-0.20) ** 2.0)
+    assert n == 1214, "sample size"
+    assert ceil(n / 0.9) == 1349, "sample size after loss"
+
+    let fixed_average = 0.25
+    let achieved = pnorm(abs(0.20-0.30) * sqrt(250.0/(2.0*fixed_average*(1.0-fixed_average))) - z_alpha)
+    assert abs(achieved - 0.73303725668939) < 1e-8, "trial power"
+
+    let meta_effects = [
+        log(198.0*576.0/(728.0*128.0)), log(96.0*342.0/(437.0*101.0)),
+        log(1105.0*6703.0/(4243.0*1645.0)), log(741.0*2418.0/(2905.0*594.0)),
+        log(264.0*3671.0/(1091.0*907.0)), log(105.0*1248.0/(408.0*348.0)),
+        log(138.0*1576.0/(431.0*436.0))
+    ]
+    let meta_variances = [
+        1.0/198.0+1.0/728.0+1.0/128.0+1.0/576.0,
+        1.0/96.0+1.0/437.0+1.0/101.0+1.0/342.0,
+        1.0/1105.0+1.0/4243.0+1.0/1645.0+1.0/6703.0,
+        1.0/741.0+1.0/2905.0+1.0/594.0+1.0/2418.0,
+        1.0/264.0+1.0/1091.0+1.0/907.0+1.0/3671.0,
+        1.0/105.0+1.0/408.0+1.0/348.0+1.0/1248.0,
+        1.0/138.0+1.0/431.0+1.0/436.0+1.0/1576.0
+    ]
+    let pooled = meta_analysis(meta_effects, meta_variances)
+    assert abs(pooled.q_stat - 8.690895696772234) < 1e-10, "meta-analysis Q"
+    assert abs(pooled.p_q - 0.19172259579209794) < 1e-10, "meta-analysis Q p-value"
+
+    let trial_homogeneity = breslow_day_test([
+        [[198, 728], [128, 576]], [[96, 437], [101, 342]],
+        [[1105, 4243], [1645, 6703]], [[741, 2905], [594, 2418]],
+        [[264, 1091], [907, 3671]], [[105, 408], [348, 1248]],
+        [[138, 431], [436, 1576]]
+    ])
+    assert abs(trial_homogeneity.tarone_statistic - 8.715213252308063) < 1e-10, "seven-trial Tarone statistic"
+    assert abs(trial_homogeneity.tarone_p_value - 0.190239054737704) < 1e-10, "seven-trial Tarone p-value"
+}
