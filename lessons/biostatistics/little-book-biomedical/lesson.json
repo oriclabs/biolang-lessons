@@ -2,7 +2,7 @@
   "schema": 2,
   "id": "little-book-biomedical-statistics",
   "title": "Biomedical statistics in BioLang",
-  "summary": "Eight practical lessons on study design, risk, association, confounding, matched studies, dose response, trial planning, and meta-analysis.",
+  "summary": "One guided medical-statistics course with eight selectable sections on study design, risk, association, confounding, matched studies, dose response, trial planning, and meta-analysis.",
   "runtime": "browser",
   "estimatedMemoryMb": 8,
   "attribution": "ATTRIBUTION.md",
@@ -18,15 +18,163 @@
   },
   "datasets": [],
   "lessons": [
-    { "id": "biomedical-01-study-design", "title": "Start with the study design", "summary": "Recognise cohort, case-control, matched, trial, and meta-analysis questions before calculating.", "entry": "01-study-design.bln" },
-    { "id": "biomedical-02-risk-and-odds", "title": "Risk, relative risk, and odds ratios", "summary": "Turn a 2x2 table into risks, an RR, an OR, and confidence intervals.", "entry": "02-risk-and-odds.bln" },
-    { "id": "biomedical-03-association", "title": "Evidence of association", "summary": "Choose chi-square or Fisher's exact test and separate evidence from effect size.", "entry": "03-association.bln" },
-    { "id": "biomedical-04-stratification", "title": "Stratification and confounding", "summary": "Compare stratum-specific, pooled, and Mantel-Haenszel odds ratios.", "entry": "04-stratification.bln" },
-    { "id": "biomedical-05-matched-studies", "title": "Matched case-control studies", "summary": "Use discordant pairs for the matched odds ratio and McNemar test.", "entry": "05-matched-studies.bln" },
-    { "id": "biomedical-06-dose-response", "title": "Dose-response", "summary": "Inspect dose-specific odds and model a trend in log odds.", "entry": "06-dose-response.bln" },
-    { "id": "biomedical-07-trial-planning", "title": "Sample size and power", "summary": "See how effect size, alpha, power, and loss to follow-up determine trial size.", "entry": "07-trial-planning.bln" },
-    { "id": "biomedical-08-meta-analysis", "title": "Meta-analysis and forest plots", "summary": "Calculate study odds ratios, inspect uncertainty, and make a BioLang forest plot.", "entry": "08-meta-analysis.bln" }
+    {
+      "id": "biomedical-01-study-design", "title": "Start with the study design",
+      "summary": "Recognise cohort, case-control, matched, trial, and meta-analysis questions before calculating.",
+      "entry": "01-study-design.bln",
+      "discoverability": {
+        "problems": ["choose an epidemiological study design", "identify the unit of analysis", "distinguish exposure sampling from outcome sampling"],
+        "methods": ["cohort study", "case-control study", "matched study", "randomized controlled trial", "meta-analysis"],
+        "plots": [],
+        "terms": ["exposure", "outcome", "sampling frame", "temporality", "confounding", "selection bias"],
+        "aliases": ["RCT", "observational study", "prospective study", "retrospective study", "evidence synthesis"],
+        "functions": []
+      }
+    },
+    {
+      "id": "biomedical-02-risk-and-odds", "title": "Risk, relative risk, and odds ratios",
+      "summary": "Turn a 2x2 table into risks, an RR, an OR, and confidence intervals.",
+      "entry": "02-risk-and-odds.bln",
+      "discoverability": {
+        "problems": ["compare disease occurrence between exposed and unexposed groups", "estimate effect size from a 2x2 table"],
+        "methods": ["risk ratio", "odds ratio", "Wald confidence interval", "Fisher exact test"],
+        "plots": [],
+        "terms": ["risk", "odds", "relative risk", "sample odds ratio", "conditional odds ratio", "confidence interval"],
+        "aliases": ["RR", "OR", "risk ratio", "cross-product ratio", "two by two table"],
+        "functions": ["fisher_exact", "qnorm", "sqrt", "exp"]
+      }
+    },
+    {
+      "id": "biomedical-03-association", "title": "Evidence of association",
+      "summary": "Choose chi-square or Fisher's exact test and separate evidence from effect size.",
+      "entry": "03-association.bln",
+      "discoverability": {
+        "problems": ["test association between categorical variables", "analyse a sparse contingency table"],
+        "methods": ["Pearson chi-square test", "Fisher exact test", "expected cell count assessment"],
+        "plots": [],
+        "terms": ["observed count", "expected count", "degrees of freedom", "p-value", "effect size", "sparse table"],
+        "aliases": ["chi squared test", "test of independence", "exact test", "categorical association"],
+        "functions": ["chi_square_contingency", "fisher_exact"]
+      }
+    },
+    {
+      "id": "biomedical-04-stratification", "title": "Stratification and confounding",
+      "summary": "Compare stratum-specific, pooled, and Mantel-Haenszel odds ratios.",
+      "entry": "04-stratification.bln",
+      "discoverability": {
+        "problems": ["adjust a categorical association for a confounder", "check whether effects differ across strata"],
+        "methods": ["Mantel-Haenszel odds ratio", "Breslow-Day test", "Tarone adjustment", "stratified analysis"],
+        "plots": [],
+        "terms": ["confounding", "effect modification", "homogeneity", "common odds ratio", "stratum", "interaction"],
+        "aliases": ["MH estimate", "adjusted odds ratio", "heterogeneity test", "subgroup analysis"],
+        "functions": ["breslow_day_test"]
+      }
+    },
+    {
+      "id": "biomedical-05-matched-studies", "title": "Matched case-control studies",
+      "summary": "Use discordant pairs for the matched odds ratio and McNemar test.",
+      "entry": "05-matched-studies.bln",
+      "discoverability": {
+        "problems": ["analyse matched case-control pairs", "test change in paired binary outcomes"],
+        "methods": ["matched odds ratio", "McNemar test", "continuity correction"],
+        "plots": [],
+        "terms": ["matched pair", "discordant pair", "concordant pair", "paired binary data", "conditional analysis"],
+        "aliases": ["paired proportions test", "matched 2x2 table", "McNemar chi-square"],
+        "functions": ["qnorm", "pnorm", "sqrt", "exp", "abs"]
+      }
+    },
+    {
+      "id": "biomedical-06-dose-response", "title": "Dose-response",
+      "summary": "Inspect dose-specific odds and model a trend in log odds.",
+      "entry": "06-dose-response.bln",
+      "discoverability": {
+        "problems": ["test whether risk changes with increasing dose", "model an ordered exposure trend"],
+        "methods": ["dose-response analysis", "linear trend regression", "log-odds transformation"],
+        "plots": ["dose-response plot", "scatter plot", "fitted trend line"],
+        "terms": ["dose", "response", "monotonic trend", "log odds", "ordered exposure", "slope"],
+        "aliases": ["trend test", "exposure-response", "dose effect", "linear trend"],
+        "functions": ["stats_relationship_plot", "lm", "log", "table"]
+      }
+    },
+    {
+      "id": "biomedical-07-trial-planning", "title": "Sample size and power",
+      "summary": "See how effect size, alpha, power, and loss to follow-up determine trial size.",
+      "entry": "07-trial-planning.bln",
+      "discoverability": {
+        "problems": ["calculate randomized trial sample size", "estimate power for two proportions", "allow for loss to follow-up"],
+        "methods": ["two-proportion sample size", "power calculation", "normal approximation"],
+        "plots": [],
+        "terms": ["statistical power", "alpha", "type I error", "type II error", "effect size", "attrition", "allocation ratio"],
+        "aliases": ["trial size", "power analysis", "required participants", "dropout adjustment", "RCT planning"],
+        "functions": ["qnorm", "pnorm", "ceil", "sqrt"]
+      }
+    },
+    {
+      "id": "biomedical-08-meta-analysis", "title": "Meta-analysis and forest plots",
+      "summary": "Calculate study odds ratios, inspect uncertainty, and make a BioLang forest plot.",
+      "entry": "08-meta-analysis.bln",
+      "discoverability": {
+        "problems": ["combine effect estimates across studies", "visualize study uncertainty", "assess between-study heterogeneity"],
+        "methods": ["fixed-effect meta-analysis", "inverse-variance weighting", "Cochran Q test", "Breslow-Day test"],
+        "plots": ["forest plot"],
+        "terms": ["pooled effect", "study weight", "standard error", "heterogeneity", "odds ratio", "confidence interval"],
+        "aliases": ["evidence synthesis", "pooled odds ratio", "inverse variance model", "meta analytic model"],
+        "functions": ["forest_plot", "meta_analysis", "breslow_day_test", "qnorm", "sqrt", "exp", "log", "table", "map"]
+      }
+    }
   ],
   "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "choose a biomedical study design", "estimate risk and odds ratios", "test categorical association",
+      "adjust for confounding", "analyse matched case-control data", "test a dose-response trend",
+      "plan sample size and power", "combine results across studies", "choose an epidemiological study design",
+      "identify the unit of analysis", "distinguish exposure sampling from outcome sampling",
+      "compare disease occurrence between exposed and unexposed groups", "estimate effect size from a 2x2 table",
+      "test association between categorical variables", "analyse a sparse contingency table",
+      "adjust a categorical association for a confounder", "check whether effects differ across strata",
+      "analyse matched case-control pairs", "test change in paired binary outcomes",
+      "test whether risk changes with increasing dose", "model an ordered exposure trend",
+      "calculate randomized trial sample size", "estimate power for two proportions", "allow for loss to follow-up",
+      "combine effect estimates across studies", "visualize study uncertainty", "assess between-study heterogeneity"
+    ],
+    "methods": [
+      "cohort study", "case-control study", "risk ratio", "odds ratio", "chi-square test", "Fisher exact test",
+      "Mantel-Haenszel odds ratio", "Breslow-Day test", "McNemar test", "linear trend regression",
+      "power calculation", "fixed-effect meta-analysis", "matched study", "randomized controlled trial",
+      "meta-analysis", "Wald confidence interval", "Pearson chi-square test", "expected cell count assessment",
+      "Tarone adjustment", "stratified analysis", "matched odds ratio", "continuity correction",
+      "dose-response analysis", "log-odds transformation", "two-proportion sample size",
+      "normal approximation", "inverse-variance weighting", "Cochran Q test"
+    ],
+    "plots": [
+      "dose-response plot", "scatter plot", "fitted trend line", "forest plot"
+    ],
+    "terms": [
+      "study design", "exposure", "outcome", "risk", "odds", "confidence interval",
+      "confounding", "effect modification", "matched pairs", "dose response",
+      "statistical power", "type I error", "type II error", "heterogeneity", "sampling frame", "temporality",
+      "selection bias", "relative risk", "sample odds ratio", "conditional odds ratio", "observed count",
+      "expected count", "degrees of freedom", "p-value", "effect size", "sparse table", "homogeneity",
+      "common odds ratio", "stratum", "interaction", "matched pair", "discordant pair", "concordant pair",
+      "paired binary data", "conditional analysis", "dose", "response", "monotonic trend", "log odds",
+      "ordered exposure", "slope", "alpha", "attrition", "allocation ratio", "pooled effect", "study weight",
+      "standard error", "odds ratio"
+    ],
+    "aliases": [
+      "RR", "OR", "two by two table", "chi squared test", "MH estimate",
+      "paired proportions", "trend test", "RCT planning", "evidence synthesis", "RCT", "observational study",
+      "prospective study", "retrospective study", "risk ratio", "cross-product ratio", "test of independence",
+      "exact test", "categorical association", "adjusted odds ratio", "heterogeneity test", "subgroup analysis",
+      "paired proportions test", "matched 2x2 table", "McNemar chi-square", "exposure-response", "dose effect",
+      "linear trend", "trial size", "power analysis", "required participants", "dropout adjustment",
+      "pooled odds ratio", "inverse variance model", "meta analytic model"
+    ],
+    "functions": [
+      "fisher_exact", "chi_square_contingency", "breslow_day_test",
+      "stats_relationship_plot", "lm", "forest_plot", "meta_analysis",
+      "qnorm", "pnorm", "table", "sqrt", "exp", "log", "ceil", "abs", "map"
+    ]
+  },
   "tags": ["biomedical statistics", "epidemiology", "risk", "odds ratio", "clinical trials", "meta-analysis", "CC BY"]
 }

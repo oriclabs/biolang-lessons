@@ -4,6 +4,12 @@ Adapted for BioLang from Avril Coghlan's [CC BY 3.0 biomedical-statistics bookle
 
 Matching makes each case-control pair the observational unit. Pairs where both people have the same exposure do not tell us which side is more exposed. The evidence comes from the two discordant cells.
 
+> **Understanding matched pairs**
+>
+> **Use them when:** each case is deliberately linked to a comparable control or the same unit is observed twice.
+>
+> **How to read them:** the pair—not the individual row—is independent. Only discordant pairs identify the exposure direction, which is why ordinary independent-sample formulas answer the wrong question.
+
 | | Control exposed | Control unexposed |
 |---|---:|---:|
 | Case exposed | 10 | 57 |

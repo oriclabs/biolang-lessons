@@ -4,6 +4,12 @@ Adapted for BioLang from Avril Coghlan's [CC BY 3.0 booklet](https://a-little-bo
 
 Increasing outcome odds with increasing dose is a useful clue. It is not automatically linear, causal, or free from confounding.
 
+> **Understanding dose-response trends**
+>
+> **Use them when:** exposure has a meaningful ordered level and you want to test whether outcome frequency changes systematically across it.
+>
+> **How to read them:** plot every dose group before fitting a line. A trend coefficient summarises one assumed shape; curvature, unequal group sizes, and influential endpoints can make that summary misleading.
+
 ```biolang
 let doses = [2.0, 9.5, 19.5, 37.0, 50.0]
 let disease = [35.0, 250.0, 196.0, 136.0, 32.0]

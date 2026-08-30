@@ -21,6 +21,15 @@ function fail(manifest, message) {
   failures.push(`${relative(root, manifest)}: ${message}`);
 }
 
+const discoveryFields = ["problems", "methods", "plots", "terms", "aliases", "functions"];
+const requiredDiscoveryFields = new Set(["problems", "methods", "terms", "aliases"]);
+function validDiscoverability(value) {
+  return value && typeof value === "object" && !Array.isArray(value) &&
+    discoveryFields.every(field => Array.isArray(value[field]) && (!requiredDiscoveryFields.has(field) || value[field].length > 0) &&
+      value[field].every(term => typeof term === "string" && term.length > 1 && term.trim() === term) &&
+      new Set(value[field]).size === value[field].length);
+}
+
 for (const manifestPath of walk(lessonsRoot).filter(path => path.endsWith(`${sep}lesson.json`))) {
   let manifest;
   try { manifest = JSON.parse(readFileSync(manifestPath, "utf8")); }
@@ -31,6 +40,12 @@ for (const manifestPath of walk(lessonsRoot).filter(path => path.endsWith(`${sep
   if (!manifest.title || !manifest.summary) fail(manifestPath, "title and summary are required");
   if (!manifest.source?.url?.startsWith("https://")) fail(manifestPath, "source.url must use HTTPS");
   if (!Array.isArray(manifest.datasets) || !Array.isArray(manifest.tags)) fail(manifestPath, "datasets and tags must be arrays");
+  if (!validDiscoverability(manifest.discoverability)) {
+    fail(manifestPath, "discoverability must provide problems, methods, plots, terms, aliases, and functions arrays; only plots and functions may be empty");
+  }
+  if (manifest.series && (!/^[a-z0-9][a-z0-9._-]*$/i.test(manifest.series.id ?? "") || !manifest.series.title ||
+      !manifest.series.url?.startsWith("https://") || !Number.isInteger(manifest.series.order) || manifest.series.order < 0 ||
+      !manifest.series.chapter)) fail(manifestPath, "series metadata is invalid");
 
   const entries = manifest.schema === 1
     ? [{ id: manifest.id, entry: manifest.entry }]
@@ -45,6 +60,16 @@ for (const manifestPath of walk(lessonsRoot).filter(path => path.endsWith(`${sep
     ids.add(entry?.id);
     if (!safeRelative(entry?.entry) || !entry.entry.endsWith(".bln")) fail(manifestPath, `unsafe notebook path '${entry?.entry ?? ""}'`);
     else if (!existsSync(join(dirname(manifestPath), entry.entry))) fail(manifestPath, `missing notebook '${entry.entry}'`);
+    if (manifest.schema === 2 && !validDiscoverability(entry.discoverability)) {
+      fail(manifestPath, `lesson '${entry?.id ?? ""}' must provide its own discoverability metadata`);
+    }
+    if (manifest.schema === 2 && validDiscoverability(entry.discoverability) && validDiscoverability(manifest.discoverability)) {
+      for (const field of discoveryFields) {
+        const aggregate = new Set(manifest.discoverability[field]);
+        const missing = entry.discoverability[field].filter(term => !aggregate.has(term));
+        if (missing.length) fail(manifestPath, `lesson '${entry.id}' has ${field} missing from aggregate discoverability: ${missing.join(", ")}`);
+      }
+    }
   }
 
   for (const dataset of manifest.datasets ?? []) {

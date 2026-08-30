@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "id": "bdsr-predictive-influenza",
+  "title": "Predicting and forecasting influenza",
+  "summary": "A complete BioLang companion to BDSR chapter 10: H7N9 exploration and feature extraction, reproducible bootstrap comparison of four classifiers, unknown-outcome prediction, and five-year CDC influenza forecasts.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 42,
+  "attribution": "ATTRIBUTION.md",
+  "source": {
+    "title": "Stephen D. Turner, Ph.D. — Biological Data Science with R: Predictive Analytics",
+    "url": "https://bdsr.stephenturner.us/predmodeling.html",
+    "repository": "https://github.com/stephenturner/bdsr",
+    "copyright": "© 2019 Stephen D. Turner, Ph.D.",
+    "licence": "CC BY-NC 4.0",
+    "licenceUrl": "https://github.com/stephenturner/bdsr/blob/main/LICENSE",
+    "note": "Independent OriClabs BioLang companion under MIT. It follows the public section and exercise order but uses newly written explanations, BioLang code, independent Rust algorithms, and BioLang-rendered figures. Dataset files retain their separate upstream terms. This is not an official BDSR publication or endorsement."
+  },
+  "series": {
+    "id": "biological-data-science-with-r",
+    "title": "Biological Data Science with R",
+    "url": "https://bdsr.stephenturner.us/",
+    "order": 10,
+    "chapter": "Chapter 10 · Predictive analytics"
+  },
+  "datasets": [
+    {
+      "id": "h7n9-raw",
+      "title": "H7N9 outbreak line list",
+      "path": "h7n9.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-predictive/h7n9.csv",
+      "bytes": 6934,
+      "sha256": "dbc3d152461dc5ab7b2ba88f16311e624ae9b3ec1c82d98dfe21dde8a48a43e8",
+      "mediaType": "text/csv",
+      "source": "BDSR chapter 10 teaching extract of the 2013 China H7N9 line list",
+      "citation": "Kucharski et al. (2014), Distinguishing between reservoir exposure and human-to-human transmission for emerging pathogens using case onset data; Dryad doi:10.5061/dryad.2g43n.",
+      "rights": "Exact upstream teaching artifact from the CC BY-NC 4.0 BDSR project, derived from the cited outbreak line list; excluded from the repository MIT grant."
+    },
+    {
+      "id": "h7n9-analysis-ready",
+      "title": "H7N9 analysis-ready teaching data",
+      "path": "h7n9_analysisready.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-predictive/h7n9_analysisready.csv",
+      "bytes": 4866,
+      "sha256": "a0c7aca9237a80fd59d4909e036e1dd74c5d9bdf166ab92f285cc4ad9ed20433",
+      "mediaType": "text/csv",
+      "source": "BDSR chapter 10 feature-engineered and MICE-completed H7N9 teaching table",
+      "citation": "Turner SD, Biological Data Science with R, chapter 10; source outbreak data: Kucharski et al. (2014), Dryad doi:10.5061/dryad.2g43n.",
+      "rights": "Exact upstream derived teaching artifact under CC BY-NC 4.0; excluded from the repository MIT grant."
+    },
+    {
+      "id": "cdc-ilinet",
+      "title": "CDC ILI and mortality weekly teaching data",
+      "path": "ilinet.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-predictive/ilinet.csv",
+      "bytes": 28788,
+      "sha256": "09ffcb3ae3390ec6257d360a3e019b5db1cd4da20d08fe29da0135bf48c971cb",
+      "mediaType": "text/csv",
+      "source": "CDC ILINet and NCHS mortality data assembled for BDSR chapter 10",
+      "citation": "Source: Centers for Disease Control and Prevention, U.S. Outpatient Influenza-like Illness Surveillance Network and National Center for Health Statistics mortality surveillance.",
+      "rights": "CDC-origin public-health data with attribution; exact BDSR teaching assembly is excluded from the repository MIT grant. No CDC endorsement is implied."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "predict a binary clinical outcome",
+      "compare classification algorithms",
+      "rank important predictors",
+      "predict outcomes for new patients",
+      "handle missing predictor values",
+      "engineer features from dates and categories",
+      "forecast seasonal influenza counts",
+      "quantify out-of-sample classification performance"
+    ],
+    "methods": [
+      "random forest", "gradient boosting", "elastic net logistic regression",
+      "k-nearest neighbours", "bootstrap resampling", "class probability prediction",
+      "variable importance", "model comparison", "additive time-series forecasting",
+      "Fourier seasonality", "piecewise linear trend"
+    ],
+    "plots": [
+      "grouped density plot", "faceted bar chart", "grouped box plot",
+      "event timeline", "bootstrap distribution histogram",
+      "variable importance plot", "resampling box plot", "forecast plot",
+      "forecast uncertainty ribbon", "seasonal components plot"
+    ],
+    "terms": [
+      "classification", "feature engineering", "imputation", "training data",
+      "unknown outcome", "reproducible random seed", "accuracy", "kappa",
+      "out-of-bag prediction", "hyperparameter tuning", "time series",
+      "seasonality", "forecast horizon", "prediction interval", "influenza",
+      "H7N9", "CDC ILINet"
+    ],
+    "aliases": [
+      "predictive modelling", "predictive modeling", "RF", "GBM", "glmnet",
+      "kNN", "nearest neighbour classifier", "feature importance",
+      "caret model comparison", "Prophet-style forecast", "ILI forecast"
+    ],
+    "functions": [
+      "stats_missingness", "grouped_density_plot", "grouped_bar_plot",
+      "grouped_boxplot_plot", "pivot_longer", "event_timeline_plot", "histogram",
+      "predictive_train", "predictive_importance_plot", "predictive_compare",
+      "predictive_resample_plot", "predictive_predict", "seasonal_forecast",
+      "seasonal_forecast_plot", "seasonal_components_plot", "set_seed"
+    ]
+  },
+  "tags": ["predictive modeling", "random forest", "gradient boosting", "elastic net", "kNN", "forecasting", "influenza", "H7N9", "CDC"]
+}

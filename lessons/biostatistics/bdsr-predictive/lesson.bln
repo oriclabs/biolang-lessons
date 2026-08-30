@@ -1,0 +1,595 @@
+# 10 Predictive analytics: predicting and forecasting influenza
+
+This independent BioLang companion follows the learning order of Stephen D. Turner's [Predictive Analytics: Predicting and Forecasting Influenza](https://bdsr.stephenturner.us/predmodeling.html). It uses the same teaching data and covers every section and hands-on task, but all explanations, BioLang code, algorithms, and figures here are independently produced.
+
+Select **Prepare all** once. The first two files describe 134 H7N9 cases; the third contains 818 weekly CDC surveillance observations. Model cells really refit the algorithms and therefore take longer than descriptive cells.
+
+Short **Understanding …** panels provide optional background before each major method. Studio keeps them collapsed so the explanation → code → result flow stays compact; open one whenever the purpose or interpretation is not yet familiar.
+
+## 10.1 Predictive Modeling
+
+The practical question is simple: 31 recorded cases ended in death, 46 in recovery, and 57 have no recorded outcome. We first learn from the 77 labelled cases, test each method on observations left out during bootstrap resampling, and only then predict the 57 unknown cases.
+
+This order matters. Looking at the unknown answers is impossible, and evaluating on the same rows used for training would make a flexible model look better than it really is.
+
+### 10.1.1 H7N9 Outbreak Data
+
+The line list comes from the 2013 influenza A(H7N9) outbreak in China. The source publication is Kucharski et al. (2014), with the line list archived at Dryad DOI `10.5061/dryad.2g43n`. The chapter keeps the three most frequent provinces and combines the others as `Other`.
+
+The raw table contains dates and readable categories. The analysis-ready table contains numeric features that a classifier can use directly.
+
+```biolang
+let flu = read_csv("h7n9.csv")
+{
+    rows: nrow(flu),
+    columns: ncol(flu),
+    names: colnames(flu),
+    first_cases: head(flu, 6)
+}
+```
+
+### 10.1.2 Importing H7N9 data
+
+`read_csv()` recognises blank/`NA` fields as missing values. Before analysis, check shape, column names, and a few rows rather than assuming the import is correct.
+
+```biolang
+{
+    shape: [nrow(flu), ncol(flu)],
+    outcomes: value_counts(flu, "outcome"),
+    provinces: value_counts(flu, "province"),
+    missingness: stats_missingness(flu)
+}
+```
+
+### 10.1.3 Exploratory data analysis
+
+> **Understanding exploratory plots**
+>
+> **Use them when:** you need to see distributions, group imbalance, missingness, and possible relationships before choosing a model.
+>
+> **How to read them:** look for broad patterns that recur across sensible views. Treat them as questions to investigate—not evidence of causation and not a licence to tune a model against every visible accident.
+
+The outcome is what we eventually want to predict. A density curve shows where ages concentrate within Death, Recover, and missing-outcome groups. The fill colours follow ggplot2's default discrete palette; missing outcome is grey.
+
+```biolang
+grouped_density_plot(flu |> col("age"), flu |> col("outcome"), {
+    missing_label: "NA",
+    colors: ["#F8766D", "#00BFC4"],
+    theme: "publication", title: "",
+    x_label: "age", y_label: "density", legend_title: "outcome",
+    width: 760, height: 470
+})
+```
+
+**What to observe:** deaths are concentrated at older ages, while recoveries and unknown outcomes extend further into younger ages. This is a clue, not proof that age will predict outcome: age is also related to province, timing, and care.
+
+The next plot counts outcomes by sex and then makes one panel per province. Dodging keeps the three outcome bars side by side instead of stacking them.
+
+```biolang
+grouped_bar_plot(flu |> col("gender"), flu |> col("outcome"), {
+    facets: flu |> col("province"), missing_label: "NA",
+    colors: ["#F8766D", "#00BFC4"],
+    theme: "publication", title: "",
+    x_label: "gender", y_label: "count",
+    legend_title: "outcome", width: 820, height: 620
+})
+```
+
+**What to observe:** the numbers and outcome mix differ among provinces. A model may use province, but province can also stand in for reporting practice, access to hospital care, or outbreak timing.
+
+Now compare age by province and outcome. These are dodged boxplots: province defines the x position and outcome defines fill and legend.
+
+```biolang
+grouped_boxplot_plot(
+    flu |> col("age"), flu |> col("province"), flu |> col("outcome"), {
+        missing_label: "NA", colors: ["#F8766D", "#00BFC4"],
+        theme: "publication", title: "",
+        x_label: "province", y_label: "age", legend_title: "outcome",
+        width: 820, height: 490
+    }
+)
+```
+
+**What to observe:** the older age distribution among deaths is clearest in Jiangsu and Zhejiang. Small boxes or absent combinations mean fewer observations support that visual impression.
+
+The raw table has one row per case but three possible event dates. `pivot_longer()` turns those date columns into repeated event rows so a line can connect onset, hospitalization, and outcome for the same person.
+
+```biolang
+let flu_events = pivot_longer(
+    flu,
+    ["date_onset", "date_hospitalization", "date_outcome"],
+    "milestone", "date"
+)
+head(flu_events |> arrange("case_id", "date"), 9)
+```
+
+```biolang
+event_timeline_plot(flu_events, {
+    id: "case_id", date: "date", value: "age",
+    group: "outcome", facet: "province", missing_label: "NA",
+    colors: ["#F8766D", "#00BFC4"],
+    theme: "publication", title: "",
+    x_label: "date", y_label: "age",
+    legend_title: "outcome", width: 960, height: 760
+})
+```
+
+**What to observe:** a disconnected point means another milestone date is missing. Jiangsu and Zhejiang contain many such partial histories, so timing features need explicit missing-data handling.
+
+### 10.1.4 Feature Extraction
+
+> **Understanding feature extraction**
+>
+> **Use it when:** the recorded columns do not directly express the comparisons a model needs, such as elapsed time between two dates or category membership.
+>
+> **How to read it:** every derived feature should have a plain-language definition and use only information available at prediction time. A feature that leaks the eventual answer makes validation meaningless.
+
+Algorithms need variables that express the useful comparison directly. We keep age; encode sex, hospitalization, early outcome, and province as 0/1 indicators; and replace calendar dates with elapsed days.
+
+```biolang
+let flu_orig = flu
+{backup_rows: nrow(flu_orig), backup_columns: ncol(flu_orig)}
+```
+
+#### 10.1.4.1 Create gender / hospitalization indicators
+
+The comparison `gender == "m"` is the feature definition. Writing it explicitly makes the reference level visible.
+
+```biolang
+{
+    gender: head(flu |> col("gender"), 10),
+    is_male: head(flu |> col("gender") |> map(|value| value == "m"), 10),
+    hospitalization_missing: head(
+        flu |> col("date_hospitalization") |> map(|value| value == nil), 10
+    )
+}
+```
+
+```biolang
+let flu_features = flu
+    |> mutate("male", |row| if row.gender == "m" { 1 } else { 0 })
+    |> mutate("hospital", |row| if row.date_hospitalization == nil { 0 } else { 1 })
+    |> drop_cols("gender")
+head(flu_features, 6)
+```
+
+#### 10.1.4.2 Convert dates to “days to ___”
+
+ISO dates sort in calendar order. The median recorded outcome date separates earlier from later recorded outcomes. `date_diff(later, earlier, "days")` returns elapsed days.
+
+```biolang
+let outcome_dates = flu |> col("date_outcome") |> filter(|value| value != nil) |> sort()
+let median_outcome_date = outcome_dates[floor(len(outcome_dates) / 2)]
+median_outcome_date
+```
+
+```biolang
+flu_features = flu_features
+    |> mutate("days_to_hospital", |row|
+        if row.date_hospitalization == nil || row.date_onset == nil { nil }
+        else { date_diff(row.date_hospitalization, row.date_onset, "days") }
+    )
+    |> mutate("days_to_outcome", |row|
+        if row.date_outcome == nil || row.date_onset == nil { nil }
+        else { date_diff(row.date_outcome, row.date_onset, "days") }
+    )
+    |> mutate("early_outcome", |row|
+        if row.date_outcome == nil { nil }
+        else if row.date_outcome < median_outcome_date { 1 }
+        else { 0 }
+    )
+    |> drop_cols("date_onset", "date_hospitalization", "date_outcome")
+head(flu_features, 6)
+```
+
+#### 10.1.4.3 Create indicators for province
+
+One-hot indicators let a model treat province as four named categories instead of pretending that one province is numerically larger than another.
+
+```biolang
+flu_features = flu_features
+    |> mutate("Jiangsu", |row| if row.province == "Jiangsu" { 1 } else { 0 })
+    |> mutate("Other", |row| if row.province == "Other" { 1 } else { 0 })
+    |> mutate("Shanghai", |row| if row.province == "Shanghai" { 1 } else { 0 })
+    |> mutate("Zhejiang", |row| if row.province == "Zhejiang" { 1 } else { 0 })
+    |> drop_cols("province")
+{
+    names: colnames(flu_features),
+    preview: head(flu_features, 6)
+}
+```
+
+### 10.1.5 Imputation
+
+> **Understanding imputation**
+>
+> **Use it when:** predictors are missing but discarding every incomplete row would waste information or distort the sample.
+>
+> **How to read it:** an imputed value is an informed placeholder, not an observation. Fit imputation inside resampling and examine how conclusions change under credible missing-data assumptions.
+
+Dropping every row with one missing predictor would waste much of this small dataset. The source chapter uses multivariate imputation by chained equations (MICE), which models each incomplete variable from the others. A simple mean fill would preserve a column mean but make the data look falsely precise by reducing variance.
+
+BioLang does not claim that median fill is equivalent to MICE. For an exact input comparison, this lesson loads the chapter's checksum-verified analysis-ready artifact, produced with seed `42`. The audit below proves that all ten predictors are complete before modelling.
+
+```biolang
+let fluimp = read_csv("h7n9_analysisready.csv")
+{
+    shape: [nrow(fluimp), ncol(fluimp)],
+    columns: colnames(fluimp),
+    missing_after_imputation: stats_missingness(fluimp),
+    preview: head(fluimp, 6)
+}
+```
+
+### 10.1.6 The caret package
+
+The historical R lesson uses `caret` as one interface over four separate modelling packages. BioLang's equivalent interface is `predictive_train()`: the `method` changes, while target, predictors, seed, resampling, metrics, prediction, and comparison stay consistent.
+
+The implementation is independent. It uses documented CART/random-forest ideas, gradient-boosted trees, proximal elastic-net logistic regression, and distance-weighted nearest neighbours. It does not port or link R package code.
+
+#### 10.1.6.1 Models available in caret
+
+The four matching BioLang method names are:
+
+```biolang
+from_records([
+    {method: "random_forest", idea: "many bootstrapped, feature-randomized trees", tunes: "mtry"},
+    {method: "gradient_boosting", idea: "trees added sequentially to correct errors", tunes: "depth and tree count"},
+    {method: "elastic_net", idea: "logistic regression with lasso/ridge penalty", tunes: "alpha and lambda"},
+    {method: "knn", idea: "vote from nearby labelled observations", tunes: "k"}
+])
+```
+
+For every candidate setting, BioLang repeats the same split → fit → predict → score process. The tuning table returned by each model makes those trials inspectable instead of hiding them behind a package object.
+
+#### 10.1.6.2 Resampling
+
+> **Understanding bootstrap validation**
+>
+> **Use it when:** the labelled dataset is too small for one train/test split to give a stable performance estimate.
+>
+> **How to read it:** each resample produces a new held-out score. The centre describes typical performance; the spread shows how dependent that score is on which cases happened to be held out.
+
+A bootstrap sample draws `n` row indices **with replacement**. Some rows appear several times and some do not appear at all. The unused rows are the out-of-bag test set. The following simulation makes that mechanism visible for 77 cases.
+
+```biolang
+set_seed(8382)
+let bootstrap_ids = range(0, 77) |> map(|unused| random_int(0, 76))
+let inclusion_counts = range(0, 77)
+    |> map(|id| bootstrap_ids |> filter(|draw| draw == id) |> len())
+histogram(inclusion_counts, {
+    bins: 6, theme: "ggplot",
+    title: "How often each case appears in one bootstrap sample",
+    x_label: "Times selected", y_label: "Cases",
+    width: 720, height: 430
+})
+```
+
+**What to observe:** cases with zero selections form the held-out test set. Repeating the process gives a distribution of accuracy and Cohen's kappa rather than one lucky train/test result.
+
+### 10.1.7 Model training
+
+#### 10.1.7.1 Splitting data into known and unknown outcomes
+
+The outcome is absent for 57 rows and present for 77. `case_id` identifies a record but contains no biological information, so the trainer excludes it from predictors by default.
+
+```biolang
+let unknown = fluimp |> filter(|row| row.outcome == nil)
+let known = fluimp |> filter(|row| row.outcome != nil) |> drop_cols("case_id")
+{
+    known_rows: nrow(known),
+    unknown_rows: nrow(unknown),
+    predictors: colnames(known) |> filter(|name| name != "outcome")
+}
+```
+
+#### 10.1.7.2 A note on reproducibility and `set_seed()`
+
+Randomness is useful for resampling, but comparisons are only fair when every method receives the same splits. Resetting a seed reproduces the sequence.
+
+```biolang
+set_seed(22908)
+let first_draw = range(0, 5) |> map(|unused| random())
+set_seed(22908)
+let second_draw = range(0, 5) |> map(|unused| random())
+{first: first_draw, second: second_draw, identical: first_draw == second_draw}
+```
+
+#### 10.1.7.3 Random Forest
+
+> **Understanding random forests**
+>
+> **Use them when:** nonlinear effects and interactions are plausible and prediction matters more than one simple coefficient equation.
+>
+> **How to read them:** held-out accuracy and kappa assess prediction; variable importance shows which inputs the fitted forest relied on. Neither importance nor a good score establishes causation.
+
+At every split, a random forest considers only `mtry` candidate predictors. BioLang tests the same three values used by the chapter for ten predictors: 2, 6, and 10. Each score comes from 25 bootstrap out-of-bag evaluations.
+
+```biolang
+let modrf = predictive_train(known, {
+    target: "outcome", method: "random_forest",
+    seed: 8382, resamples: 25, trees: 100
+})
+{
+    method: modrf.method,
+    best_parameters: modrf.parameters,
+    held_out_metrics: modrf.metrics,
+    tuning_grid: modrf.tuning
+}
+```
+
+The chapter's historical R/caret run selected `mtry = 10`, with mean accuracy `0.693` and mean kappa `0.345`. BioLang reports its own measured values above; exact equality is not promised because its independent forest and random-number stream are different.
+
+Permutation importance asks how much held-out accuracy falls when one predictor is scrambled. Values are scaled so the largest observed loss is `100`.
+
+```biolang
+modrf.importance
+```
+
+```biolang
+predictive_importance_plot(modrf, {
+    theme: "classic", title: "",
+    # Match the chapter's 7:5 plotting device as well as its boxed geometry.
+    width: 672, height: 480
+})
+```
+
+**What to observe:** age and elapsed-time features should rank near the top. Importance says the model used a variable; it does not prove that variable causes the outcome.
+
+#### 10.1.7.4 Stochastic Gradient Boosting
+
+> **Understanding gradient boosting**
+>
+> **Use it when:** many small trees can progressively correct the errors left by earlier trees.
+>
+> **How to read it:** depth controls interaction complexity, learning rate controls step size, and tree count controls how long fitting continues. Judge their combination on held-out data because training performance almost always improves with more trees.
+
+Boosting adds trees sequentially so later trees focus on errors left by earlier ones. The grid crosses depths `1–3` with `50`, `100`, and `150` trees, using learning rate `0.1`.
+
+```biolang
+let modgbm = predictive_train(known, {
+    target: "outcome", method: "gradient_boosting",
+    seed: 8382, resamples: 25
+})
+{
+    method: modgbm.method,
+    best_parameters: modgbm.parameters,
+    held_out_metrics: modgbm.metrics,
+    tuning_grid: modgbm.tuning
+}
+```
+
+#### 10.1.7.5 Model comparison: Random Forest vs Gradient Boosting
+
+Because both calls used seed `8382`, their 25 bootstrap train/test splits are aligned. That makes the row-by-row performance comparison meaningful.
+
+```biolang
+let tree_comparison = predictive_compare([modgbm, modrf])
+tree_comparison.summary
+```
+
+The original R run favoured random forest (`0.693` mean accuracy) over boosting (`0.639`). Check whether the independent BioLang implementations preserve that broad conclusion and inspect the spread rather than only the mean.
+
+#### 10.1.7.6 Elastic net regularized logistic regression
+
+> **Understanding elastic net**
+>
+> **Use it when:** a binary outcome should be predicted from several possibly correlated variables while limiting unstable coefficients.
+>
+> **How to read it:** `alpha` chooses the lasso/ridge mixture and `lambda` controls penalty strength. Shrinkage improves stability but does not make correlated predictors scientifically interchangeable.
+
+Elastic net penalises large or numerous coefficients. `alpha = 0` is ridge-like, `alpha = 1` is lasso, and intermediate values mix the two. The chapter's grid uses `0.10`, `0.55`, and `1.00` across three penalty strengths.
+
+```biolang
+let modglmnet = predictive_train(known, {
+    target: "outcome", method: "elastic_net",
+    seed: 8382, resamples: 25
+})
+{
+    method: modglmnet.method,
+    best_parameters: modglmnet.parameters,
+    held_out_metrics: modglmnet.metrics,
+    tuning_grid: modglmnet.tuning
+}
+```
+
+#### 10.1.7.7 k-nearest neighbor
+
+> **Understanding nearest neighbours**
+>
+> **Use it when:** cases that are close on properly scaled predictors are expected to have similar outcomes.
+>
+> **How to read it:** small `k` follows local detail and noise; large `k` smooths more aggressively. Distances are meaningful only after handling units, missingness, and irrelevant predictors.
+
+kNN predicts from nearby labelled cases in the ten-dimensional feature space. Small `k` is flexible but noisy; larger `k` is smoother but can erase local patterns. BioLang compares `k = 5`, `7`, and `9` using distance-weighted votes.
+
+```biolang
+let modknn = predictive_train(known, {
+    target: "outcome", method: "knn",
+    seed: 8382, resamples: 25
+})
+{
+    method: modknn.method,
+    best_parameters: modknn.parameters,
+    held_out_metrics: modknn.metrics,
+    tuning_grid: modknn.tuning
+}
+```
+
+#### 10.1.7.8 Compare all the models
+
+> **Understanding model comparison**
+>
+> **Use it when:** candidate models were evaluated on the same resampling splits and the intended outcome and costs are already defined.
+>
+> **How to read it:** compare the whole score distributions, not only their means. A tiny apparent winner inside broad overlap is weaker evidence than a consistent advantage across resamples.
+
+Use both accuracy and kappa. Accuracy is the fraction correct; kappa discounts agreement expected from the class frequencies. A method should not be selected from a tiny mean difference without inspecting uncertainty and scientific costs.
+
+```biolang
+let model_comparison = predictive_compare([modgbm, modrf, modglmnet, modknn])
+model_comparison.summary
+```
+
+```biolang
+predictive_resample_plot(model_comparison, {
+    theme: "classic", title: "",
+    width: 760, height: 540
+})
+```
+
+**What to observe:** each box summarises 25 held-out results. The black dot is the median, the box spans the middle half, dashed whiskers reach the most extreme values within 1.5 IQR, and open circles are results beyond those whiskers. Accuracy and kappa share one horizontal scale, so equal positions mean equal numeric values. Broad overlap means the apparent winner is uncertain; the small sample is a more important limitation than the third decimal place. BioLang's independently generated resamples can place individual outliers differently from the historical R run without making the plot geometry wrong.
+
+### 10.1.8 Prediction on unknown samples
+
+The chapter selected random forest, so use that fitted workflow for the 57 cases without recorded outcomes.
+
+```biolang
+let unknown_classes = predictive_predict(modrf, unknown)
+{
+    cases: unknown |> col("case_id"),
+    predicted_outcome: unknown_classes
+}
+```
+
+Probabilities show confidence that class labels hide. The two columns sum to one; the selected class is the larger probability.
+
+```biolang
+let unknown_probabilities = predictive_predict(modrf, unknown, {type: "prob"})
+head(unknown_probabilities, 6)
+```
+
+The historical R first-six Death probabilities were `0.040, 0.030, 0.564, 0.138, 0.774, 0.972`. Similar direction on most cases is useful evidence; it is not bit-for-bit equivalence. A real deployment also needs calibration, external validation, and a plan for uncertain predictions.
+
+#### Measured R comparison
+
+This is not a copied reference table. The validation script ran R 4.5.2 and current CRAN packages on the prepared files, then ran BioLang independently. All four accuracy differences are below 0.024; all four kappa differences are below 0.065. Both implementations select random forest as the strongest model, while the close middle pair changes order.
+
+| Method | R accuracy | BioLang accuracy | R kappa | BioLang kappa |
+|---|---:|---:|---:|---:|
+| Random forest | 0.6919 | 0.6719 | 0.3432 | 0.3074 |
+| Gradient boosting | 0.6393 | 0.6628 | 0.2268 | 0.2912 |
+| Elastic net | 0.6432 | 0.6326 | 0.2432 | 0.2216 |
+| k-nearest neighbours | 0.6350 | 0.6226 | 0.2181 | 0.2038 |
+
+The six displayed unknown cases receive the same class in both implementations. Their Death-probability mean absolute difference is `0.054`; the largest difference is `0.170` on the first case. That is close directional agreement, not probability calibration equivalence.
+
+## 10.2 Forecasting
+
+> **Understanding additive forecasting**
+>
+> **Use it when:** measurements are ordered in time, repeated seasonal cycles are available, and trend plus seasonality is a defensible description of the process.
+>
+> **How to read it:** points are observations, the line is the fitted or future mean, and the ribbon is model uncertainty. A component plot separates trend from the repeating yearly contribution; it does not turn either component into a biological cause.
+
+Classification predicts an outcome for a row. Forecasting predicts future values along an ordered time axis. A useful infectious-disease forecast must separate long-term change from repeating seasonal structure and display uncertainty.
+
+### 10.2.1 The Prophet Package
+
+The source chapter uses Prophet: a piecewise trend plus Fourier seasonality and optional holiday effects. BioLang's `seasonal_forecast()` independently fits the same broad additive structure—piecewise linear trend plus yearly Fourier terms—but is not a port of Prophet and does not claim identical optimisation or priors.
+
+Use this approach when observations are regularly spaced, several seasonal cycles are available, and trend/seasonality are scientifically plausible. Do not interpret a smooth extrapolation as a guarantee: reporting changes, new pathogens, interventions, and structural breaks can invalidate it.
+
+### 10.2.2 CDC ILI time series data
+
+The file combines weekly CDC outpatient influenza-like illness totals with NCHS influenza and pneumonia mortality fields. ILI begins in January 2003; death fields begin later.
+
+```biolang
+let ili = read_csv("ilinet.csv")
+{
+    shape: [nrow(ili), ncol(ili)],
+    first_weeks: head(ili, 6),
+    last_weeks: tail(ili, 6),
+    date_range: [first(ili |> col("week_start")), last(ili |> col("week_start"))]
+}
+```
+
+### 10.2.3 Forecasting with prophet
+
+The modelling interface expects a date column and a numeric response. Renaming to `ds` and `y` mirrors the source lesson and makes the roles obvious.
+
+```biolang
+let ili_model = ili
+    |> select("week_start", "ilitotal")
+    |> rename("week_start", "ds")
+    |> rename("ilitotal", "y")
+head(ili_model, 6)
+```
+
+Fit 15 years of weekly observations, then reproduce the chapter's `365 * 5` daily future grid. `period_days: 365.25` keeps the seasonal basis tied to calendar time even though the historical measurements are weekly and the future rows are daily.
+
+```biolang
+let ili_forecast = seasonal_forecast(ili_model, {
+    date: "ds", value: "y",
+    periods: 365 * 5, frequency_days: 1,
+    period_days: 365.25, fourier_order: 10,
+    confidence: 0.95
+})
+{
+    history_rows: ili_forecast.history_rows,
+    future_rows: ili_forecast.future_rows,
+    residual_sd: ili_forecast.residual_sd,
+    last_predictions: tail(ili_forecast.forecast, 6)
+}
+```
+
+```biolang
+seasonal_forecast_plot(ili_forecast, {
+    theme: "publication", title: "Five year ILI forecast",
+    x_label: "ds", y_label: "y",
+    width: 840, height: 500
+})
+```
+
+Black points are observed weekly totals, the blue line is the fitted/forecast value, and the pale-blue band is the model interval. The band reflects residual variation under this model; it does not include every possible future surveillance or policy change.
+
+Break the additive fit into long-term trend and yearly seasonal contribution.
+
+```biolang
+seasonal_components_plot(ili_forecast, {
+    theme: "publication", title: "",
+    width: 840, height: 620
+})
+```
+
+**What to observe:** the trend changes around the 2009–2010 period, while the yearly component repeats a winter influenza cycle. A component is a model description, not automatically a biological mechanism.
+
+#### Hands-on challenge — forecast pneumonia deaths
+
+Death surveillance starts later, so first remove missing pneumonia-death weeks. Then repeat exactly the same preparation, fit, and five-year horizon.
+
+```biolang
+let pneumonia_model = ili
+    |> filter(|row| row.pneumoniadeaths != nil)
+    |> select("week_start", "pneumoniadeaths")
+    |> rename("week_start", "ds")
+    |> rename("pneumoniadeaths", "y")
+let pneumonia_forecast = seasonal_forecast(pneumonia_model, {
+    date: "ds", value: "y",
+    periods: 365 * 5, frequency_days: 1,
+    period_days: 365.25, fourier_order: 10,
+    confidence: 0.95
+})
+{
+    observed_weeks: nrow(pneumonia_model),
+    last_predictions: tail(pneumonia_forecast.forecast, 6)
+}
+```
+
+```biolang
+seasonal_forecast_plot(pneumonia_forecast, {
+    theme: "publication", title: "Five year pneumonia death forecast",
+    x_label: "ds", y_label: "y",
+    width: 840, height: 500
+})
+```
+
+**What to observe:** the repeating seasonal rise is visible, but the future interval widens. Before using this operationally, validate on withheld recent years and investigate surveillance definition changes.
+
+## What this lesson establishes
+
+- The exact teaching files, row counts, categories, and section order match the public chapter.
+- Every displayed figure is rendered from the prepared data by BioLang; no upstream R figure is embedded.
+- The four classifiers use aligned deterministic bootstrap splits and report their own measured tuning results.
+- The forecast matches Prophet's published additive modelling idea, not its private object representation or exact optimiser.
+- Historical R output and current R validation are recorded separately so a difference cannot be mistaken for a match.

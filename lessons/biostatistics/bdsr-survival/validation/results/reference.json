@@ -1,0 +1,1516 @@
+{
+  "environment": {
+    "r": "R version 4.5.2 (2025-10-31 ucrt)",
+    "survival": "3.8.3",
+    "RTCGA_clinical": "20151101.40.0",
+    "RTCGA_mRNA": "1.38.0"
+  },
+  "lung": {
+    "dimensions": [228, 10],
+    "overall": {
+      "n": 228,
+      "events": 165,
+      "median": 310,
+      "lower": 285,
+      "upper": 363
+    },
+    "by_sex": [
+      {
+        "group": "1",
+        "time": 0,
+        "n_risk": 138,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "1",
+        "time": 100,
+        "n_risk": 114,
+        "n_event": 24,
+        "survival": 0.82608695652173947,
+        "std_error": 0.032265575587881824,
+        "confidence_lower": 0.76520756618523289,
+        "confidence_upper": 0.89180986949383845
+      },
+      {
+        "group": "1",
+        "time": 200,
+        "n_risk": 78,
+        "n_event": 30,
+        "survival": 0.6073072354171547,
+        "std_error": 0.041685809367567161,
+        "confidence_lower": 0.53086200618147072,
+        "confidence_upper": 0.69476073611481748
+      },
+      {
+        "group": "1",
+        "time": 300,
+        "n_risk": 49,
+        "n_event": 20,
+        "survival": 0.4410888930886176,
+        "std_error": 0.043938587013012086,
+        "confidence_lower": 0.36285625385855563,
+        "confidence_upper": 0.53618866848022617
+      },
+      {
+        "group": "1",
+        "time": 400,
+        "n_risk": 31,
+        "n_event": 15,
+        "survival": 0.29767779639487818,
+        "std_error": 0.042496126087989139,
+        "confidence_lower": 0.2250245635938776,
+        "confidence_upper": 0.39378843381043876
+      },
+      {
+        "group": "1",
+        "time": 500,
+        "n_risk": 20,
+        "n_event": 7,
+        "survival": 0.22321168933434127,
+        "std_error": 0.040167296252285024,
+        "confidence_lower": 0.1568707133452488,
+        "confidence_upper": 0.3176084126412847
+      },
+      {
+        "group": "1",
+        "time": 600,
+        "n_risk": 13,
+        "n_event": 7,
+        "survival": 0.14508759806732183,
+        "std_error": 0.03533282151100673,
+        "confidence_lower": 0.090020060098192342,
+        "confidence_upper": 0.2338413359198305
+      },
+      {
+        "group": "1",
+        "time": 700,
+        "n_risk": 8,
+        "n_event": 5,
+        "survival": 0.08928467573373651,
+        "std_error": 0.029257945402589344,
+        "confidence_lower": 0.046972568506554596,
+        "confidence_upper": 0.16971082430304163
+      },
+      {
+        "group": "1",
+        "time": 800,
+        "n_risk": 6,
+        "n_event": 2,
+        "survival": 0.066963506800302372,
+        "std_error": 0.025852531087348963,
+        "confidence_lower": 0.031420688620327382,
+        "confidence_upper": 0.14271206138025824
+      },
+      {
+        "group": "1",
+        "time": 900,
+        "n_risk": 2,
+        "n_event": 2,
+        "survival": 0.035713870293494598,
+        "std_error": 0.021597766466278884,
+        "confidence_lower": 0.010916350446891989,
+        "confidence_upper": 0.11684129577423925
+      },
+      {
+        "group": "1",
+        "time": 1000,
+        "n_risk": 2,
+        "n_event": 0,
+        "survival": 0.035713870293494598,
+        "std_error": 0.021597766466278884,
+        "confidence_lower": 0.010916350446891989,
+        "confidence_upper": 0.11684129577423925
+      },
+      {
+        "group": "2",
+        "time": 0,
+        "n_risk": 90,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "2",
+        "time": 100,
+        "n_risk": 82,
+        "n_event": 7,
+        "survival": 0.92208835341365458,
+        "std_error": 0.028279413652742329,
+        "confidence_lower": 0.86829468332241688,
+        "confidence_upper": 0.97921471573192786
+      },
+      {
+        "group": "2",
+        "time": 200,
+        "n_risk": 66,
+        "n_event": 11,
+        "survival": 0.7945934894877309,
+        "std_error": 0.043247307189887278,
+        "confidence_lower": 0.71419481172720156,
+        "confidence_upper": 0.88404284540987987
+      },
+      {
+        "group": "2",
+        "time": 300,
+        "n_risk": 43,
+        "n_event": 9,
+        "survival": 0.67420258604892414,
+        "std_error": 0.052288081852221654,
+        "confidence_lower": 0.57912871509444797,
+        "confidence_upper": 0.78488445692237208
+      },
+      {
+        "group": "2",
+        "time": 400,
+        "n_risk": 26,
+        "n_event": 10,
+        "survival": 0.50891426251304206,
+        "std_error": 0.060268160796370852,
+        "confidence_lower": 0.40349773159095426,
+        "confidence_upper": 0.64187158021435509
+      },
+      {
+        "group": "2",
+        "time": 500,
+        "n_risk": 21,
+        "n_event": 5,
+        "survival": 0.41104613510668786,
+        "std_error": 0.062584368916401553,
+        "confidence_lower": 0.30499292194012051,
+        "confidence_upper": 0.55397654513214345
+      },
+      {
+        "group": "2",
+        "time": 600,
+        "n_risk": 11,
+        "n_event": 3,
+        "survival": 0.3432595794926025,
+        "std_error": 0.063420251992053672,
+        "confidence_lower": 0.23897673918846543,
+        "confidence_upper": 0.49304856746126935
+      },
+      {
+        "group": "2",
+        "time": 700,
+        "n_risk": 8,
+        "n_event": 3,
+        "survival": 0.24964333054007454,
+        "std_error": 0.065207463524047229,
+        "confidence_lower": 0.14961805055741001,
+        "confidence_upper": 0.4165392628159354
+      },
+      {
+        "group": "2",
+        "time": 800,
+        "n_risk": 2,
+        "n_event": 5,
+        "survival": 0.083214443513358174,
+        "std_error": 0.049921274437846837,
+        "confidence_lower": 0.025677538957091645,
+        "confidence_upper": 0.26967707539298352
+      },
+      {
+        "group": "2",
+        "time": 900,
+        "n_risk": 1,
+        "n_event": 0,
+        "survival": 0.083214443513358174,
+        "std_error": 0.049921274437846837,
+        "confidence_lower": 0.025677538957091645,
+        "confidence_upper": 0.26967707539298352
+      },
+      {
+        "group": "2",
+        "time": 1000,
+        "n_risk": 0,
+        "n_event": 0,
+        "survival": 0.083214443513358174,
+        "std_error": 0.049921274437846837,
+        "confidence_lower": 0.025677538957091645,
+        "confidence_upper": 0.26967707539298352
+      }
+    ],
+    "cox_sex": [
+      {
+        "name": "sex",
+        "coefficient": -0.53102353761950816,
+        "hazard_ratio": 0.58800281856358849,
+        "standard_error": 0.16717858323075435,
+        "z": -3.1763849612635102,
+        "p_value": 0.0014912292048807638,
+        "confidence_lower": 0.42371783035391469,
+        "confidence_upper": 0.8159848131713866
+      }
+    ],
+    "logrank_sex": {
+      "observed": [112, 53],
+      "expected": [91.581739029572802, 73.418260970427212],
+      "chi_squared": 10.326741954885632,
+      "p_value": 0.0013111645203554882
+    },
+    "cox_multivariable": [
+      {
+        "name": "sex",
+        "coefficient": -0.55085214535058868,
+        "hazard_ratio": 0.57645837469910155,
+        "standard_error": 0.20083299516171166,
+        "z": -2.7428368775112872,
+        "p_value": 0.0060910935430087002,
+        "confidence_lower": 0.38888267685306027,
+        "confidence_upper": 0.85451031259561916
+      },
+      {
+        "name": "age",
+        "coefficient": 0.010649191489708975,
+        "hazard_ratio": 1.0107060959454988,
+        "standard_error": 0.011611134393506722,
+        "z": 0.91715340885764851,
+        "p_value": 0.35906225730501323,
+        "confidence_lower": 0.98796479571034634,
+        "confidence_upper": 1.0339708629465023
+      },
+      {
+        "name": "ph.ecog",
+        "coefficient": 0.73417669163583921,
+        "hazard_ratio": 2.0837657043514346,
+        "standard_error": 0.22327092554218431,
+        "z": 3.2882771899340986,
+        "p_value": 0.001008025386346533,
+        "confidence_lower": 1.3452417259184757,
+        "confidence_upper": 3.2277318098103431
+      },
+      {
+        "name": "ph.karno",
+        "coefficient": 0.022455063738637902,
+        "hazard_ratio": 1.0227090764095139,
+        "standard_error": 0.011239885428212051,
+        "z": 1.997801835441829,
+        "p_value": 0.04573814828899124,
+        "confidence_lower": 1.0004253835589221,
+        "confidence_upper": 1.0454891210872586
+      },
+      {
+        "name": "pat.karno",
+        "coefficient": -0.012416551331604775,
+        "hazard_ratio": 0.98766021598495302,
+        "standard_error": 0.0080541570008228341,
+        "z": -1.541632641421848,
+        "p_value": 0.12316288884518165,
+        "confidence_lower": 0.97219156658242145,
+        "confidence_upper": 1.0033749888085914
+      },
+      {
+        "name": "meal.cal",
+        "coefficient": 3.3290253425948949e-05,
+        "hazard_ratio": 1.0000332908075527,
+        "standard_error": 0.0002594669043561166,
+        "z": 0.12830250358349479,
+        "p_value": 0.89790958390929676,
+        "confidence_lower": 0.99952485738173058,
+        "confidence_upper": 1.000541982860808
+      },
+      {
+        "name": "wt.loss",
+        "coefficient": -0.014330612169987926,
+        "hazard_ratio": 0.98577158230039841,
+        "standard_error": 0.007771326676597746,
+        "z": -1.8440367734305319,
+        "p_value": 0.065177781153005057,
+        "confidence_lower": 0.97087055308628645,
+        "confidence_upper": 1.0009013141679526
+      }
+    ],
+    "cox_age": [
+      {
+        "name": "age",
+        "coefficient": 0.018720179204551463,
+        "hazard_ratio": 1.0188965002948611,
+        "standard_error": 0.0091992067179203548,
+        "z": 2.0349775560629531,
+        "p_value": 0.041853131341810762,
+        "confidence_lower": 1.0006903035009596,
+        "confidence_upper": 1.0374339340364365
+      }
+    ],
+    "mean_age": 62.44736842105263,
+    "age_cut_mean_logrank_p": 0.39091480729670686,
+    "age_cut_70_logrank_p": 0.031228295267656803
+  },
+  "colon": {
+    "dimensions": [929, 16],
+    "by_sex": [
+      {
+        "group": "0",
+        "time": 0,
+        "n_risk": 445,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "0",
+        "time": 500,
+        "n_risk": 381,
+        "n_event": 64,
+        "survival": 0.85617977528089884,
+        "std_error": 0.016634603684255404,
+        "confidence_lower": 0.82418950952546033,
+        "confidence_upper": 0.88941171797019303
+      },
+      {
+        "group": "0",
+        "time": 1000,
+        "n_risk": 306,
+        "n_event": 75,
+        "survival": 0.68764044943820268,
+        "std_error": 0.021969900846928899,
+        "confidence_lower": 0.64590074878766135,
+        "confidence_upper": 0.73207747257004929
+      },
+      {
+        "group": "0",
+        "time": 1500,
+        "n_risk": 265,
+        "n_event": 40,
+        "survival": 0.59772765386550508,
+        "std_error": 0.023246324924849935,
+        "confidence_lower": 0.55385888761465707,
+        "confidence_upper": 0.64507107529550844
+      },
+      {
+        "group": "0",
+        "time": 2000,
+        "n_risk": 218,
+        "n_event": 22,
+        "survival": 0.54727499798164547,
+        "std_error": 0.023646483142797964,
+        "confidence_lower": 0.50283692733705754,
+        "confidence_upper": 0.59564027049875945
+      },
+      {
+        "group": "1",
+        "time": 0,
+        "n_risk": 484,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "1",
+        "time": 500,
+        "n_risk": 418,
+        "n_event": 65,
+        "survival": 0.86565893123270166,
+        "std_error": 0.015503683651639236,
+        "confidence_lower": 0.83579940534160202,
+        "confidence_upper": 0.89658520984071288
+      },
+      {
+        "group": "1",
+        "time": 1000,
+        "n_risk": 335,
+        "n_event": 83,
+        "survival": 0.69376971761472495,
+        "std_error": 0.020968461190219174,
+        "confidence_lower": 0.65386586639140032,
+        "confidence_upper": 0.73610880429580638
+      },
+      {
+        "group": "1",
+        "time": 1500,
+        "n_risk": 287,
+        "n_event": 46,
+        "survival": 0.5983954322630507,
+        "std_error": 0.022308781088547079,
+        "confidence_lower": 0.55623027538449432,
+        "confidence_upper": 0.64375692802007667
+      },
+      {
+        "group": "1",
+        "time": 2000,
+        "n_risk": 238,
+        "n_event": 25,
+        "survival": 0.54534155384937844,
+        "std_error": 0.022717917557999751,
+        "confidence_lower": 0.50258452698613787,
+        "confidence_upper": 0.5917361048464137
+      }
+    ],
+    "logrank_sex": {
+      "chi_squared": 0.020150409881430197,
+      "p_value": 0.88711780997597223
+    },
+    "logrank_differentiation": {
+      "chi_squared": 17.189094441028466,
+      "df": 2,
+      "p_value": 0.00018511242393477544
+    },
+    "logrank_node4": {
+      "chi_squared": 104.91564294504434,
+      "p_value": 1.2744780713016425e-24
+    },
+    "logrank_treatment": {
+      "chi_squared": 11.683092710639166,
+      "df": 2,
+      "p_value": 0.0029043479975860982
+    },
+    "by_differentiation": [
+      {
+        "group": "1",
+        "time": 0,
+        "n_risk": 93,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "1",
+        "time": 500,
+        "n_risk": 85,
+        "n_event": 8,
+        "survival": 0.91397849462365588,
+        "std_error": 0.029075690246733555,
+        "confidence_lower": 0.85873143569835542,
+        "confidence_upper": 0.9727799098855372
+      },
+      {
+        "group": "1",
+        "time": 1000,
+        "n_risk": 70,
+        "n_event": 15,
+        "survival": 0.75268817204301075,
+        "std_error": 0.04473923102352044,
+        "confidence_lower": 0.66991591936530581,
+        "confidence_upper": 0.84568744816543817
+      },
+      {
+        "group": "1",
+        "time": 1500,
+        "n_risk": 55,
+        "n_event": 15,
+        "survival": 0.59139784946236573,
+        "std_error": 0.050974000658743468,
+        "confidence_lower": 0.49947371253048201,
+        "confidence_upper": 0.70023988765448042
+      },
+      {
+        "group": "1",
+        "time": 2000,
+        "n_risk": 49,
+        "n_event": 3,
+        "survival": 0.55893300248138966,
+        "std_error": 0.05150776193835846,
+        "confidence_lower": 0.46657165901716163,
+        "confidence_upper": 0.6695779634814254
+      },
+      {
+        "group": "2",
+        "time": 0,
+        "n_risk": 663,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "2",
+        "time": 500,
+        "n_risk": 585,
+        "n_event": 78,
+        "survival": 0.88235294117647045,
+        "std_error": 0.012512812641515205,
+        "confidence_lower": 0.85816596995377559,
+        "confidence_upper": 0.90722160987658795
+      },
+      {
+        "group": "2",
+        "time": 1000,
+        "n_risk": 476,
+        "n_event": 109,
+        "survival": 0.7179487179487184,
+        "std_error": 0.017476480913931391,
+        "confidence_lower": 0.68449971394831377,
+        "confidence_upper": 0.75303225275435226
+      },
+      {
+        "group": "2",
+        "time": 1500,
+        "n_risk": 415,
+        "n_event": 58,
+        "survival": 0.63036309015951708,
+        "std_error": 0.018750819777621417,
+        "confidence_lower": 0.59466295097066635,
+        "confidence_upper": 0.66820646012476481
+      },
+      {
+        "group": "2",
+        "time": 2000,
+        "n_risk": 340,
+        "n_event": 36,
+        "survival": 0.57460151203997745,
+        "std_error": 0.019262080563723208,
+        "confidence_lower": 0.538062045995089,
+        "confidence_upper": 0.61362235098374096
+      },
+      {
+        "group": "3",
+        "time": 0,
+        "n_risk": 150,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "3",
+        "time": 500,
+        "n_risk": 108,
+        "n_event": 41,
+        "survival": 0.72631578947368425,
+        "std_error": 0.036434094772538922,
+        "confidence_lower": 0.65830440489385067,
+        "confidence_upper": 0.80135363232734913
+      },
+      {
+        "group": "3",
+        "time": 1000,
+        "n_risk": 78,
+        "n_event": 30,
+        "survival": 0.52456140350877234,
+        "std_error": 0.040894157377124936,
+        "confidence_lower": 0.45023340524387218,
+        "confidence_upper": 0.61116004020636394
+      },
+      {
+        "group": "3",
+        "time": 1500,
+        "n_risk": 66,
+        "n_event": 12,
+        "survival": 0.44385964912280729,
+        "std_error": 0.040701157380917917,
+        "confidence_lower": 0.37084460499431549,
+        "confidence_upper": 0.53125051697176895
+      },
+      {
+        "group": "3",
+        "time": 2000,
+        "n_risk": 57,
+        "n_event": 4,
+        "survival": 0.41685059422750453,
+        "std_error": 0.040403300390888852,
+        "confidence_lower": 0.34472882563372875,
+        "confidence_upper": 0.50406117790812988
+      }
+    ],
+    "by_node4": [
+      {
+        "group": "0",
+        "time": 0,
+        "n_risk": 674,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "0",
+        "time": 500,
+        "n_risk": 616,
+        "n_event": 57,
+        "survival": 0.9154159550411709,
+        "std_error": 0.0107192234931808,
+        "confidence_lower": 0.89464591653994618,
+        "confidence_upper": 0.93666818933781237
+      },
+      {
+        "group": "0",
+        "time": 1000,
+        "n_risk": 519,
+        "n_event": 97,
+        "survival": 0.77126766341942843,
+        "std_error": 0.016187843422072492,
+        "confidence_lower": 0.74018380406528217,
+        "confidence_upper": 0.80365688274908587
+      },
+      {
+        "group": "0",
+        "time": 1500,
+        "n_risk": 458,
+        "n_event": 58,
+        "survival": 0.6849824522632153,
+        "std_error": 0.017908318881924283,
+        "confidence_lower": 0.6507669097313612,
+        "confidence_upper": 0.72099695435069955
+      },
+      {
+        "group": "0",
+        "time": 2000,
+        "n_risk": 388,
+        "n_event": 33,
+        "survival": 0.63478112993883096,
+        "std_error": 0.018608612542012248,
+        "confidence_lower": 0.59933691745721385,
+        "confidence_upper": 0.67232147927077257
+      },
+      {
+        "group": "1",
+        "time": 0,
+        "n_risk": 255,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "1",
+        "time": 500,
+        "n_risk": 183,
+        "n_event": 72,
+        "survival": 0.71764705882352986,
+        "std_error": 0.02818912026153849,
+        "confidence_lower": 0.66447061427455412,
+        "confidence_upper": 0.77507912310063676
+      },
+      {
+        "group": "1",
+        "time": 1000,
+        "n_risk": 122,
+        "n_event": 61,
+        "survival": 0.47843137254902079,
+        "std_error": 0.031282068678766539,
+        "confidence_lower": 0.42088566448080023,
+        "confidence_upper": 0.54384503335722811
+      },
+      {
+        "group": "1",
+        "time": 1500,
+        "n_risk": 94,
+        "n_event": 28,
+        "survival": 0.36862745098039318,
+        "std_error": 0.030211103877651396,
+        "confidence_lower": 0.3139257163093423,
+        "confidence_upper": 0.43286099403974909
+      },
+      {
+        "group": "1",
+        "time": 2000,
+        "n_risk": 68,
+        "n_event": 14,
+        "survival": 0.31254525968195218,
+        "std_error": 0.029114520243042119,
+        "confidence_lower": 0.26038799753856962,
+        "confidence_upper": 0.37514993115298845
+      }
+    ],
+    "by_treatment": [
+      {
+        "group": "Obs",
+        "time": 0,
+        "n_risk": 315,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "Obs",
+        "time": 500,
+        "n_risk": 267,
+        "n_event": 47,
+        "survival": 0.85069013112491387,
+        "std_error": 0.020088450349869166,
+        "confidence_lower": 0.8122147415411991,
+        "confidence_upper": 0.89098813673356014
+      },
+      {
+        "group": "Obs",
+        "time": 1000,
+        "n_risk": 211,
+        "n_event": 56,
+        "survival": 0.67226823096388355,
+        "std_error": 0.026481337808860635,
+        "confidence_lower": 0.62231874590500924,
+        "confidence_upper": 0.7262268368696938
+      },
+      {
+        "group": "Obs",
+        "time": 1500,
+        "n_risk": 176,
+        "n_event": 35,
+        "survival": 0.5607545433632396,
+        "std_error": 0.028004819067361304,
+        "confidence_lower": 0.50846688867987677,
+        "confidence_upper": 0.61841914371042894
+      },
+      {
+        "group": "Obs",
+        "time": 2000,
+        "n_risk": 141,
+        "n_event": 17,
+        "survival": 0.50517966433477624,
+        "std_error": 0.028296365967490862,
+        "confidence_lower": 0.45265565502899019,
+        "confidence_upper": 0.56379830986769086
+      },
+      {
+        "group": "Lev",
+        "time": 0,
+        "n_risk": 310,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "Lev",
+        "time": 500,
+        "n_risk": 265,
+        "n_event": 45,
+        "survival": 0.85483870967741937,
+        "std_error": 0.020007215643077222,
+        "confidence_lower": 0.81651109630276009,
+        "confidence_upper": 0.89496544856751759
+      },
+      {
+        "group": "Lev",
+        "time": 1000,
+        "n_risk": 203,
+        "n_event": 62,
+        "survival": 0.65483870967742008,
+        "std_error": 0.027002089165615428,
+        "confidence_lower": 0.60399770571336375,
+        "confidence_upper": 0.70995921281775287
+      },
+      {
+        "group": "Lev",
+        "time": 1500,
+        "n_risk": 173,
+        "n_event": 30,
+        "survival": 0.55806451612903285,
+        "std_error": 0.02820595407097368,
+        "confidence_lower": 0.50543182992914171,
+        "confidence_upper": 0.6161780594743963
+      },
+      {
+        "group": "Lev",
+        "time": 2000,
+        "n_risk": 145,
+        "n_event": 14,
+        "survival": 0.51210679206738818,
+        "std_error": 0.028434133235165547,
+        "confidence_lower": 0.45930223795735547,
+        "confidence_upper": 0.5709821220289818
+      },
+      {
+        "group": "Lev+5FU",
+        "time": 0,
+        "n_risk": 304,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "Lev+5FU",
+        "time": 500,
+        "n_risk": 267,
+        "n_event": 37,
+        "survival": 0.8782894736842104,
+        "std_error": 0.018751936224564687,
+        "confidence_lower": 0.84229472896656599,
+        "confidence_upper": 0.91582242302635486
+      },
+      {
+        "group": "Lev+5FU",
+        "time": 1000,
+        "n_risk": 227,
+        "n_event": 40,
+        "survival": 0.74671052631578994,
+        "std_error": 0.024942955721966503,
+        "confidence_lower": 0.69938920172548025,
+        "confidence_upper": 0.79723365578878402
+      },
+      {
+        "group": "Lev+5FU",
+        "time": 1500,
+        "n_risk": 203,
+        "n_event": 21,
+        "survival": 0.67741340377699488,
+        "std_error": 0.026824073666793777,
+        "confidence_lower": 0.62682756391368544,
+        "confidence_upper": 0.73208158995369765
+      },
+      {
+        "group": "Lev+5FU",
+        "time": 2000,
+        "n_risk": 170,
+        "n_event": 16,
+        "survival": 0.62349557349015061,
+        "std_error": 0.027874698795595159,
+        "confidence_lower": 0.57118736884464927,
+        "confidence_upper": 0.68059405961328701
+      }
+    ],
+    "cox_rx": [
+      {
+        "name": "rxLev",
+        "coefficient": -0.026637463391311861,
+        "hazard_ratio": 0.97371418458139125,
+        "standard_error": 0.11030399548373743,
+        "z": -0.24149137367593482,
+        "p_value": 0.80917430148831837,
+        "confidence_lower": 0.78440538317497721,
+        "confidence_upper": 1.2087108701592209
+      },
+      {
+        "name": "rxLev+5FU",
+        "coefficient": -0.37171027574353133,
+        "hazard_ratio": 0.68955399410462304,
+        "standard_error": 0.11875399957630968,
+        "z": -3.1300863724145596,
+        "p_value": 0.0017475491218020374,
+        "confidence_lower": 0.54636728953690483,
+        "confidence_upper": 0.87026569835221002
+      }
+    ],
+    "cox_adjusted": [
+      {
+        "name": "rxLev",
+        "coefficient": -0.08007245671551802,
+        "hazard_ratio": 0.92304946283124623,
+        "standard_error": 0.11161316933421504,
+        "z": -0.71741047398939684,
+        "p_value": 0.47312085871675341,
+        "confidence_lower": 0.741685300711308,
+        "confidence_upper": 1.1487625681888642
+      },
+      {
+        "name": "rxLev+5FU",
+        "coefficient": -0.40252710237806061,
+        "hazard_ratio": 0.66862821726586419,
+        "standard_error": 0.12053856939726777,
+        "z": -3.3394050086277582,
+        "p_value": 0.00083958059466864813,
+        "confidence_lower": 0.52793698069439321,
+        "confidence_upper": 0.84681261073264213
+      },
+      {
+        "name": "age",
+        "coefficient": 0.0053332000749124727,
+        "hazard_ratio": 1.0053474469022319,
+        "standard_error": 0.0040453806599312185,
+        "z": 1.3183431976468565,
+        "p_value": 0.187388786420182,
+        "confidence_lower": 0.9974077653356116,
+        "confidence_upper": 1.0133503308476288
+      },
+      {
+        "name": "sex",
+        "coefficient": -0.028257095430469403,
+        "hazard_ratio": 0.97213840232923932,
+        "standard_error": 0.095727904074569325,
+        "z": -0.29518138628061807,
+        "p_value": 0.76785532042107096,
+        "confidence_lower": 0.80583172214425658,
+        "confidence_upper": 1.1727672754908829
+      },
+      {
+        "name": "nodes",
+        "coefficient": 0.092754812858454647,
+        "hazard_ratio": 1.0971926847474682,
+        "standard_error": 0.0088708710139334662,
+        "z": 10.456111098083241,
+        "p_value": 1.3737900878345256e-25,
+        "confidence_lower": 1.0782811280321709,
+        "confidence_upper": 1.1164359239601198
+      }
+    ]
+  },
+  "tcga": {
+    "dimensions": [2269, 4],
+    "counts": [
+      {
+        "0": 994,
+        "1": 104,
+        "_row": "brca"
+      },
+      {
+        "0": 149,
+        "1": 446,
+        "_row": "gbm"
+      },
+      {
+        "0": 279,
+        "1": 297,
+        "_row": "ov"
+      }
+    ],
+    "by_disease": [
+      {
+        "group": "brca",
+        "time": 0,
+        "n_risk": 1096,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "brca",
+        "time": 365,
+        "n_risk": 588,
+        "n_event": 13,
+        "survival": 0.98133348833568168,
+        "std_error": 0.0051630437695804497,
+        "confidence_lower": 0.97126610446460926,
+        "confidence_upper": 0.99150522282451126
+      },
+      {
+        "group": "brca",
+        "time": 730,
+        "n_risk": 413,
+        "n_event": 11,
+        "survival": 0.95837470855521556,
+        "std_error": 0.0085103950351541561,
+        "confidence_lower": 0.94183895675392837,
+        "confidence_upper": 0.97520077653600779
+      },
+      {
+        "group": "brca",
+        "time": 1095,
+        "n_risk": 304,
+        "n_event": 20,
+        "survival": 0.90509583970413277,
+        "std_error": 0.014125167531559317,
+        "confidence_lower": 0.87783014363022105,
+        "confidence_upper": 0.93320841736190141
+      },
+      {
+        "group": "brca",
+        "time": 1460,
+        "n_risk": 207,
+        "n_event": 9,
+        "survival": 0.8733628630250122,
+        "std_error": 0.017190158697616011,
+        "confidence_lower": 0.84031237131122882,
+        "confidence_upper": 0.90771327015098735
+      },
+      {
+        "group": "brca",
+        "time": 1825,
+        "n_risk": 136,
+        "n_event": 14,
+        "survival": 0.7990741352195212,
+        "std_error": 0.024742136962271902,
+        "confidence_lower": 0.75202259453771081,
+        "confidence_upper": 0.84906953356812542
+      },
+      {
+        "group": "gbm",
+        "time": 0,
+        "n_risk": 595,
+        "n_event": 2,
+        "survival": 0.99663865546218489,
+        "std_error": 0.0023728314826165341,
+        "confidence_lower": 0.99199882516894011,
+        "confidence_upper": 1
+      },
+      {
+        "group": "gbm",
+        "time": 365,
+        "n_risk": 224,
+        "n_event": 257,
+        "survival": 0.51104333906166155,
+        "std_error": 0.022289922119768366,
+        "confidence_lower": 0.46917115058444775,
+        "confidence_upper": 0.55665250106268904
+      },
+      {
+        "group": "gbm",
+        "time": 730,
+        "n_risk": 75,
+        "n_event": 127,
+        "survival": 0.19975504812147768,
+        "std_error": 0.019553574680667839,
+        "confidence_lower": 0.16488287407969443,
+        "confidence_upper": 0.24200256984074411
+      },
+      {
+        "group": "gbm",
+        "time": 1095,
+        "n_risk": 39,
+        "n_event": 31,
+        "survival": 0.11348255773798629,
+        "std_error": 0.016167693104612333,
+        "confidence_lower": 0.085834065577005833,
+        "confidence_upper": 0.15003706074252846
+      },
+      {
+        "group": "gbm",
+        "time": 1460,
+        "n_risk": 27,
+        "n_event": 9,
+        "survival": 0.085375422694522182,
+        "std_error": 0.014634986746046489,
+        "confidence_lower": 0.061012746943616317,
+        "confidence_upper": 0.11946622903250495
+      },
+      {
+        "group": "gbm",
+        "time": 1825,
+        "n_risk": 12,
+        "n_event": 9,
+        "survival": 0.053375399680822701,
+        "std_error": 0.012589713528954971,
+        "confidence_lower": 0.033617646570152239,
+        "confidence_upper": 0.084745173495191103
+      },
+      {
+        "group": "ov",
+        "time": 0,
+        "n_risk": 576,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "ov",
+        "time": 365,
+        "n_risk": 411,
+        "n_event": 59,
+        "survival": 0.887603210475574,
+        "std_error": 0.013885291269444721,
+        "confidence_lower": 0.86080152062653859,
+        "confidence_upper": 0.9152393906938191
+      },
+      {
+        "group": "ov",
+        "time": 730,
+        "n_risk": 314,
+        "n_event": 55,
+        "survival": 0.76136704188679394,
+        "std_error": 0.019777580651549449,
+        "confidence_lower": 0.72357393628698041,
+        "confidence_upper": 0.80113412520919947
+      },
+      {
+        "group": "ov",
+        "time": 1095,
+        "n_risk": 210,
+        "n_event": 59,
+        "survival": 0.60156937021852064,
+        "std_error": 0.024276998877480513,
+        "confidence_lower": 0.55582046527453011,
+        "confidence_upper": 0.6510838117599097
+      },
+      {
+        "group": "ov",
+        "time": 1460,
+        "n_risk": 133,
+        "n_event": 49,
+        "survival": 0.45069305724665687,
+        "std_error": 0.026127474913944203,
+        "confidence_lower": 0.40228626654094551,
+        "confidence_upper": 0.50492459908437848
+      },
+      {
+        "group": "ov",
+        "time": 1825,
+        "n_risk": 78,
+        "n_event": 39,
+        "survival": 0.30995767528179924,
+        "std_error": 0.025998044364295227,
+        "confidence_lower": 0.26297043204351417,
+        "confidence_upper": 0.36534054311550823
+      }
+    ],
+    "cox_disease": [
+      {
+        "name": "diseasegbm",
+        "coefficient": 2.8874567691708171,
+        "hazard_ratio": 17.947606603123912,
+        "standard_error": 0.11290344269508959,
+        "z": 25.574567969275915,
+        "p_value": 2.9272900491009758e-144,
+        "confidence_lower": 14.384771147321745,
+        "confidence_upper": 22.392888943559655
+      },
+      {
+        "name": "diseaseov",
+        "coefficient": 1.5469839673576686,
+        "hazard_ratio": 4.6972816420328591,
+        "standard_error": 0.11525491391855765,
+        "z": 13.422282094200433,
+        "p_value": 4.4771079239913814e-41,
+        "confidence_lower": 3.7474982613156094,
+        "confidence_upper": 5.887782538111944
+      }
+    ],
+    "logrank": {
+      "chi_squared": 1090.0481317409378,
+      "df": 2,
+      "p_value": 1.990928612059211e-237
+    }
+  },
+  "kidney": {
+    "dimensions": [937, 5],
+    "counts": [
+      {
+        "female": 51,
+        "male": 61,
+        "_row": "kich"
+      },
+      {
+        "female": 191,
+        "male": 346,
+        "_row": "kirc"
+      },
+      {
+        "female": 76,
+        "male": 212,
+        "_row": "kirp"
+      }
+    ],
+    "cox": [
+      {
+        "name": "diseasekirc",
+        "coefficient": 1.5928843259365497,
+        "hazard_ratio": 4.9179133561402972,
+        "standard_error": 0.34499874972726152,
+        "z": 4.6170727493818546,
+        "p_value": 3.8919086301183925e-06,
+        "confidence_lower": 2.5010213833019952,
+        "confidence_upper": 9.6703978382509916
+      },
+      {
+        "name": "diseasekirp",
+        "coefficient": 0.99620284299862116,
+        "hazard_ratio": 2.7079796574411961,
+        "standard_error": 0.38068708045767818,
+        "z": 2.6168548767164457,
+        "p_value": 0.0088744062523518734,
+        "confidence_lower": 1.2841151422822301,
+        "confidence_upper": 5.7106668893276042
+      },
+      {
+        "name": "sexmale",
+        "coefficient": -0.062822871232399824,
+        "hazard_ratio": 0.93910980231983188,
+        "standard_error": 0.14841138469183923,
+        "z": -0.42330223764736757,
+        "p_value": 0.67207476191057836,
+        "confidence_lower": 0.70208286534260811,
+        "confidence_upper": 1.2561583031695605
+      }
+    ],
+    "logrank": {
+      "chi_squared": 32.545328158786518,
+      "df": 2,
+      "p_value": 8.5678486168895972e-08
+    },
+    "by_disease": [
+      {
+        "group": "kich",
+        "time": 0,
+        "n_risk": 111,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "kich",
+        "time": 365,
+        "n_risk": 86,
+        "n_event": 2,
+        "survival": 0.97952325947705554,
+        "std_error": 0.014390966218845704,
+        "confidence_lower": 0.95171971241934306,
+        "confidence_upper": 1
+      },
+      {
+        "group": "kich",
+        "time": 730,
+        "n_risk": 72,
+        "n_event": 2,
+        "survival": 0.95417790877521391,
+        "std_error": 0.022588616182071097,
+        "confidence_lower": 0.91091643951268775,
+        "confidence_upper": 0.99949396245577271
+      },
+      {
+        "group": "kich",
+        "time": 1095,
+        "n_risk": 54,
+        "n_event": 3,
+        "survival": 0.91019052354754926,
+        "std_error": 0.032892659993273371,
+        "confidence_lower": 0.84795226765988985,
+        "confidence_upper": 0.97699696168281069
+      },
+      {
+        "group": "kich",
+        "time": 1460,
+        "n_risk": 44,
+        "n_event": 1,
+        "survival": 0.89268685963317329,
+        "std_error": 0.036622410943794599,
+        "confidence_lower": 0.82371820232700832,
+        "confidence_upper": 0.96743015646676112
+      },
+      {
+        "group": "kich",
+        "time": 1825,
+        "n_risk": 38,
+        "n_event": 1,
+        "survival": 0.87143241059428822,
+        "std_error": 0.041461912657740942,
+        "confidence_lower": 0.79384252696299029,
+        "confidence_upper": 0.95660590160040126
+      },
+      {
+        "group": "kirc",
+        "time": 0,
+        "n_risk": 536,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "kirc",
+        "time": 365,
+        "n_risk": 385,
+        "n_event": 49,
+        "survival": 0.89543003055547965,
+        "std_error": 0.01418018313118837,
+        "confidence_lower": 0.86806427289111832,
+        "confidence_upper": 0.92365849472203398
+      },
+      {
+        "group": "kirc",
+        "time": 730,
+        "n_risk": 313,
+        "n_event": 32,
+        "survival": 0.81618908582040184,
+        "std_error": 0.018607692051055655,
+        "confidence_lower": 0.78052149520390923,
+        "confidence_upper": 0.85348658288816182
+      },
+      {
+        "group": "kirc",
+        "time": 1095,
+        "n_risk": 250,
+        "n_event": 26,
+        "survival": 0.74436521876161788,
+        "std_error": 0.021669679119600823,
+        "confidence_lower": 0.70308238006309887,
+        "confidence_upper": 0.78807205899869759
+      },
+      {
+        "group": "kirc",
+        "time": 1460,
+        "n_risk": 181,
+        "n_event": 20,
+        "survival": 0.67848875818694321,
+        "std_error": 0.024272680434634465,
+        "confidence_lower": 0.63254472860833366,
+        "confidence_upper": 0.72776987012266015
+      },
+      {
+        "group": "kirc",
+        "time": 1825,
+        "n_risk": 112,
+        "n_event": 16,
+        "survival": 0.60580675239663362,
+        "std_error": 0.027685886907759985,
+        "confidence_lower": 0.55390268571079015,
+        "confidence_upper": 0.66257454732938281
+      },
+      {
+        "group": "kirp",
+        "time": 0,
+        "n_risk": 288,
+        "n_event": 0,
+        "survival": 1,
+        "std_error": 0,
+        "confidence_lower": 1,
+        "confidence_upper": 1
+      },
+      {
+        "group": "kirp",
+        "time": 365,
+        "n_risk": 145,
+        "n_event": 10,
+        "survival": 0.9411307338941991,
+        "std_error": 0.01815919289582079,
+        "confidence_lower": 0.90620395687481314,
+        "confidence_upper": 0.97740365351614966
+      },
+      {
+        "group": "kirp",
+        "time": 730,
+        "n_risk": 100,
+        "n_event": 8,
+        "survival": 0.87664064433210309,
+        "std_error": 0.027804622506060223,
+        "confidence_lower": 0.82380388910394942,
+        "confidence_upper": 0.93286621908388923
+      },
+      {
+        "group": "kirp",
+        "time": 1095,
+        "n_risk": 67,
+        "n_event": 2,
+        "survival": 0.85321290591369381,
+        "std_error": 0.031622915521752282,
+        "confidence_lower": 0.79343078743696582,
+        "confidence_upper": 0.91749938916445628
+      },
+      {
+        "group": "kirp",
+        "time": 1460,
+        "n_risk": 54,
+        "n_event": 3,
+        "survival": 0.80957096248166771,
+        "std_error": 0.038767150749410943,
+        "confidence_lower": 0.7370454135356036,
+        "confidence_upper": 0.88923305302114053
+      },
+      {
+        "group": "kirp",
+        "time": 1825,
+        "n_risk": 36,
+        "n_event": 5,
+        "survival": 0.72705481148913464,
+        "std_error": 0.049502524701450563,
+        "confidence_lower": 0.63622675376934212,
+        "confidence_upper": 0.83084952931913814
+      }
+    ]
+  },
+  "expression": {
+    "dimensions": [1205, 5],
+    "counts": {
+      "BRCA.mRNA": 590,
+      "OV.mRNA": 561,
+      "UCEC.mRNA": 54
+    },
+    "summaries": [
+      {
+        "gene": "PAX8",
+        "dataset": "BRCA.mRNA",
+        "n": 590,
+        "median": -0.2615833333333335,
+        "mean": -0.19605621468926554,
+        "q1": -0.69425000000000003,
+        "q3": 0.33200000000000002,
+        "_row": "25%"
+      },
+      {
+        "gene": "PAX8",
+        "dataset": "OV.mRNA",
+        "n": 561,
+        "median": 3.7549999999999999,
+        "mean": 3.5877023172905527,
+        "q1": 3.3127499999999999,
+        "q3": 4.1014999999999997,
+        "_row": "25%1"
+      },
+      {
+        "gene": "PAX8",
+        "dataset": "UCEC.mRNA",
+        "n": 54,
+        "median": 3.7201250000000003,
+        "mean": 3.5414305555555554,
+        "q1": 3.1975625000000001,
+        "q3": 4.133,
+        "_row": "25%2"
+      },
+      {
+        "gene": "GATA3",
+        "dataset": "BRCA.mRNA",
+        "n": 590,
+        "median": 1.6763750000000002,
+        "mean": 1.1035731840193705,
+        "q1": 0.32384374999999999,
+        "q3": 2.3421562499999999,
+        "_row": "25%3"
+      },
+      {
+        "gene": "GATA3",
+        "dataset": "OV.mRNA",
+        "n": 561,
+        "median": -4.25,
+        "mean": -4.2256807995925643,
+        "q1": -4.6861249999999997,
+        "q3": -3.8087499999999999,
+        "_row": "25%11"
+      },
+      {
+        "gene": "GATA3",
+        "dataset": "UCEC.mRNA",
+        "n": 54,
+        "median": -4.2044999999999995,
+        "mean": -4.1172847222222222,
+        "q1": -4.7285535714285727,
+        "q3": -3.8703125000000003,
+        "_row": "25%21"
+      },
+      {
+        "gene": "ESR1",
+        "dataset": "BRCA.mRNA",
+        "n": 590,
+        "median": 3.0645833333333297,
+        "mean": 2.298235927067283,
+        "q1": 1.0900833333333351,
+        "q3": 4.2601666666666667,
+        "_row": "25%4"
+      },
+      {
+        "gene": "ESR1",
+        "dataset": "OV.mRNA",
+        "n": 561,
+        "median": 1.61516666666667,
+        "mean": 1.4866152703505644,
+        "q1": 0.99708333333333299,
+        "q3": 2.20508333333333,
+        "_row": "25%12"
+      },
+      {
+        "gene": "ESR1",
+        "dataset": "UCEC.mRNA",
+        "n": 54,
+        "median": 2.7722083333333352,
+        "mean": 2.1655108024691359,
+        "q1": 1.2164791666666674,
+        "q3": 3.4573333333333327,
+        "_row": "25%22"
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+let flu = read_csv("../h7n9_analysisready.csv")
+let known = flu |> filter(|row| row.outcome != nil) |> drop_cols("case_id")
+let unknown = flu |> filter(|row| row.outcome == nil)
+
+let modrf = predictive_train(known, {
+    target: "outcome", method: "random_forest",
+    seed: 8382, resamples: 25, trees: 100
+})
+let modgbm = predictive_train(known, {
+    target: "outcome", method: "gradient_boosting",
+    seed: 8382, resamples: 25
+})
+let modglmnet = predictive_train(known, {
+    target: "outcome", method: "elastic_net",
+    seed: 8382, resamples: 25
+})
+let modknn = predictive_train(known, {
+    target: "outcome", method: "knn",
+    seed: 8382, resamples: 25
+})
+let comparison = predictive_compare([modgbm, modrf, modglmnet, modknn])
+let unknown_probabilities = predictive_predict(modrf, unknown, {type: "prob"})
+
+let ili = read_csv("../ilinet.csv")
+let ili_model = ili
+    |> select("week_start", "ilitotal")
+    |> rename("week_start", "ds")
+    |> rename("ilitotal", "y")
+let ili_forecast = seasonal_forecast(ili_model, {
+    date: "ds", value: "y",
+    periods: 365 * 5, frequency_days: 1,
+    period_days: 365.25, fourier_order: 10,
+    confidence: 0.95
+})
+let pneumonia_model = ili
+    |> filter(|row| row.pneumoniadeaths != nil)
+    |> select("week_start", "pneumoniadeaths")
+    |> rename("week_start", "ds")
+    |> rename("pneumoniadeaths", "y")
+let pneumonia_forecast = seasonal_forecast(pneumonia_model, {
+    date: "ds", value: "y",
+    periods: 365 * 5, frequency_days: 1,
+    period_days: 365.25, fourier_order: 10,
+    confidence: 0.95
+})
+
+write_json({
+    schema: "oriclabs.bdsr-predictive-biolang-reference.v1",
+    data: {
+        h7n9_rows: nrow(flu), known_rows: nrow(known), unknown_rows: nrow(unknown),
+        predictors: ncol(known) - 1,
+        ili_rows: nrow(ili),
+        ili_first_date: first(ili |> col("week_start")),
+        ili_last_date: last(ili |> col("week_start"))
+    },
+    models: {
+        random_forest: {
+            parameters: modrf.parameters, metrics: modrf.metrics,
+            tuning: modrf.tuning, resamples: modrf.resamples,
+            importance: modrf.importance
+        },
+        gradient_boosting: {
+            parameters: modgbm.parameters, metrics: modgbm.metrics,
+            tuning: modgbm.tuning, resamples: modgbm.resamples
+        },
+        elastic_net: {
+            parameters: modglmnet.parameters, metrics: modglmnet.metrics,
+            tuning: modglmnet.tuning, resamples: modglmnet.resamples
+        },
+        knn: {
+            parameters: modknn.parameters, metrics: modknn.metrics,
+            tuning: modknn.tuning, resamples: modknn.resamples
+        }
+    },
+    comparison: comparison.summary,
+    first_six_unknown_probabilities: head(unknown_probabilities, 6),
+    forecast: {
+        ili: {
+            history_rows: ili_forecast.history_rows,
+            future_rows: ili_forecast.future_rows,
+            residual_sd: ili_forecast.residual_sd,
+            last: last(ili_forecast.forecast)
+        },
+        pneumonia: {
+            history_rows: pneumonia_forecast.history_rows,
+            future_rows: pneumonia_forecast.future_rows,
+            residual_sd: pneumonia_forecast.residual_sd,
+            last: last(pneumonia_forecast.forecast)
+        }
+    }
+}, "biolang-reference.json")

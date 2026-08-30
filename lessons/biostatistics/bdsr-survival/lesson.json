@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "id": "bdsr-survival-analysis",
+  "title": "Survival analysis with lung, colon, and TCGA data",
+  "summary": "A practical BioLang companion covering every exercise and figure through BDSR section 9.3.1.2: censoring, Kaplan-Meier curves, log-rank tests, Cox models, risk tables, TCGA expression, and pan-kidney survival.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 28,
+  "attribution": "ATTRIBUTION.md",
+  "source": {
+    "title": "Stephen D. Turner, Ph.D. — Biological Data Science with R: Survival analysis",
+    "url": "https://bdsr.stephenturner.us/survival.html",
+    "repository": "https://github.com/stephenturner/bdsr",
+    "copyright": "© 2019 Stephen D. Turner, Ph.D.",
+    "licence": "CC BY-NC 4.0",
+    "licenceUrl": "https://github.com/stephenturner/bdsr/blob/main/LICENSE",
+    "note": "Independent OriClabs BioLang companion under MIT. It follows the public topic order but does not copy or relicense upstream prose, R code, tables, or figures. Dataset files retain their separate upstream terms. This is not an official BDSR publication or endorsement."
+  },
+  "series": {
+    "id": "biological-data-science-with-r",
+    "title": "Biological Data Science with R",
+    "url": "https://bdsr.stephenturner.us/",
+    "order": 9,
+    "chapter": "Chapter 9 · Survival analysis"
+  },
+  "datasets": [
+    {
+      "id": "lung",
+      "title": "Lung cancer survival teaching data",
+      "path": "lung.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-survival/lung.csv",
+      "bytes": 7413,
+      "sha256": "0c1214a74b2c7580b947cc82dbd1f69d3f018cbfb6f0edb778276715a8729971",
+      "mediaType": "text/csv",
+      "source": "lung dataset distributed with R survival 3.8.3",
+      "citation": "Therneau T (2024), survival: Survival Analysis, R package; source data credited in the package documentation to the North Central Cancer Treatment Group.",
+      "rights": "Redistributed as a narrow teaching extract under the survival package's LGPL (>= 2) terms; excluded from the repository MIT grant."
+    },
+    {
+      "id": "colon",
+      "title": "Colon cancer recurrence and death teaching data",
+      "path": "colon.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-survival/colon.csv",
+      "bytes": 48262,
+      "sha256": "f9ce0ec8512e93050cefba3031e58cfbed1353e635fd4aa76eec38b2d7a6436a",
+      "mediaType": "text/csv",
+      "source": "death-endpoint rows from the colon dataset distributed with R survival 3.8.3",
+      "citation": "Moertel et al. (1990), Levamisole and Fluorouracil for Adjuvant Therapy of Resected Colon Carcinoma, New England Journal of Medicine 322:352–358; survival R package documentation.",
+      "rights": "Redistributed as a narrow teaching extract under the survival package's LGPL (>= 2) terms; excluded from the repository MIT grant."
+    },
+    {
+      "id": "tcga-clinical",
+      "title": "RTCGA clinical survival teaching extract",
+      "path": "tcga-clinical.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-survival/tcga-clinical.csv",
+      "bytes": 64187,
+      "sha256": "93f6a1a5a21c305f2758c1326c40b2753f48d4959185af48416e773daff57f7f",
+      "mediaType": "text/csv",
+      "source": "BRCA, GBM, and OV data from Bioconductor RTCGA.clinical 20151101.40.0",
+      "citation": "Kosinski et al., RTCGA and RTCGA.clinical, Bioconductor; TCGA data snapshot dated 2015-11-01.",
+      "rights": "Narrow derivative data artifact distributed under GPL-2 with attribution to RTCGA and TCGA; excluded from the repository MIT grant."
+    },
+    {
+      "id": "tcga-expression",
+      "title": "RTCGA three-gene expression teaching extract",
+      "path": "tcga-expression.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-survival/tcga-expression.csv",
+      "bytes": 88702,
+      "sha256": "37b4f78ddf8c30a976b4cd6d01c72dfff16ac88bb7a2ed83440e36ec528d6e1f",
+      "mediaType": "text/csv",
+      "source": "PAX8, GATA3, and ESR1 columns from BRCA, OV, and UCEC in Bioconductor RTCGA.mRNA 1.38.0",
+      "citation": "Kosinski et al., RTCGA and RTCGA.mRNA, Bioconductor; TCGA data snapshot dated 2015-11-01.",
+      "rights": "Narrow derivative data artifact distributed under GPL-2 with attribution to RTCGA and TCGA; excluded from the repository MIT grant."
+    },
+    {
+      "id": "tcga-kidney",
+      "title": "RTCGA pan-kidney survival teaching extract",
+      "path": "tcga-kidney.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-survival/tcga-kidney.csv",
+      "bytes": 34602,
+      "sha256": "33edb25f3848a99acbebcb00eebd91e4c67629d699660d916c129251dea737bd",
+      "mediaType": "text/csv",
+      "source": "KIPAN data from Bioconductor RTCGA.clinical 20151101.40.0",
+      "citation": "Kosinski et al., RTCGA and RTCGA.clinical, Bioconductor; TCGA data snapshot dated 2015-11-01.",
+      "rights": "Narrow derivative data artifact distributed under GPL-2 with attribution to RTCGA and TCGA; excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "analyse time until death or recurrence",
+      "handle censored follow-up data",
+      "estimate survival over time",
+      "compare survival between patient groups",
+      "estimate an adjusted hazard ratio",
+      "assess treatment and prognostic factors",
+      "relate gene expression to patient survival"
+    ],
+    "methods": [
+      "Kaplan-Meier estimator", "life table", "log-rank test",
+      "Cox proportional hazards regression", "multivariable Cox model",
+      "risk set estimation", "survival stratification"
+    ],
+    "plots": [
+      "survival curve", "Kaplan-Meier plot", "risk table", "censoring marks",
+      "hazard ratio forest plot", "histogram", "box plot", "violin plot",
+      "faceted gene expression plot"
+    ],
+    "terms": [
+      "right censoring", "event time", "follow-up time", "median survival",
+      "hazard", "hazard ratio", "proportional hazards", "confidence interval",
+      "number at risk", "recurrence-free survival", "overall survival",
+      "clinical covariate", "TCGA", "RTCGA", "pan-kidney cohort"
+    ],
+    "aliases": [
+      "time-to-event analysis", "KM curve", "survival probability",
+      "log rank test", "Cox model", "Cox PH", "relative hazard",
+      "censored observations", "patient outcome analysis"
+    ],
+    "functions": [
+      "kaplan_meier", "log_rank_test", "stats_cox_diagnostics", "forest_plot",
+      "histogram", "stats_group_plot", "violin_plot", "plot_grid",
+      "cross_tab", "inner_join", "read_csv"
+    ]
+  },
+  "tags": ["survival", "Kaplan-Meier", "Cox regression", "TCGA", "clinical", "statistics"]
+}

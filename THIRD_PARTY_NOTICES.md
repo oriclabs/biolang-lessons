@@ -13,7 +13,14 @@ adapted lesson content remains CC BY 3.0.
 
 ## Biological Data Science with R
 
-`lessons/biostatistics/bdsr-essential` is an independently written companion
+`lessons/biostatistics/bdsr-essential` and
+`lessons/biostatistics/bdsr-survival`, and
+`lessons/biostatistics/bdsr-predictive` are independently written companions
 inspired by Stephen D. Turner's *Biological Data Science with R*. Its upstream
-source is CC BY-NC 4.0. See the collection's `ATTRIBUTION.md` for the exact
-boundary, source links, and data rights.
+source is CC BY-NC 4.0. See each collection's `ATTRIBUTION.md` for the exact
+boundary, source links, and data rights. The survival collection also contains
+narrow teaching extracts from the separately licensed `survival`,
+`RTCGA.clinical`, and `RTCGA.mRNA` packages; those CSV files are excluded from
+the repository MIT grant. The predictive collection includes exact H7N9 and
+CDC-derived teaching CSVs from the BDSR project; those data artifacts are also
+excluded from the repository MIT grant.

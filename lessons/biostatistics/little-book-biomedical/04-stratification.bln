@@ -4,6 +4,12 @@ Adapted for BioLang from Avril Coghlan's [CC BY 3.0 booklet](https://a-little-bo
 
 A pooled table can mix groups that have different baseline risks or exposure patterns. Stratification asks whether the association looks similar within those groups.
 
+> **Understanding stratification**
+>
+> **Use it when:** a third categorical variable may mix unlike groups or change the exposure–outcome association.
+>
+> **How to read it:** compare the stratum-specific estimates first, then the adjusted combined estimate. Strong disagreement between strata can be the result rather than a nuisance to pool away.
+
 ```biolang
 fn odds_ratio(a, b, c, d) { 1.0 * a * d / (b * c) }
 

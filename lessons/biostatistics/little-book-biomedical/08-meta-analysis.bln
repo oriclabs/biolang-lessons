@@ -4,6 +4,12 @@ Adapted for BioLang from Avril Coghlan's [CC BY 3.0 booklet](https://a-little-bo
 
 A forest plot should show each study's estimate and uncertainty before it shows a pooled answer. Similar-looking point estimates can carry very different precision.
 
+> **Understanding meta-analysis**
+>
+> **Use it when:** several sufficiently comparable studies estimate the same clearly defined effect.
+>
+> **How to read it:** each line is one study interval, point size reflects precision, and the reference line marks no effect. Read heterogeneity, design quality, and outcome definitions before treating the pooled estimate as one universal truth.
+
 ```biolang
 fn log_or_report(label, a, b, c, d) {
     let estimate = 1.0 * a * d / (b * c)

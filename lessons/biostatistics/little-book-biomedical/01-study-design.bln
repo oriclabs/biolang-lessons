@@ -4,6 +4,12 @@ Adapted for BioLang from Avril Coghlan's [*A Little Book of R for Biomedical Sta
 
 The calculation comes second. First ask how people entered the data. That choice decides which quantities are meaningful.
 
+> **Understanding study design**
+>
+> **Use it when:** deciding what can be estimated before selecting a statistical test.
+>
+> **How to read it:** follow who was sampled, what created the groups, and what the independent unit is. Identical counts can support different conclusions when they came from different designs.
+
 | Design | How the groups arise | A useful question | Main caution |
 |---|---|---|---|
 | Cohort | Start with exposed and unexposed people, then observe disease | How many times larger is risk? | Loss to follow-up and confounding |

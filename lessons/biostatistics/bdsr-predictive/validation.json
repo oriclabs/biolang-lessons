@@ -1,0 +1,282 @@
+{
+  "schema": "oriclabs.lesson-validation.v1",
+  "lesson": "bdsr-predictive-influenza",
+  "generated_at_utc": "2026-08-30T10:22:05.524Z",
+  "status": "validated_with_expected_independent_algorithm_differences",
+  "oracle": {
+    "r_version": "R version 4.5.2 (2025-10-31 ucrt)",
+    "packages": {
+      "caret": "7.0.1",
+      "randomForest": "4.7.1.2",
+      "gbm": "2.3.1",
+      "glmnet": "5.0",
+      "kknn": "1.4.1",
+      "prophet": "1.1.7"
+    },
+    "source": "validation/reference.R executed locally; no chapter values copied into the oracle"
+  },
+  "data": {
+    "r": {
+      "h7n9_rows": 134,
+      "known_rows": 77,
+      "unknown_rows": 57,
+      "predictors": 10,
+      "ili_rows": 818,
+      "ili_first_date": "2003-01-06",
+      "ili_last_date": "2018-09-24"
+    },
+    "biolang": {
+      "h7n9_rows": 134,
+      "ili_first_date": "2003-01-06",
+      "ili_last_date": "2018-09-24",
+      "ili_rows": 818,
+      "known_rows": 77,
+      "predictors": 10,
+      "unknown_rows": 57
+    },
+    "exact_shape_and_date_match": true
+  },
+  "acceptance": {
+    "model_accuracy_absolute_difference_max": 0.04,
+    "model_kappa_absolute_difference_max": 0.08,
+    "first_six_predicted_class_agreement_minimum": 1,
+    "forecast_history_future_dates_exact": true,
+    "note": "The gates test scientific conclusions across independent implementations; they do not assert bit-for-bit model identity."
+  },
+  "models": {
+    "random_forest": {
+      "r": {
+        "accuracy": 0.6918615990876836,
+        "kappa": 0.3432458948647888,
+        "best_tune": {
+          "mtry": 10
+        }
+      },
+      "biolang": {
+        "accuracy": 0.671891754979449,
+        "kappa": 0.30739116854454335,
+        "parameters": {
+          "first": 6,
+          "label": "mtry=6",
+          "second": 0,
+          "trees": 100
+        }
+      },
+      "difference": {
+        "accuracy": -0.019969844108234658,
+        "kappa": -0.035854726320245445
+      },
+      "passes": true
+    },
+    "gradient_boosting": {
+      "r": {
+        "accuracy": 0.6392637964556763,
+        "kappa": 0.22683437408816307,
+        "best_tune": {
+          "n.trees": 100,
+          "interaction.depth": 3,
+          "shrinkage": 0.1,
+          "n.minobsinnode": 10
+        }
+      },
+      "biolang": {
+        "accuracy": 0.6628290395481113,
+        "kappa": 0.29118364049142176,
+        "parameters": {
+          "first": 1,
+          "label": "depth=1, trees=100",
+          "second": 100,
+          "trees": 100
+        }
+      },
+      "difference": {
+        "accuracy": 0.023565243092435018,
+        "kappa": 0.06434926640325869
+      },
+      "passes": true
+    },
+    "elastic_net": {
+      "r": {
+        "accuracy": 0.6432336142208223,
+        "kappa": 0.24324837304544714,
+        "best_tune": {
+          "alpha": 1,
+          "lambda": 0.039077244316716164
+        }
+      },
+      "biolang": {
+        "accuracy": 0.6325916690281322,
+        "kappa": 0.22163195978779246,
+        "parameters": {
+          "first": 1,
+          "label": "alpha=1.00, lambda=0.003908",
+          "second": 0.003908,
+          "trees": 100
+        }
+      },
+      "difference": {
+        "accuracy": -0.010641945192690017,
+        "kappa": -0.021616413257654676
+      },
+      "passes": true
+    },
+    "knn": {
+      "r": {
+        "accuracy": 0.6349753897381817,
+        "kappa": 0.21814854108790532,
+        "best_tune": {
+          "kmax": 7,
+          "distance": 2,
+          "kernel": "optimal"
+        }
+      },
+      "biolang": {
+        "accuracy": 0.6226411215495342,
+        "kappa": 0.20379089814100862,
+        "parameters": {
+          "first": 7,
+          "label": "k=7",
+          "second": 0,
+          "trees": 100
+        }
+      },
+      "difference": {
+        "accuracy": -0.012334268188647468,
+        "kappa": -0.014357642946896704
+      },
+      "passes": true
+    }
+  },
+  "first_six_unknown_probabilities": {
+    "rows": [
+      {
+        "case": 1,
+        "r_death": 0.04,
+        "biolang_death": 0.20999999999999996,
+        "absolute_difference": 0.16999999999999996,
+        "same_class": true
+      },
+      {
+        "case": 2,
+        "r_death": 0.03,
+        "biolang_death": 0.06999999999999995,
+        "absolute_difference": 0.03999999999999995,
+        "same_class": true
+      },
+      {
+        "case": 3,
+        "r_death": 0.564,
+        "biolang_death": 0.6,
+        "absolute_difference": 0.03600000000000003,
+        "same_class": true
+      },
+      {
+        "case": 4,
+        "r_death": 0.138,
+        "biolang_death": 0.15000000000000002,
+        "absolute_difference": 0.01200000000000001,
+        "same_class": true
+      },
+      {
+        "case": 5,
+        "r_death": 0.774,
+        "biolang_death": 0.83,
+        "absolute_difference": 0.05599999999999994,
+        "same_class": true
+      },
+      {
+        "case": 6,
+        "r_death": 0.972,
+        "biolang_death": 0.96,
+        "absolute_difference": 0.01200000000000001,
+        "same_class": true
+      }
+    ],
+    "class_agreement": 1,
+    "mean_absolute_probability_difference": 0.05433333333333332,
+    "maximum_absolute_probability_difference": 0.16999999999999996
+  },
+  "forecast": {
+    "ili": {
+      "r": {
+        "elapsed_seconds": 9.66,
+        "history_rows": 818,
+        "forecast_rows": 2643,
+        "first_future_date": "2018-09-25",
+        "last_future_date": "2023-09-23",
+        "last_yhat": 25428.76473315341,
+        "last_yhat_lower": 16127.260933097421,
+        "last_yhat_upper": 34992.68803832698
+      },
+      "biolang": {
+        "future_rows": 1825,
+        "history_rows": 818,
+        "last": {
+          "date": "2023-09-23",
+          "observed": null,
+          "yhat": 30256.057484304714,
+          "yhat_lower": 22165.304958351,
+          "yhat_upper": 38346.81001025843
+        },
+        "residual_sd": 7467.031943247244
+      },
+      "history_rows_equal": true,
+      "future_rows_equal": true,
+      "last_date_equal": true
+    },
+    "pneumonia": {
+      "r": {
+        "elapsed_seconds": 5.670000000000002,
+        "history_rows": 467,
+        "forecast_rows": 2292,
+        "first_future_date": "2018-09-25",
+        "last_future_date": "2023-09-23",
+        "last_yhat": 2384.05596252489,
+        "last_yhat_lower": 2084.0520475340427,
+        "last_yhat_upper": 2667.9266343129925
+      },
+      "biolang": {
+        "future_rows": 1825,
+        "history_rows": 467,
+        "last": {
+          "date": "2023-09-23",
+          "observed": null,
+          "yhat": 2292.977216971953,
+          "yhat_lower": 2016.033147074295,
+          "yhat_upper": 2569.9212868696113
+        },
+        "residual_sd": 227.7547025904986
+      },
+      "history_rows_equal": true,
+      "future_rows_equal": true,
+      "last_date_equal": true
+    },
+    "note": "BioLang independently fits piecewise trend plus Fourier seasonality; forecast values and intervals are not asserted equal to Prophet's Stan posterior."
+  },
+  "timing": {
+    "r_component_elapsed_seconds": {
+      "random_forest": 1.75,
+      "gradient_boosting": 2.14,
+      "elastic_net": 1.42,
+      "knn": 1.83,
+      "ili_prophet": 9.66,
+      "pneumonia_prophet": 5.670000000000002
+    },
+    "biolang_total_elapsed_seconds": 3.5276214,
+    "comparable": false,
+    "note": "Only compare timing when both commands use release/optimised builds on the same host; a missing or debug BioLang time is diagnostic only."
+  },
+  "visual_contract": {
+    "figures": 9,
+    "source_reference_pngs_inspected": true,
+    "generated_by_biolang": true,
+    "checked": [
+      "ggplot2 discrete fills #F8766D and #00BFC4 with grey NA",
+      "four province facets and Death/Recover/NA legends",
+      "Tukey boxplots with filled groups and outliers",
+      "outcome-coloured patient event paths",
+      "caret-style importance lollipops and side-by-side Accuracy/Kappa panels",
+      "calendar-scaled five-year forecast and trend/yearly component panels"
+    ]
+  }
+}

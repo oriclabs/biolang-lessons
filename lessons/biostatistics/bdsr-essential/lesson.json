@@ -16,6 +16,13 @@
     "licenceUrl": "https://github.com/stephenturner/bdsr/blob/main/LICENSE",
     "note": "Independent OriClabs BioLang companion under MIT. The upstream BDSR source is CC BY-NC 4.0; upstream prose, R code, tables, and figures are not copied or relicensed here. The non-commercial condition matters if upstream material is reused directly. This is not an official BDSR publication or endorsement."
   },
+  "series": {
+    "id": "biological-data-science-with-r",
+    "title": "Biological Data Science with R",
+    "url": "https://bdsr.stephenturner.us/",
+    "order": 8,
+    "chapter": "Chapter 8 · Essential statistics"
+  },
   "datasets": [
     {
       "id": "nhanes",
@@ -43,5 +50,48 @@
     }
   ],
   "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "summarize a biomedical dataset",
+      "find missing values and unusual observations",
+      "compare two independent groups",
+      "compare more than two groups",
+      "measure relationships between continuous variables",
+      "test association between categorical variables",
+      "adjust an outcome for several predictors",
+      "estimate sample size and statistical power",
+      "diagnose a fitted statistical model"
+    ],
+    "methods": [
+      "descriptive statistics", "exploratory data analysis", "Welch t-test",
+      "Wilcoxon rank-sum test", "analysis of variance", "Tukey HSD",
+      "linear regression", "multiple regression", "chi-square test",
+      "Fisher exact test", "logistic regression", "power analysis"
+    ],
+    "plots": [
+      "histogram", "scatter plot", "regression plot", "confidence band",
+      "box plot", "mosaic plot", "residual plot"
+    ],
+    "terms": [
+      "mean", "median", "quartile", "variance", "standard deviation",
+      "missing data", "outlier", "distribution", "continuous variable",
+      "categorical variable", "contingency table", "p-value", "effect size",
+      "confidence interval", "batch effect", "biological replicate",
+      "technical replicate", "independent observations"
+    ],
+    "aliases": [
+      "EDA", "t test", "Student t test", "Mann-Whitney U test",
+      "rank sum test", "ANOVA", "OLS", "generalized linear model", "GLM",
+      "chi squared test", "sample size calculation"
+    ],
+    "functions": [
+      "read_csv", "summary", "mean", "median", "quantile", "variance", "stdev",
+      "histogram", "stats_relationship_plot", "ttest", "wilcoxon", "anova",
+      "tukey_hsd", "lm", "stats_group_plot", "cross_tab",
+      "chi_square_contingency", "fisher_exact", "mosaic_plot",
+      "stats_glm_diagnostics", "stats_multiple_linear_diagnostics",
+      "power_t_test", "power_prop_test"
+    ]
+  },
   "tags": ["statistics", "NHANES", "EDA", "inference", "regression"]
 }

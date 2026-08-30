@@ -4,6 +4,8 @@ This is an independent BioLang companion to Stephen D. Turner's [Essential stati
 
 Select **Prepare all** once before running. Studio downloads the two declared files and verifies their exact size and SHA-256.
 
+Short **Understanding …** panels provide optional background before the main statistical choices. Studio keeps them collapsed so the lesson remains compact; open one when you want the purpose, reading rule, and main limitation before running the code.
+
 ## 8.1 Our data: NHANES
 
 ### 8.1.1 About NHANES
@@ -29,6 +31,12 @@ head(dictionary, 12)
 ```
 
 ## 8.2 Descriptive statistics
+
+> **Understanding descriptive statistics**
+>
+> **Use them when:** you need to describe the observations you actually have before making claims beyond them.
+>
+> **How to read them:** centre answers “where are typical values?”, spread answers “how different are they?”, and shape shows asymmetry, tails, gaps, or multiple groups. No single summary replaces the others.
 
 Begin with the values and their scale. The mean is the equal-share centre, the median is the halfway observation after sorting, and quartiles describe the middle half.
 
@@ -60,6 +68,12 @@ let income = nh |> drop_null("Income") |> col("Income")
 
 ### 8.2.1 Missing data
 
+> **Understanding missing values**
+>
+> **Use this check when:** any variable may be absent, unrecorded, inapplicable, or lost.
+>
+> **How to read it:** report both the full row count and the number contributing to each result. Missingness can bias a result when the reason a value is absent is related to the quantity being studied.
+
 Missing means unknown, not zero. Count it first, then make the omission explicit before calculating a statistic.
 
 ```biolang
@@ -73,6 +87,12 @@ let income_summary = summary(nh |> col("Income"))
 ```
 
 ### 8.2.2 EDA
+
+> **Understanding exploratory data analysis**
+>
+> **Use it when:** you need to see distributions, groups, unusual values, and relationships before selecting a formal model.
+>
+> **How to read it:** plots suggest what to investigate and reveal assumptions that numbers can hide. They do not supply a p-value and should not be mined until a preferred story appears.
 
 Exploratory plots reveal shape, unusual values, groups, and relationships before a test compresses the data to a few numbers. They are diagnostics, not proof.
 
@@ -147,6 +167,12 @@ The outcome in this section is numeric. The method changes with the number and t
 
 ### 8.3.1 T-tests
 
+> **Understanding two-sample t-tests**
+>
+> **Use them when:** a numeric outcome is compared between two independent groups and a difference in means is the scientific target.
+>
+> **How to read them:** the estimate is the observed mean difference; its confidence interval gives compatible effect sizes; the p-value measures conflict with a zero-difference model. Welch's version is safer when group variances or sizes differ.
+
 Welch's two-sample test compares two independent means without requiring equal variances. The three examples below follow the source order.
 
 ```biolang
@@ -176,6 +202,12 @@ These are unpaired tests because the groups contain different people. Repeated m
 
 ### 8.3.2 Wilcoxon test
 
+> **Understanding the Wilcoxon rank-sum test**
+>
+> **Use it when:** two independent groups have an ordinal or strongly non-normal outcome and an ordering comparison is meaningful.
+>
+> **How to read it:** the test works from ranks, so it asks whether one group tends to contain larger values. It is not automatically a test of medians unless the distribution shapes are suitably similar.
+
 Alcohol days are strongly skewed and tied at common values. The rank-sum test asks whether one group tends to have higher observations without treating a difference in means as the only possible question.
 
 ```biolang
@@ -190,6 +222,12 @@ wilcoxon(alcohol_committed, alcohol_single, {method: "normal", continuity: true}
 ```
 
 ### 8.3.3 Linear models
+
+> **Understanding linear models**
+>
+> **Use them when:** the average numeric outcome can be described as an intercept plus one or more predictor contributions.
+>
+> **How to read them:** each coefficient is a conditional average change under the fitted model. Inspect residual patterns, uncertainty, influential observations, and the observed predictor range before interpreting coefficients.
 
 A two-group equal-variance t-test, a one-way ANOVA with two groups, and a linear model with one 0/1 indicator express the same comparison in different forms.
 
@@ -211,6 +249,12 @@ let single_indicator = bmi_relationship |> col("RelationshipStatus")
 The intercept is the committed-group mean; the indicator coefficient is how much the single-group mean differs from it. This is association, not causation.
 
 ### 8.3.4 ANOVA
+
+> **Understanding ANOVA**
+>
+> **Use it when:** a numeric outcome is compared across three or more independent groups and the first question is whether any group mean differs.
+>
+> **How to read it:** the omnibus p-value does not identify which groups differ. Planned contrasts or multiplicity-adjusted comparisons answer that second question; group plots show whether means are an adequate summary.
 
 ANOVA extends the mean-comparison question to more than two groups. The omnibus test asks whether at least one smoking-status mean differs; Tukey's procedure then compares pairs while controlling the family-wise error rate.
 
@@ -240,6 +284,12 @@ stats_group_plot(
 ```
 
 ### 8.3.5 Linear regression
+
+> **Understanding regression lines**
+>
+> **Use them when:** you want the average change in one numeric variable associated with a change in another.
+>
+> **How to read them:** slope gives change per x-unit, the ribbon gives uncertainty in the mean line, and scatter around it shows unexplained variation. Do not extrapolate beyond the observed x range or translate association into causation without a design argument.
 
 For two continuous variables, a fitted line estimates the average change in weight for a one-unit change in height.
 
@@ -314,6 +364,12 @@ Here both the observed outcome and the explanatory labels are categories rather 
 
 ### 8.4.1 Contingency tables
 
+> **Understanding categorical association tests**
+>
+> **Use them when:** both variables are categories and each independent observation contributes to one table cell.
+>
+> **How to read them:** chi-square compares observed with independence-expected counts; Fisher's exact test is useful for sparse 2x2 tables. Pair the p-value with proportions or an effect estimate because evidence strength is not effect size.
+
 Begin with gender and diabetes. The table, chi-square test, Fisher exact test, and mosaic plot all use the same 2x2 counts.
 
 ```biolang
@@ -376,6 +432,12 @@ The mosaic's area represents count. A strong association does not identify a cau
 
 ### 8.4.2 Logistic regression
 
+> **Understanding logistic regression**
+>
+> **Use it when:** the outcome has two categories and you need prediction or adjusted associations from several predictors.
+>
+> **How to read it:** coefficients are changes in log odds; exponentiating gives odds ratios conditional on the other model terms. Check calibration, separation, functional form, and whether an odds ratio answers the practical question.
+
 Insurance is binary, so logistic regression models its log odds. The first model uses race alone; the second adds age, income, and hours slept so each coefficient is conditional on the others.
 
 ```biolang
@@ -404,6 +466,12 @@ insured_adjusted.coefficients
 Exponentiating a coefficient gives a conditional odds ratio. It is not a risk difference, and statistical adjustment does not by itself establish causation.
 
 ## 8.5 Power & sample size
+
+> **Understanding power calculations**
+>
+> **Use them when:** planning a study around a pre-specified meaningful effect, alpha, target power, variability, allocation, and analysis method.
+>
+> **How to read them:** larger samples detect smaller effects more reliably, but the result is only as credible as its assumptions. Recalculate across plausible inputs rather than presenting one optimistic number.
 
 Power connects effect size, variability, sample size, and the chosen significance threshold. A calculation is only as credible as those design assumptions.
 
@@ -441,6 +509,12 @@ power_prop_test(0.8, 0.2, {power: 0.9})
 ```
 
 ## 8.6 Tidying models
+
+> **Understanding model diagnostics**
+>
+> **Use them when:** a fitted model must be checked rather than accepted because it returned coefficients.
+>
+> **How to read them:** residuals should look like structureless errors around zero. Curvature, funnels, clusters, or isolated influential points indicate that the model, scale, variance, or grouping may need reconsideration.
 
 BioLang's diagnostic functions already return named records and row-like coefficient lists. You can display only the reusable part instead of parsing console text.
 

@@ -1,10 +1,13 @@
 # Biomedical statistics in BioLang
 
 This is an installable schema-2 Studio collection. One manifest opens eight
-ordered `.bln` notebooks as separate tabs. Removing the collection uninstalls
-its package and cached data while preserving edited notebook tabs as ordinary
-user documents. The notebooks use small embedded count tables, so Browser mode
-needs no data download.
+ordered `.bln` sections under one **Biomedical statistics in BioLang** tab.
+Use the section selector or previous/next buttons to move through the course;
+each section keeps its own cells, outputs, and execution progress. Variables
+remain isolated and are reconstructed by replaying required cells. Removing
+the collection uninstalls its package metadata while preserving open edited
+sections as ordinary notebook tabs. The notebooks use small embedded count
+tables, so Browser mode needs no data download.
 
 The collection is an attributed adaptation of Avril Coghlan's CC BY 3.0
 booklet, not a line-for-line conversion. See [ATTRIBUTION.md](ATTRIBUTION.md).
