@@ -1,0 +1,57 @@
+# Anchovy landings: exact opening forecast example
+
+This lesson ports the opening anchovy example from [Fisheries Catch Forecasting](https://fish-forecast.github.io/Fish-Forecast-Bookdown/). It uses the source's complete 1964–2007 Hellenic landings table, then selects the same 1964–1987 training window and defines `t = Year - 1963` exactly as the source does.
+
+```biolang
+let landings = read_csv("data/Landings_in_Hellenic_Waters.csv")
+let training = landings |> filter(|row| row.Year <= 1987)
+let t = training |> col("Year") |> map(|year| year - 1963)
+let log_catch = training |> col("Anchovy") |> map(|catch_tons| log(catch_tons))
+
+{
+    source_rows: nrow(landings),
+    source_columns: ncol(landings),
+    training_rows: nrow(training),
+    first_year: first(training |> col("Year")),
+    last_year: last(training |> col("Year"))
+}
+```
+
+## Exact source regression
+
+The book fits `lm(log.metric.tons ~ t)` to those 24 observations. BioLang's two-vector form performs the same ordinary least-squares calculation.
+
+```biolang
+let fit = lm(t, log_catch)
+let forecast_1988_log = fit.intercept + fit.slope * 25
+let forecast_1988_tons = exp(forecast_1988_log)
+
+table({
+    quantity: ["intercept", "slope", "1988 log forecast", "1988 forecast (metric tons)"],
+    value: [fit.intercept, fit.slope, forecast_1988_log, forecast_1988_tons]
+})
+```
+
+The fitted intercept `8.3614308532`, slope `0.0581894225`, and 1988 log forecast `9.8161664158` match the source calculation from the exact distributed CSV.
+
+## Exact published figures
+
+The source first publishes the species landings series:
+
+![Exact source fish-landings plot](figures/source/f11-load_data-1.png)
+
+It then publishes the time-varying regression forecast:
+
+![Exact source anchovy forecast plot](figures/source/plot.TVreg.forecast2-1.png)
+
+Both PNGs are byte-for-byte copies of the canonical rendered chapter assets, not BioLang redraws.
+
+```biolang
+assert nrow(landings) == 44, "exact source rows"
+assert ncol(landings) == 32, "exact source columns"
+assert nrow(training) == 24, "1964–1987 training observations"
+assert abs(fit.intercept - 8.361430853160096) < 1e-12, "source intercept"
+assert abs(fit.slope - 0.05818942250559716) < 1e-12, "source slope"
+assert abs(forecast_1988_log - 9.816166415800025) < 1e-12, "source 1988 log forecast"
+"Exact data, model, forecast, and canonical figures verified."
+```

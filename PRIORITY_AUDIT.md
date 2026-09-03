@@ -46,6 +46,26 @@ P3 outcome: three DataViz notebooks were added as one navigable collection.
 The held sources are potentially useful, but usefulness does not override
 licence, data provenance, exact-output availability, or engine capability.
 
+## Full-catalogue expansion
+
+After the P1–P3 audit, the complete Big Book of R catalogue was screened for
+additional material that fits BioLang's biological scope. Five distinct,
+high-value sources passed the usefulness, licensing, real-data, and fidelity
+gates and are now active:
+
+| Source | Active lesson | Fidelity and licence decision |
+| --- | --- | --- |
+| *Fisheries Catch Forecasting* | `fish-forecast-anchovy` | Exact real Hellenic landings table, same 1964–1987 log-linear model and forecast, and two canonical PNGs; public domain / Unlicense. |
+| *Beyond Multiple Linear Regression* | `beyondmlr-birdkeeping` | Exact 147-person case-control data, unadjusted odds ratio, and source model 4; CC BY-NC-SA 4.0. The exercise publishes no canonical answer plot, so none is substituted. |
+| *Applied Machine Learning for Tabular Data* | `aml4td-cell-tabularization` | Exact four-row biological feature table and two canonical cell images; CC BY-NC-SA 4.0. |
+| *The Data Validation Cookbook* | `validate-cars-rules` | Exact `cars` observations, four rules, printed results, violating rows, and canonical plot; CC BY-NC 4.0. |
+| *Modern Statistics with R* | `mswr-bacteria-extrapolation` | Exact 241 bacterial OD measurements and observations 45–90 model window; CC BY-NC-SA 4.0. The selected source publishes code with figure evaluation disabled, so no redraw is included. |
+
+All five are bounded lessons rather than claims to port their entire books.
+Their source revisions, data and figure hashes, exact included scope, and
+excluded scope are recorded in each lesson's manifest, validation record,
+attribution notice, and source map.
+
 ## Navigation and integrity
 
 - Every multi-notebook collection retains the Studio selector and includes
@@ -54,4 +74,3 @@ licence, data provenance, exact-output availability, or engine capability.
   SHA-256 in its lesson metadata or validation record.
 - Registry entries pin each `lesson.json` checksum. Any content change must be
   accompanied by a rebuilt Registry entry so Studio can trust the update.
-

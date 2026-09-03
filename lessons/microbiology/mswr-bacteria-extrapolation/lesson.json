@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "mswr-bacteria-extrapolation",
+  "title": "Modern Statistics with R: Bacterial Growth Extrapolation",
+  "summary": "A source-faithful port of the bacterial-growth extrapolation example using the exact 241 measurements and the same observations 45–90 training window.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 32,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Modern Statistics with R — Extrapolation example",
+    "url": "https://www.modernstatisticswithr.com/mlchapter.html#extrapolation",
+    "repository": "https://github.com/mthulin/mswr-book",
+    "revision": "f65463c21f16ff809ae3b015ce2b2b08405e9a25",
+    "copyright": "Måns Thulin",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "This non-commercial adaptation uses the exact source CSV and same fit window. The selected published section contains code but no rendered canonical figure, so no substitute plot is drawn."
+  },
+  "series": {
+    "id": "modern-statistics-with-r",
+    "title": "Modern Statistics with R",
+    "url": "https://www.modernstatisticswithr.com/",
+    "order": 8,
+    "chapter": "Predictive modelling · extrapolation"
+  },
+  "datasets": [
+    {
+      "id": "mswr-bacteria",
+      "title": "Bacterial optical-density time series",
+      "path": "data/bacteria.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/microbiology/mswr-bacteria-extrapolation/data/bacteria.csv",
+      "bytes": 4833,
+      "sha256": "a323bb04dcad72b57079b38e54e28733153a43817eba24370e4025226ce032db",
+      "mediaType": "text/csv",
+      "source": "Exact Examples/bacteria.csv distributed with Modern Statistics with R.",
+      "citation": "Thulin M. Modern Statistics with R. Eos Chasma Press; bacterial-growth extrapolation example.",
+      "rights": "CC BY-NC-SA 4.0; excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["show why a bacterial-growth model should not be extrapolated", "fit exponential-phase optical-density data"],
+    "methods": ["linear regression", "training-range selection", "extrapolation diagnostic"],
+    "plots": [],
+    "terms": ["bacteria", "optical density", "growth curve", "exponential phase", "training range", "extrapolation"],
+    "aliases": ["MSwR bacteria", "bacterial OD", "growth extrapolation"],
+    "functions": ["read_csv", "split", "int", "range", "map", "lm", "table"]
+  },
+  "tags": ["microbiology", "bacterial growth", "regression", "extrapolation", "CC BY-NC-SA"]
+}

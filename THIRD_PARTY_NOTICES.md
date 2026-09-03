@@ -103,3 +103,38 @@ three PNG files are byte-for-byte source artifacts from the pinned revision.
 The original FPbase, Becares et al., and Goedhart et al. study attributions are
 retained in the collection manifest and `ATTRIBUTION.md`. These artifacts and
 the adapted lesson content are excluded from the repository MIT grant.
+
+## Fisheries Catch Forecasting
+
+`lessons/ecology/fish-forecast-anchovy` adapts a bounded portion of Elizabeth
+Holmes's *Fisheries Catch Forecasting*. The source is a work of the United
+States government in the US and is dedicated worldwide under the Unlicense.
+The CSV and two PNGs are byte-for-byte source files.
+
+## Beyond Multiple Linear Regression
+
+`lessons/epidemiology/beyondmlr-birdkeeping` adapts the birdkeeping and lung
+cancer exercise by Paul Roback and Julie Legler, © 2021 Taylor & Francis Group,
+under CC BY-NC-SA 4.0. The exact distributed study CSV and adapted lesson are
+excluded from the repository MIT grant.
+
+## Applied Machine Learning for Tabular Data
+
+`lessons/machine-learning/aml4td-cell-tabularization` adapts Max Kuhn and Kjell
+Johnson's biological image-to-table example under CC BY-NC-SA 4.0. Both images
+are byte-for-byte source assets; the CSV mechanically serializes the exact
+published table. These materials are excluded from the repository MIT grant.
+
+## The Data Validation Cookbook
+
+`lessons/data-quality/validate-cars-rules` adapts Mark P. J. van der Loo's
+opening `cars` example under CC BY-NC 4.0. Its PNG is a byte-for-byte published
+asset and its CSV is the exact Rdatasets serialization of `datasets::cars`.
+The adapted material is excluded from the repository MIT grant.
+
+## Modern Statistics with R
+
+`lessons/microbiology/mswr-bacteria-extrapolation` adapts Måns Thulin's
+bacterial-growth extrapolation example under CC BY-NC-SA 4.0. The dataset is a
+byte-for-byte source file. The adapted material is excluded from the repository
+MIT grant.

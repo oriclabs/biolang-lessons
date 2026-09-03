@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "checked": "2026-09-03",
+  "source": "https://data-cleaning.github.io/validate/sect-intro.html",
+  "sourceRevision": "cb1e94528d3ede03776cb102bdf7017f821886c7",
+  "dataset": {"path": "data/cars.csv", "bytes": 454, "sha256": "08e75516e5fd1377db316a3ed790545c942dcf905c69f49d0c6f16873a4a6242", "rows": 50, "sourceVariables": 2, "serializationColumns": 3},
+  "figures": [
+    {"path": "figures/source/unnamed-chunk-7-1.png", "bytes": 29111, "sha256": "bcecab71ee809e9c333065326e925e1350496ea7f6cd6ea8407ddb51cde36427", "status": "byte-for-byte canonical source output"}
+  ],
+  "metrics": [
+    {"name": "V1–V4 items", "expected": [50, 50, 50, 1], "status": "exact source result"},
+    {"name": "V1–V4 passes", "expected": [50, 50, 48, 1], "status": "exact source result"},
+    {"name": "V1–V4 fails", "expected": [0, 0, 2, 0], "status": "exact source result"},
+    {"name": "violating row numbers", "expected": [1, 3], "status": "exact source result"},
+    {"name": "speed-distance correlation", "expected": 0.8068949006892104, "tolerance": 1e-12}
+  ]
+}

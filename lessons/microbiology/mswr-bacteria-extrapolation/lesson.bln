@@ -1,0 +1,55 @@
+# Bacterial growth: why extrapolation fails
+
+This lesson ports the bacterial-growth example from [Modern Statistics with R](https://www.modernstatisticswithr.com/mlchapter.html#extrapolation). The complete source file has 241 optical-density measurements. The source fits a linear model only to observations 45–90, the exponential phase from `03:00:23` through `06:00:23`.
+
+BioLang converts the source `HH:MM:SS` strings to seconds since midnight. This is the same linear time coordinate as the source's `as.POSIXct` conversion with only a constant origin removed; fitted values and slope are therefore unchanged.
+
+```biolang
+fn seconds_since_midnight(value) {
+    let parts = split(value, ":")
+    int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+}
+
+let bacteria = read_csv("data/bacteria.csv")
+let times = bacteria |> col("Time") |> map(|value| seconds_since_midnight(value))
+let od = bacteria |> col("OD")
+let training_indices = range(44, 90)
+let training_time = training_indices |> map(|index| times[index])
+let training_od = training_indices |> map(|index| od[index])
+
+{
+    source_rows: nrow(bacteria),
+    training_rows: len(training_indices),
+    first_training_time: (bacteria |> col("Time"))[44],
+    last_training_time: (bacteria |> col("Time"))[89]
+}
+```
+
+## The exact source fit window
+
+```biolang
+let fit = lm(training_time, training_od)
+let fitted_first = fit.intercept + fit.slope * first(times)
+let fitted_last = fit.intercept + fit.slope * last(times)
+
+table({
+    quantity: ["slope per second", "intercept at midnight", "prediction at first measurement", "prediction at last measurement"],
+    value: [fit.slope, fit.intercept, fitted_first, fitted_last]
+})
+```
+
+The model fits the selected exponential phase well but predicts about `2.219` OD at the last measurement, while the observed value is only `1.242`. This is the source's point: biological growth dynamics outside the training range are different, so a locally good straight line extrapolates poorly.
+
+The selected source section contains plotting code with evaluation disabled and publishes no rendered canonical figure. Under this registry's one-to-one policy, no independently drawn substitute plot is included.
+
+```biolang
+assert nrow(bacteria) == 241 && ncol(bacteria) == 2, "exact source data"
+assert len(training_indices) == 46, "R rows 45:90 inclusive"
+assert (bacteria |> col("Time"))[44] == "03:00:23", "first training time"
+assert (bacteria |> col("Time"))[89] == "06:00:23", "last training time"
+assert abs(fit.intercept - -0.4242471620090761) < 1e-12, "source-equivalent intercept"
+assert abs(fit.slope - 0.00004567608782205414) < 1e-15, "source slope"
+assert abs(fitted_last - 2.2187083076384426) < 1e-12, "last extrapolated value"
+assert abs(last(od) - 1.242) < 1e-12, "last observed OD"
+"Exact source data, training rows, and model geometry verified."
+```

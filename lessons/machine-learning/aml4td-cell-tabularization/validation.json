@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "checked": "2026-09-03",
+  "source": "https://aml4td.org/chapters/introduction.html",
+  "sourceRevision": "2c34b03f35935a6f28ee38a1b9493c5740cc961d",
+  "dataset": {"path": "data/cells.csv", "bytes": 247, "sha256": "da9440e04128b7216a8172d060fa02461eb2a8ab27df91557de85cf659450b03", "rows": 4, "columns": 7, "status": "mechanical serialization of exact published table"},
+  "figures": [
+    {"path": "figures/source/cells.png", "bytes": 94427, "sha256": "1f1e47477e4fb1b8ffd59545810a15eb063d9094fc842ed172133d58a6b3789b", "status": "byte-for-byte canonical source asset"},
+    {"path": "figures/source/segmented.png", "bytes": 100579, "sha256": "8bb99d7a23e8aff2b5e0e165b2cb7ec4ce5f40077c14b8871f3cd5672e426734", "status": "byte-for-byte canonical source asset"}
+  ],
+  "metrics": [
+    {"name": "cell identifiers", "expected": [17, 18, 21, 22], "status": "exact"},
+    {"name": "nucleus areas", "expected": [3352, 1777, 1274, 1169], "status": "exact"},
+    {"name": "cell areas", "expected": [11699, 4980, 3081, 3933], "status": "exact"}
+  ]
+}

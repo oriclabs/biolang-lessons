@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "validate-cars-rules",
+  "title": "Data Validation Cookbook: Cars Rules",
+  "summary": "A one-to-one port of the cookbook's opening validation workflow using the exact R cars data, four original rules, published counts, violating records, and canonical summary plot.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 32,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "The Data Validation Cookbook — Introduction, quick example",
+    "url": "https://data-cleaning.github.io/validate/sect-intro.html",
+    "repository": "https://github.com/data-cleaning/validate",
+    "revision": "cb1e94528d3ede03776cb102bdf7017f821886c7",
+    "copyright": "Mark P. J. van der Loo",
+    "licence": "CC BY-NC 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+    "note": "The selected example is ported with the exact built-in cars data values, rules, results, and byte-for-byte canonical PNG. No synthetic data or redrawn figure is used."
+  },
+  "series": {
+    "id": "data-validation-cookbook",
+    "title": "The Data Validation Cookbook",
+    "url": "https://data-cleaning.github.io/validate/",
+    "order": 1,
+    "chapter": "Introduction · a quick example"
+  },
+  "datasets": [
+    {
+      "id": "r-datasets-cars",
+      "title": "Speed and stopping distances of cars",
+      "path": "data/cars.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/data-quality/validate-cars-rules/data/cars.csv",
+      "bytes": 454,
+      "sha256": "08e75516e5fd1377db316a3ed790545c942dcf905c69f49d0c6f16873a4a6242",
+      "mediaType": "text/csv",
+      "source": "Exact Rdatasets CSV serialization of R's built-in datasets::cars table used in the source example.",
+      "citation": "Ezekiel M. Methods of Correlation Analysis. Wiley, 1930; R datasets package; Rdatasets archive.",
+      "rights": "R data serialization used with attribution; source lesson adaptation is CC BY-NC 4.0 and excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["validate record-level data constraints", "find rows violating data-quality rules"],
+    "methods": ["data validation", "record-wise rule", "aggregate rule", "correlation check"],
+    "plots": ["validation result summary"],
+    "terms": ["cars", "speed", "stopping distance", "passes", "fails", "validation rule"],
+    "aliases": ["validate cookbook", "cars validation", "data quality rules"],
+    "functions": ["read_csv", "filter", "cor", "table", "nrow"]
+  },
+  "tags": ["data quality", "validation", "correlation", "cars", "CC BY-NC"]
+}

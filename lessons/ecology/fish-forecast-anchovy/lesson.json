@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "fish-forecast-anchovy",
+  "title": "Fisheries Catch Forecasting: Anchovy Trend",
+  "summary": "A strict port of the opening Hellenic anchovy time-varying regression example, using the exact landings table, published coefficients and forecast, and byte-for-byte canonical figures.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 32,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Fisheries Catch Forecasting — Chapters 1–2, anchovy example",
+    "url": "https://fish-forecast.github.io/Fish-Forecast-Bookdown/",
+    "repository": "https://github.com/Fish-Forecast/Fish-Forecast-Bookdown",
+    "revision": "364874796493c45409495fe0473e3ede4a7fd174",
+    "copyright": "Public-domain work of the United States government",
+    "licence": "Public domain / Unlicense",
+    "licenceUrl": "https://unlicense.org/",
+    "note": "The selected source scope uses the exact Hellenic landings CSV and two byte-for-byte published PNGs. No synthetic data or redrawn figures are used."
+  },
+  "series": {
+    "id": "fisheries-catch-forecasting",
+    "title": "Fisheries Catch Forecasting",
+    "url": "https://fish-forecast.github.io/Fish-Forecast-Bookdown/",
+    "order": 1,
+    "chapter": "Chapters 1–2 · anchovy time-varying regression"
+  },
+  "datasets": [
+    {
+      "id": "hellenic-fish-landings",
+      "title": "Landings in Hellenic Waters",
+      "path": "data/Landings_in_Hellenic_Waters.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/ecology/fish-forecast-anchovy/data/Landings_in_Hellenic_Waters.csv",
+      "bytes": 9073,
+      "sha256": "5259edda8f2db3b3a25dd860440d4abf92af37d3813ebe84472a69b3c9ca16dd",
+      "mediaType": "text/csv",
+      "source": "Exact CSV distributed with Fisheries Catch Forecasting.",
+      "citation": "Holmes, Elizabeth. Fisheries Catch Forecasting, Landings in Hellenic Waters example.",
+      "rights": "Public domain in the United States and dedicated worldwide under the Unlicense."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["forecast annual anchovy landings", "fit a trend to fisheries catch data"],
+    "methods": ["time-varying regression", "log-linear regression", "one-step forecast"],
+    "plots": ["fish landings time series", "forecast plot"],
+    "terms": ["anchovy", "Hellenic waters", "fisheries", "annual catch", "metric tons", "forecast"],
+    "aliases": ["Fish Forecast Bookdown", "anchovy forecast", "Hellenic landings"],
+    "functions": ["read_csv", "filter", "map", "log", "lm", "exp"]
+  },
+  "tags": ["ecology", "fisheries", "forecasting", "regression", "public domain"]
+}

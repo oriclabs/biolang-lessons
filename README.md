@@ -9,11 +9,16 @@ workflow repositories.
 ```text
 lessons/
   biostatistics/
-  bioinformatics/
-  genomics/
-  phylogenetics/
-  single-cell/
+  data-quality/
+  ecology/
   epidemiology/
+  genomics/
+  machine-learning/
+  microbiology/
+  phylogenetics/
+  sequence-analysis/
+  single-cell/
+  transcriptomics/
   visualization/
 ```
 
@@ -103,6 +108,19 @@ for jumping directly to any notebook. `npm test` verifies the adjacent links.
     exact plot-ready experimental tables—fluorescent-protein spectra,
     differential-expression volcano ranking, and CFP/YFP co-expression—with
     all three canonical source PNGs copied byte for byte.
+- Cross-category source ports selected from the full Big Book of R catalogue:
+  - `lessons/ecology/fish-forecast-anchovy`: exact Hellenic landings data,
+    opening anchovy regression/forecast, and both canonical source plots.
+  - `lessons/epidemiology/beyondmlr-birdkeeping`: exact 147-person
+    case-control table and years-smoking-adjusted logistic model; the selected
+    exercise publishes no answer figure, so no substitute is drawn.
+  - `lessons/machine-learning/aml4td-cell-tabularization`: the exact four-cell
+    feature table and both byte-for-byte biological source images.
+  - `lessons/data-quality/validate-cars-rules`: exact `cars` data, all four
+    source rules and results, and the canonical validation plot.
+  - `lessons/microbiology/mswr-bacteria-extrapolation`: exact 241-point
+    bacterial-growth data and observations 45–90 fit; the source code disables
+    figure rendering, so the lesson remains numerical rather than redrawing it.
 
 The current P1–P3 re-audit, including additions, exclusions, and capability
 holds, is recorded in [`PRIORITY_AUDIT.md`](PRIORITY_AUDIT.md). Priority is an

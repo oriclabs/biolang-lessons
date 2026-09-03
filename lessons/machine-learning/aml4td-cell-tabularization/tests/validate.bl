@@ -1,0 +1,12 @@
+fn test_aml4td_cell_table_reference_parity() {
+    let cells = read_csv("../data/cells.csv")
+    assert nrow(cells) == 4, "four source observations"
+    assert ncol(cells) == 7, "seven source columns"
+    assert cells |> col("ID") == [17, 18, 21, 22], "exact identifiers"
+    assert cells |> col("nucleus_eccentricity") == [0.494, 0.708, 0.495, 0.809], "exact nucleus eccentricity"
+    assert cells |> col("cell_eccentricity") == [0.836, 0.550, 0.802, 0.975], "exact cell eccentricity"
+    assert cells |> col("nucleus_area") == [3352, 1777, 1274, 1169], "exact nucleus area"
+    assert cells |> col("cell_area") == [11699, 4980, 3081, 3933], "exact cell area"
+    assert cells |> col("nucleus_intensity") == [0.274, 0.278, 0.326, 0.583], "exact nucleus intensity"
+    assert cells |> col("cell_intensity") == [0.155, 0.210, 0.218, 0.229], "exact cell intensity"
+}

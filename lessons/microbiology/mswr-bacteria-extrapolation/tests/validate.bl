@@ -1,0 +1,24 @@
+fn seconds_since_midnight(value) {
+    let parts = split(value, ":")
+    int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+}
+
+fn test_mswr_bacteria_reference_parity() {
+    let bacteria = read_csv("../data/bacteria.csv")
+    let times = bacteria |> col("Time") |> map(|value| seconds_since_midnight(value))
+    let od = bacteria |> col("OD")
+    let indices = range(44, 90)
+    let training_time = indices |> map(|index| times[index])
+    let training_od = indices |> map(|index| od[index])
+    let fit = lm(training_time, training_od)
+    let fitted_last = fit.intercept + fit.slope * last(times)
+
+    assert nrow(bacteria) == 241 && ncol(bacteria) == 2, "exact source data"
+    assert len(indices) == 46, "source R rows 45:90"
+    assert (bacteria |> col("Time"))[44] == "03:00:23", "first training time"
+    assert (bacteria |> col("Time"))[89] == "06:00:23", "last training time"
+    assert abs(fit.intercept - -0.4242471620090761) < 1e-12, "equivalent intercept"
+    assert abs(fit.slope - 0.00004567608782205414) < 1e-15, "source slope"
+    assert abs(fitted_last - 2.2187083076384426) < 1e-12, "extrapolated final value"
+    assert abs(last(od) - 1.242) < 1e-12, "observed final value"
+}

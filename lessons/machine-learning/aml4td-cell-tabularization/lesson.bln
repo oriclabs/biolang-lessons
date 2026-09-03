@@ -1,0 +1,48 @@
+# From biological images to an exact feature table
+
+The introduction to [Applied Machine Learning for Tabular Data](https://aml4td.org/chapters/introduction.html) uses four cells to explain how image data become one-row-per-cell tabular predictors. This lesson preserves that example exactly: the two source images and all values from the published table.
+
+## The source images
+
+The first fluorescence image shows four cells, with cytoskeleton in blue and DNA in red.
+
+![Exact AML4TD four-cell fluorescence image](figures/source/cells.png)
+
+The second source image overlays the detected cell and nucleus boundaries.
+
+![Exact AML4TD segmented-cell image](figures/source/segmented.png)
+
+Both files are byte-for-byte copies of the canonical source assets.
+
+## The exact published table
+
+Each image-derived object becomes one observation. The source's identifiers and six measurements are retained without interpolation or invented values.
+
+```biolang
+let cells = read_csv("data/cells.csv")
+cells
+```
+
+The areas describe cell and nucleus size, eccentricity describes shape, and intensity summarizes the image signal. These are predictors derived from the images; they are not synthetic observations.
+
+```biolang
+table({
+    check: ["cell count", "ID 17 nucleus area", "ID 22 cell eccentricity", "mean cell intensity"],
+    value: [
+        nrow(cells),
+        cells |> filter(|row| row.ID == 17) |> col("nucleus_area") |> first(),
+        cells |> filter(|row| row.ID == 22) |> col("cell_eccentricity") |> first(),
+        mean(cells |> col("cell_intensity"))
+    ]
+})
+```
+
+```biolang
+assert nrow(cells) == 4, "four exact source cells"
+assert ncol(cells) == 7, "identifier plus six exact features"
+assert cells |> col("ID") == [17, 18, 21, 22], "source identifiers"
+assert cells |> col("nucleus_area") == [3352, 1777, 1274, 1169], "source nucleus areas"
+assert cells |> col("cell_area") == [11699, 4980, 3081, 3933], "source cell areas"
+assert abs(mean(cells |> col("cell_intensity")) - 0.203) < 1e-12, "source mean cell intensity"
+"Exact images and published table verified."
+```

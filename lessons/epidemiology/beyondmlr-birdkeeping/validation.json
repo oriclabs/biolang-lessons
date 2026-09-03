@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "checked": "2026-09-03",
+  "source": "https://bookdown.org/roback/bookdown-BeyondMLR/ch-logreg.html",
+  "sourceRevision": "b04814b528955b8f19ac8752ae74e9f108761062",
+  "dataset": {"path": "data/birdkeeping.csv", "bytes": 3126, "sha256": "841b2c03325142d50e7f213bba1b89b8c2414023583b3822739609edc70b77da", "rows": 147, "sourceVariables": 7},
+  "figures": [],
+  "figurePolicy": "The selected source exercise publishes no canonical answer figure; no substitute figure is included.",
+  "metrics": [
+    {"name": "bird/cancer cell counts", "expected": [33, 34, 16, 64], "status": "exact"},
+    {"name": "unadjusted odds ratio", "expected": 3.8823529411764706, "tolerance": 1e-12},
+    {"name": "model4 coefficients", "expected": [-3.180155446359459, 0.05824972355555551, 1.4755515107867647], "tolerance": 1e-10}
+  ]
+}

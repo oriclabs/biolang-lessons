@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "checked": "2026-09-03",
+  "source": "https://fish-forecast.github.io/Fish-Forecast-Bookdown/",
+  "sourceRevision": "364874796493c45409495fe0473e3ede4a7fd174",
+  "dataset": {"path": "data/Landings_in_Hellenic_Waters.csv", "bytes": 9073, "sha256": "5259edda8f2db3b3a25dd860440d4abf92af37d3813ebe84472a69b3c9ca16dd", "rows": 44, "columns": 32},
+  "figures": [
+    {"path": "figures/source/f11-load_data-1.png", "bytes": 101579, "sha256": "078bd99919576d515061aa69e9102a59b70d7dbe2692cc02b853224e605e2b1f", "status": "byte-for-byte canonical source output"},
+    {"path": "figures/source/plot.TVreg.forecast2-1.png", "bytes": 67457, "sha256": "37c3d9a2706b98ba1f201bf5f09e40e4cbdb2bd8d0b35bafaac247d7adffe39e", "status": "byte-for-byte canonical source output"}
+  ],
+  "metrics": [
+    {"name": "training observations", "expected": 24, "status": "exact"},
+    {"name": "intercept", "expected": 8.361430853160096, "tolerance": 1e-12},
+    {"name": "slope", "expected": 0.05818942250559716, "tolerance": 1e-12},
+    {"name": "1988 log forecast", "expected": 9.816166415800025, "tolerance": 1e-12}
+  ]
+}

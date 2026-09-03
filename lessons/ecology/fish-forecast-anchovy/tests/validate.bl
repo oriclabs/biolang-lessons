@@ -1,0 +1,15 @@
+fn test_fish_forecast_reference_parity() {
+    let landings = read_csv("../data/Landings_in_Hellenic_Waters.csv")
+    let training = landings |> filter(|row| row.Year <= 1987)
+    let t = training |> col("Year") |> map(|year| year - 1963)
+    let log_catch = training |> col("Anchovy") |> map(|catch_tons| log(catch_tons))
+    let fit = lm(t, log_catch)
+    let forecast_1988_log = fit.intercept + fit.slope * 25
+
+    assert nrow(landings) == 44, "exact source rows"
+    assert ncol(landings) == 32, "exact source columns"
+    assert nrow(training) == 24, "exact training window"
+    assert abs(fit.intercept - 8.361430853160096) < 1e-12, "source intercept"
+    assert abs(fit.slope - 0.05818942250559716) < 1e-12, "source slope"
+    assert abs(forecast_1988_log - 9.816166415800025) < 1e-12, "source forecast"
+}

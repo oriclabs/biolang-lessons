@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "aml4td-cell-tabularization",
+  "title": "AML4TD: From Cell Images to a Table",
+  "summary": "A strict port of the biological image-to-table example, preserving both canonical microscopy images and every value in the source's four-cell feature table.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 32,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Applied Machine Learning for Tabular Data — Introduction, biological image example",
+    "url": "https://aml4td.org/chapters/introduction.html",
+    "repository": "https://github.com/aml4td/website",
+    "revision": "2c34b03f35935a6f28ee38a1b9493c5740cc961d",
+    "copyright": "Max Kuhn and Kjell Johnson",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "This non-commercial adaptation retains CC BY-NC-SA 4.0. Both images are byte-for-byte canonical assets and the CSV is a mechanical serialization of the exact published four-row table."
+  },
+  "series": {
+    "id": "applied-machine-learning-for-tabular-data",
+    "title": "Applied Machine Learning for Tabular Data",
+    "url": "https://aml4td.org/",
+    "order": 1,
+    "chapter": "Introduction · from biological images to tabular predictors"
+  },
+  "datasets": [
+    {
+      "id": "aml4td-four-cell-features",
+      "title": "Four-cell morphology and intensity table",
+      "path": "data/cells.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/machine-learning/aml4td-cell-tabularization/data/cells.csv",
+      "bytes": 247,
+      "sha256": "da9440e04128b7216a8172d060fa02461eb2a8ab27df91557de85cf659450b03",
+      "mediaType": "text/csv",
+      "source": "Mechanical CSV serialization of the exact four-row table published in the selected source section.",
+      "citation": "Kuhn M, Johnson K. Applied Machine Learning for Tabular Data, Introduction.",
+      "rights": "CC BY-NC-SA 4.0; excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["represent segmented biological images as tabular predictors", "inspect cell morphology features"],
+    "methods": ["image segmentation", "feature extraction", "tabular representation"],
+    "plots": ["fluorescence microscopy image", "segmented cell image"],
+    "terms": ["cell", "nucleus", "eccentricity", "area", "intensity", "cytoskeleton", "DNA"],
+    "aliases": ["AML4TD cells", "cell image tabularization", "biological image features"],
+    "functions": ["read_csv", "col", "filter", "mean", "table"]
+  },
+  "tags": ["machine learning", "tabular data", "microscopy", "cell biology", "CC BY-NC-SA"]
+}

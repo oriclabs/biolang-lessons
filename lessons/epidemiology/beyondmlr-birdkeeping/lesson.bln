@@ -1,0 +1,57 @@
+# Birdkeeping and lung cancer: exact case-control data
+
+This lesson implements the birdkeeping exercise in Chapter 6 of [Beyond Multiple Linear Regression](https://bookdown.org/roback/bookdown-BeyondMLR/ch-logreg.html). The source describes 49 lung-cancer cases and two age- and sex-matched controls per case from four hospitals in The Hague in 1985. The complete distributed `birdkeeping.csv` is used unchanged.
+
+```biolang
+let birds = read_csv("data/birdkeeping.csv")
+let exposed_cases = birds |> filter(|row| row.bird == 1 && row.cancer == 1) |> nrow()
+let exposed_controls = birds |> filter(|row| row.bird == 1 && row.cancer == 0) |> nrow()
+let unexposed_cases = birds |> filter(|row| row.bird == 0 && row.cancer == 1) |> nrow()
+let unexposed_controls = birds |> filter(|row| row.bird == 0 && row.cancer == 0) |> nrow()
+
+table({
+    birdkeeping: ["yes", "no"],
+    cancer: [exposed_cases, unexposed_cases],
+    control: [exposed_controls, unexposed_controls]
+})
+```
+
+## Unadjusted association
+
+The source asks for the unadjusted odds ratio from this exact two-way table. Cross-multiplication gives the birdkeeper-to-non-birdkeeper odds ratio.
+
+```biolang
+let unadjusted_or = (1.0 * exposed_cases * unexposed_controls) / (exposed_controls * unexposed_cases)
+unadjusted_or
+```
+
+The result is `3.8823529412`: in this case-control sample, the unadjusted odds of lung cancer are about 3.88 times as high among birdkeepers.
+
+## Source model 4: adjust for years smoked
+
+The exercise defines `model4` as `cancer ~ yrsmoke + bird`. The order of BioLang's coefficient vector is intercept, `yrsmoke`, then `bird`, matching the formula order.
+
+```biolang
+let model4 = glm(~cancer ~ (yrsmoke + bird), birds, "binomial")
+let adjusted_bird_or = exp(model4.coefficients[2])
+
+table({
+    term: ["intercept", "yrsmoke", "bird"],
+    coefficient: model4.coefficients,
+    p_value: model4.p_values
+})
+```
+
+The adjusted birdkeeping coefficient is `1.4755515108`, corresponding to an adjusted odds ratio of `4.37345`. The selected source is an exercise and publishes no canonical answer figure. In accordance with the one-to-one rule, this lesson does not invent or redraw a plot.
+
+```biolang
+assert nrow(birds) == 147, "exact source rows"
+assert exposed_cases == 33 && exposed_controls == 34, "exact exposed counts"
+assert unexposed_cases == 16 && unexposed_controls == 64, "exact unexposed counts"
+assert abs(unadjusted_or - 3.8823529411764706) < 1e-12, "unadjusted odds ratio"
+assert model4.converged, "source model converged"
+assert abs(model4.coefficients[0] - -3.180155446359459) < 1e-10, "model4 intercept"
+assert abs(model4.coefficients[1] - 0.05824972355555551) < 1e-10, "years-smoked coefficient"
+assert abs(model4.coefficients[2] - 1.4755515107867647) < 1e-10, "bird coefficient"
+"Exact source data and requested model verified."
+```

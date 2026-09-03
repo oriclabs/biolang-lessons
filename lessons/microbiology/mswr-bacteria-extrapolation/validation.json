@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "checked": "2026-09-03",
+  "source": "https://www.modernstatisticswithr.com/mlchapter.html#extrapolation",
+  "sourceRevision": "f65463c21f16ff809ae3b015ce2b2b08405e9a25",
+  "dataset": {"path": "data/bacteria.csv", "bytes": 4833, "sha256": "a323bb04dcad72b57079b38e54e28733153a43817eba24370e4025226ce032db", "rows": 241, "columns": 2},
+  "figures": [],
+  "figurePolicy": "The selected published source section contains plotting code with evaluation disabled and no rendered canonical image; no substitute plot is included.",
+  "metrics": [
+    {"name": "training row positions", "expected": [45, 90], "status": "exact R one-based selection"},
+    {"name": "training times", "expected": ["03:00:23", "06:00:23"], "status": "exact"},
+    {"name": "slope per second", "expected": 0.00004567608782205414, "tolerance": 1e-15},
+    {"name": "final-time linear prediction", "expected": 2.2187083076384426, "tolerance": 1e-12},
+    {"name": "final observed OD", "expected": 1.242, "status": "exact"}
+  ]
+}

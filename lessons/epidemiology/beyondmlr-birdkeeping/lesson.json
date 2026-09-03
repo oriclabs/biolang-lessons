@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "beyondmlr-birdkeeping",
+  "title": "Beyond MLR: Birdkeeping and Lung Cancer",
+  "summary": "A source-faithful analysis of the real 147-person case-control dataset, matching the exercise's unadjusted odds ratio and its years-smoking-adjusted logistic model.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 32,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Beyond Multiple Linear Regression — Chapter 6, birdkeeping and lung cancer exercise",
+    "url": "https://bookdown.org/roback/bookdown-BeyondMLR/ch-logreg.html",
+    "repository": "https://github.com/proback/BeyondMLR",
+    "revision": "b04814b528955b8f19ac8752ae74e9f108761062",
+    "copyright": "© 2021 Taylor & Francis Group, LLC",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "This non-commercial adaptation uses the exact source CSV and retains CC BY-NC-SA 4.0. The selected exercise publishes no canonical answer figure, so no substitute plot is drawn."
+  },
+  "series": {
+    "id": "beyond-multiple-linear-regression",
+    "title": "Beyond Multiple Linear Regression",
+    "url": "https://bookdown.org/roback/bookdown-BeyondMLR/",
+    "order": 6,
+    "chapter": "Chapter 6 · birdkeeping and lung cancer exercise"
+  },
+  "datasets": [
+    {
+      "id": "beyondmlr-birdkeeping-data",
+      "title": "Birdkeeping and lung cancer case-control data",
+      "path": "data/birdkeeping.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/epidemiology/beyondmlr-birdkeeping/data/birdkeeping.csv",
+      "bytes": 3126,
+      "sha256": "841b2c03325142d50e7f213bba1b89b8c2414023583b3822739609edc70b77da",
+      "mediaType": "text/csv",
+      "source": "Exact birdkeeping.csv distributed with Beyond Multiple Linear Regression.",
+      "citation": "Holst PA et al. Household pets and risk of lung cancer. BMJ. 1988;297:1319–1321; data as distributed by Roback and Legler.",
+      "rights": "Included in this non-commercial CC BY-NC-SA 4.0 adaptation; excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["estimate lung-cancer odds associated with birdkeeping", "adjust an exposure odds ratio for smoking duration"],
+    "methods": ["case-control study", "two-way table", "odds ratio", "logistic regression"],
+    "plots": [],
+    "terms": ["birdkeeping", "lung cancer", "smoking history", "confounding", "retrospective observational study"],
+    "aliases": ["BeyondMLR birdkeeping", "pet birds lung cancer", "birdkeeping case-control"],
+    "functions": ["read_csv", "filter", "glm", "exp", "table"]
+  },
+  "tags": ["epidemiology", "logistic regression", "case-control", "lung cancer", "CC BY-NC-SA"]
+}
