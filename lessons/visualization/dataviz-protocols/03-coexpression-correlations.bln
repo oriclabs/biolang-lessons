@@ -1,0 +1,46 @@
+# Protocol 16: co-expression correlations
+
+This notebook ports the six-panel correlation calculation from [DataViz Protocol 16](https://joachimgoedhart.github.io/DataViz-protocols/complete-protocols.html#protocol-16). Its input is the exact tidy table written by the source R Markdown after reshaping the published CFP/YFP co-expression measurements. Missing pairs are removed panel by panel, exactly as the source's `drop_na()` step specifies.
+
+```biolang
+let coexpression = read_csv("data/protocol_16.csv")
+let complete = coexpression |> filter(|row| row.YFP != nil && row.CFP != nil)
+
+let dual_cfp = complete |> filter(|row| row.System == "Dual-promotor" && row.Order == "CFP first")
+let dual_yfp = complete |> filter(|row| row.System == "Dual-promotor" && row.Order == "YFP first")
+let ires_cfp = complete |> filter(|row| row.System == "IRES" && row.Order == "CFP first")
+let ires_yfp = complete |> filter(|row| row.System == "IRES" && row.Order == "YFP first")
+let peptide_cfp = complete |> filter(|row| row.System == "2A-peptide" && row.Order == "CFP first")
+let peptide_yfp = complete |> filter(|row| row.System == "2A-peptide" && row.Order == "YFP first")
+
+let panel_results = table([
+    {system: "Dual-promotor", order: "CFP first", n: nrow(dual_cfp), r_squared: cor(dual_cfp |> col("CFP"), dual_cfp |> col("YFP")) ** 2},
+    {system: "Dual-promotor", order: "YFP first", n: nrow(dual_yfp), r_squared: cor(dual_yfp |> col("CFP"), dual_yfp |> col("YFP")) ** 2},
+    {system: "IRES", order: "CFP first", n: nrow(ires_cfp), r_squared: cor(ires_cfp |> col("CFP"), ires_cfp |> col("YFP")) ** 2},
+    {system: "IRES", order: "YFP first", n: nrow(ires_yfp), r_squared: cor(ires_yfp |> col("CFP"), ires_yfp |> col("YFP")) ** 2},
+    {system: "2A-peptide", order: "CFP first", n: nrow(peptide_cfp), r_squared: cor(peptide_cfp |> col("CFP"), peptide_cfp |> col("YFP")) ** 2},
+    {system: "2A-peptide", order: "YFP first", n: nrow(peptide_yfp), r_squared: cor(peptide_yfp |> col("CFP"), peptide_yfp |> col("YFP")) ** 2}
+])
+panel_results
+```
+
+## Exact published output
+
+![DataViz Protocol 16: co-expression systems](figures/source/Protocol_16.png)
+
+This is the source repository's `Protocol_16.png`, copied byte for byte. It preserves the six facets, through-origin fits, annotations and styling from the source.
+
+```biolang
+assert nrow(coexpression) == 5040, "exact reshaped source rows"
+assert nrow(dual_cfp) == 734 && abs(panel_results[0].r_squared - 0.48344847392330931) < 0.000000000001, "dual-promotor CFP-first panel"
+assert nrow(dual_yfp) == 338 && abs(panel_results[1].r_squared - 0.61268574105033569) < 0.000000000001, "dual-promotor YFP-first panel"
+assert nrow(ires_cfp) == 294 && abs(panel_results[2].r_squared - 0.87290620331188751) < 0.000000000001, "IRES CFP-first panel"
+assert nrow(ires_yfp) == 497 && abs(panel_results[3].r_squared - 0.78472453099494932) < 0.000000000001, "IRES YFP-first panel"
+assert nrow(peptide_cfp) == 629 && abs(panel_results[4].r_squared - 0.94384750564493303) < 0.000000000001, "2A-peptide CFP-first panel"
+assert nrow(peptide_yfp) == 840 && abs(panel_results[5].r_squared - 0.96826576264838493) < 0.000000000001, "2A-peptide YFP-first panel"
+"Exact complete-pair counts, Pearson R-squared values, source table, and canonical PNG verified."
+```
+
+***
+
+[← Previous: Volcano plot](#lesson-section=volcano-plot)

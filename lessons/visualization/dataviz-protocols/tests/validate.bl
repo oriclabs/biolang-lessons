@@ -1,0 +1,47 @@
+fn test_dataviz_protocols() {
+    let spectra = read_csv("../data/protocol_1.csv")
+    let mturquoise_em = spectra |> filter(|row| row["Fluorescent Protein"] == "mTurquoise2" && row.Spectrum == "EM")
+    let mturquoise_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "mTurquoise2" && row.Spectrum == "EX")
+    let mneongreen_em = spectra |> filter(|row| row["Fluorescent Protein"] == "mNeonGreen" && row.Spectrum == "EM")
+    let mneongreen_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "mNeonGreen" && row.Spectrum == "EX")
+    let mscarlet_em = spectra |> filter(|row| row["Fluorescent Protein"] == "mScarlet-I" && row.Spectrum == "EM")
+    let mscarlet_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "mScarlet-I" && row.Spectrum == "EX")
+    let mirfp_em = spectra |> filter(|row| row["Fluorescent Protein"] == "miRFP670" && row.Spectrum == "EM")
+    let mirfp_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "miRFP670" && row.Spectrum == "EX")
+    assert nrow(spectra) == 1824 && ncol(spectra) == 4
+    assert min(spectra |> col("Wavelength")) == 300 && max(spectra |> col("Wavelength")) == 811
+    assert min(spectra |> col("Intensity")) == 0 && max(spectra |> col("Intensity")) == 1
+    assert nrow(mturquoise_em) == 210 && nrow(mturquoise_ex) == 196
+    assert nrow(mneongreen_em) == 277 && nrow(mneongreen_ex) == 251
+    assert nrow(mscarlet_em) == 229 && nrow(mscarlet_ex) == 261
+    assert nrow(mirfp_em) == 206 && nrow(mirfp_ex) == 194
+
+    let genes = read_csv("../data/protocol_14.csv")
+    let increased = genes |> filter(|row| row.log2_FoldChange > 1.5 && row.minus_log10_pvalue > 5)
+    let decreased = genes |> filter(|row| row.log2_FoldChange < -1.5 && row.minus_log10_pvalue > 5)
+    let unchanged = genes |> filter(|row| !(row.log2_FoldChange > 1.5 && row.minus_log10_pvalue > 5) && !(row.log2_FoldChange < -1.5 && row.minus_log10_pvalue > 5))
+    let top_ten = genes
+        |> filter(|row| row.Change != "Unchanged")
+        |> mutate("distance", |row| row.minus_log10_pvalue + abs(row.log2_FoldChange))
+        |> arrange("-distance")
+        |> head(10)
+    assert nrow(genes) == 3001
+    assert nrow(increased) == 8 && nrow(decreased) == 12 && nrow(unchanged) == 2981
+    assert top_ten[0].Gene == "Osbpl3" && top_ten[1].Gene == "Spp1" && top_ten[9].Gene == "Lrtm2"
+
+    let coexpression = read_csv("../data/protocol_16.csv")
+    let complete = coexpression |> filter(|row| row.YFP != nil && row.CFP != nil)
+    let dual_cfp = complete |> filter(|row| row.System == "Dual-promotor" && row.Order == "CFP first")
+    let dual_yfp = complete |> filter(|row| row.System == "Dual-promotor" && row.Order == "YFP first")
+    let ires_cfp = complete |> filter(|row| row.System == "IRES" && row.Order == "CFP first")
+    let ires_yfp = complete |> filter(|row| row.System == "IRES" && row.Order == "YFP first")
+    let peptide_cfp = complete |> filter(|row| row.System == "2A-peptide" && row.Order == "CFP first")
+    let peptide_yfp = complete |> filter(|row| row.System == "2A-peptide" && row.Order == "YFP first")
+    assert nrow(coexpression) == 5040
+    assert nrow(dual_cfp) == 734 && abs(cor(dual_cfp |> col("CFP"), dual_cfp |> col("YFP")) ** 2 - 0.48344847392330931) < 0.000000000001
+    assert nrow(dual_yfp) == 338 && abs(cor(dual_yfp |> col("CFP"), dual_yfp |> col("YFP")) ** 2 - 0.61268574105033569) < 0.000000000001
+    assert nrow(ires_cfp) == 294 && abs(cor(ires_cfp |> col("CFP"), ires_cfp |> col("YFP")) ** 2 - 0.87290620331188751) < 0.000000000001
+    assert nrow(ires_yfp) == 497 && abs(cor(ires_yfp |> col("CFP"), ires_yfp |> col("YFP")) ** 2 - 0.78472453099494932) < 0.000000000001
+    assert nrow(peptide_cfp) == 629 && abs(cor(peptide_cfp |> col("CFP"), peptide_cfp |> col("YFP")) ** 2 - 0.94384750564493303) < 0.000000000001
+    assert nrow(peptide_yfp) == 840 && abs(cor(peptide_yfp |> col("CFP"), peptide_yfp |> col("YFP")) ** 2 - 0.96826576264838493) < 0.000000000001
+}

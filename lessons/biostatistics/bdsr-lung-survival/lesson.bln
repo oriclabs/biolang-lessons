@@ -1,0 +1,98 @@
+# Lung-cancer survival: exact BDSR worked example
+
+This lesson ports the worked lung-cancer example in sections 9.2.2–9.2.3 of [Biological Data Science with R](https://bdsr.stephenturner.us/survival.html). The scope is deliberately bounded: the exact 228-row `survival::lung` dataset, the same event and sex coding, the same Kaplan–Meier calculations, and the three canonical figures published by the chapter.
+
+The source uses `status = 1` for censored observations and `status = 2` for deaths. BioLang's survival routines take an explicit `0/1` event vector, so this is the source's equivalent `status == 2` transformation—not a change of data.
+
+```biolang
+let source = read_csv("data/lung.csv")
+let lung = table({
+    time: source |> col("time"),
+    event: source |> col("status") |> map(|value| if value == 2 { 1 } else { 0 }),
+    sex: source |> col("sex")
+})
+{
+    rows: nrow(source),
+    source_columns: ncol(source),
+    deaths: lung |> col("event") |> filter(|value| value == 1) |> len(),
+    censored: lung |> col("event") |> filter(|value| value == 0) |> len()
+}
+```
+
+## Overall and sex-stratified fits
+
+The source first fits an intercept-only curve, then fits separate curves for `sex = 1` (male) and `sex = 2` (female). The helper below reads the first Kaplan–Meier step at or below 0.5, which gives the same reported median.
+
+```biolang
+fn km_median(curve) {
+    let reached = range(0, len(curve.survival)) |> filter(|index| curve.survival[index] <= 0.5)
+    curve.times[first(reached)]
+}
+
+fn survival_at(curve, at) {
+    let available = range(0, len(curve.times)) |> filter(|index| curve.times[index] <= at)
+    if len(available) == 0 { return 1.0 }
+    curve.survival[last(available)]
+}
+
+let overall_curve = kaplan_meier(lung |> col("time"), lung |> col("event"))
+let male = lung |> filter(|row| row.sex == 1)
+let female = lung |> filter(|row| row.sex == 2)
+let male_curve = kaplan_meier(male |> col("time"), male |> col("event"))
+let female_curve = kaplan_meier(female |> col("time"), female |> col("event"))
+
+table({
+    stratum: ["overall", "sex=1", "sex=2"],
+    n: [nrow(lung), nrow(male), nrow(female)],
+    events: [165, 112, 53],
+    median_days: [km_median(overall_curve), km_median(male_curve), km_median(female_curve)],
+    source_lower_95: [285, 212, 348],
+    source_upper_95: [363, 310, 550]
+})
+```
+
+The results match the published `survfit` output exactly: overall `n = 228`, `events = 165`, median `310` days; male median `270` days; female median `426` days. The confidence limits in the last two columns are copied from the source's printed R result because BioLang does not expose median-confidence bounds in its curve object.
+
+At the source's requested 100-day intervals, the same fitted curves can be inspected directly.
+
+```biolang
+let check_days = range(0, 1100, 100)
+table({
+    day: check_days,
+    male_survival: check_days |> map(|day| survival_at(male_curve, day)),
+    female_survival: check_days |> map(|day| survival_at(female_curve, day))
+})
+```
+
+## Exact published figures
+
+The first source figure is the direct base-R `plot(sfit)` output.
+
+![Exact BDSR base-R Kaplan-Meier plot](figures/source/sfitPlot-1.png)
+
+The second is the source's default `ggsurvplot(sfit)` output.
+
+![Exact BDSR default survminer Kaplan-Meier plot](figures/source/survminer-1.png)
+
+The third is the source's configured output with confidence intervals, log-rank p-value, risk table, labels, colours, and title.
+
+![Exact BDSR configured survminer Kaplan-Meier plot](figures/source/survminerOptions-1.png)
+
+All three PNGs are byte-for-byte copies from the published chapter. They are not BioLang redraws. The code above verifies the data and statistical geometry underlying them while the images preserve the exact source rendering.
+
+```biolang
+let sex_test = log_rank_test(
+    male |> col("time"), male |> col("event"),
+    female |> col("time"), female |> col("event")
+)
+assert nrow(source) == 228, "source lung rows"
+assert ncol(source) == 11, "CSV contains the source's ten variables plus row names"
+assert km_median(overall_curve) == 310, "overall median"
+assert km_median(male_curve) == 270, "male median"
+assert km_median(female_curve) == 426, "female median"
+assert abs(survival_at(male_curve, 100) - 0.8260869565217395) < 1e-12, "male day-100 survival"
+assert abs(survival_at(female_curve, 500) - 0.41104613510668786) < 1e-12, "female day-500 survival"
+assert abs(sex_test.chi2 - 10.326741954885632) < 1e-10, "source log-rank statistic"
+"Exact dataset, calculations, and canonical figures verified."
+```
+

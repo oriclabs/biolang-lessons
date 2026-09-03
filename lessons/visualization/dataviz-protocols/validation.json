@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "reference": "https://joachimgoedhart.github.io/DataViz-protocols/complete-protocols.html",
+  "checked": "2026-09-03",
+  "sourceRevision": "6f1108772c72a934b9a80c037f0cbc836875f719",
+  "status": "verified",
+  "metrics": [
+    {"name": "Protocol 1 plot-ready rows", "reference": 1824, "biolang": 1824, "status": "exact"},
+    {"name": "Protocol 1 protein-spectrum group sizes", "reference": [210, 196, 277, 251, 229, 261, 206, 194], "biolang": [210, 196, 277, 251, 229, 261, 206, 194], "status": "exact"},
+    {"name": "Protocol 14 gene classes", "reference": {"increased": 8, "decreased": 12, "unchanged": 2981}, "biolang": {"increased": 8, "decreased": 12, "unchanged": 2981}, "status": "exact"},
+    {"name": "Protocol 14 top-ten order", "reference": ["Osbpl3", "Spp1", "Cyp2c69", "Syngr1", "Fabp5", "Cyp2b9", "Ces1f", "Mrgpre", "Elovl3", "Lrtm2"], "biolang": ["Osbpl3", "Spp1", "Cyp2c69", "Syngr1", "Fabp5", "Cyp2b9", "Ces1f", "Mrgpre", "Elovl3", "Lrtm2"], "status": "exact"},
+    {"name": "Protocol 16 complete-pair counts", "reference": [734, 338, 294, 497, 629, 840], "biolang": [734, 338, 294, 497, 629, 840], "status": "exact"},
+    {"name": "Protocol 16 Pearson R-squared values", "reference": [0.48344847392330931, 0.61268574105033569, 0.87290620331188751, 0.78472453099494932, 0.94384750564493303, 0.96826576264838493], "biolang": [0.48344847392330931, 0.61268574105033569, 0.87290620331188751, 0.78472453099494932, 0.94384750564493303, 0.96826576264838493], "status": "exact within 1e-12"}
+  ],
+  "figures": [
+    {"file": "figures/source/Protocol_01.png", "bytes": 885166, "sha256": "5c5ff0e73e36b2c0aae44e5d421149ad9abeee28291ce035424b2402a31be9e6", "status": "byte-for-byte published source copy"},
+    {"file": "figures/source/Protocol_14.png", "bytes": 571854, "sha256": "efb8290d7fb1df251956102291388e50e2ab02944dd2b3031a54e850232cfd8e", "status": "byte-for-byte published source copy"},
+    {"file": "figures/source/Protocol_16.png", "bytes": 1116851, "sha256": "aa12a91588478a1013a791bec9b39eb9f5f456b671d2e07a9b347818df58ab37", "status": "byte-for-byte published source copy"}
+  ]
+}

@@ -1,0 +1,50 @@
+# Protocol 14: volcano plot
+
+This notebook ports the thresholding and hit-ranking portion of [DataViz Protocol 14](https://joachimgoedhart.github.io/DataViz-protocols/complete-protocols.html#protocol-14). It uses the exact 3,001-gene table saved by the source workflow from the Becares et al. differential-expression results.
+
+The source defines an increased hit as `log2_FoldChange > 1.5` and `minus_log10_pvalue > 5`, a decreased hit as `log2_FoldChange < -1.5` and `minus_log10_pvalue > 5`, and everything else as unchanged.
+
+```biolang
+let genes = read_csv("data/protocol_14.csv")
+let increased = genes |> filter(|row| row.log2_FoldChange > 1.5 && row.minus_log10_pvalue > 5)
+let decreased = genes |> filter(|row| row.log2_FoldChange < -1.5 && row.minus_log10_pvalue > 5)
+let unchanged = genes |> filter(|row| !(row.log2_FoldChange > 1.5 && row.minus_log10_pvalue > 5) && !(row.log2_FoldChange < -1.5 && row.minus_log10_pvalue > 5))
+{
+    genes: nrow(genes),
+    increased: nrow(increased),
+    decreased: nrow(decreased),
+    unchanged: nrow(unchanged)
+}
+```
+
+The published workflow ranks only increased and decreased genes by Manhattan distance from the origin: `minus_log10_pvalue + abs(log2_FoldChange)`.
+
+```biolang
+let hits = genes
+    |> filter(|row| row.Change != "Unchanged")
+    |> mutate("distance", |row| row.minus_log10_pvalue + abs(row.log2_FoldChange))
+    |> arrange("-distance")
+let top_ten = hits |> head(10)
+top_ten
+```
+
+## Exact published output
+
+![DataViz Protocol 14: volcano plot](figures/source/Protocol_14.png)
+
+This is the source repository's `Protocol_14.png`, copied byte for byte. The displayed thresholds, labels, colours, annotations and layout are the canonical source output, not a substitute.
+
+```biolang
+assert nrow(genes) == 3001, "exact source gene rows"
+assert nrow(increased) == 8, "exact increased count"
+assert nrow(decreased) == 12, "exact decreased count"
+assert nrow(unchanged) == 2981, "exact unchanged count"
+assert top_ten[0].Gene == "Osbpl3", "source top-ranked hit"
+assert top_ten[1].Gene == "Spp1", "source second-ranked hit"
+assert top_ten[9].Gene == "Lrtm2", "source tenth-ranked hit"
+"Exact thresholds, hit ranking, source table, and canonical PNG verified."
+```
+
+***
+
+[← Previous: Fluorescent-protein spectra](#lesson-section=fluorescent-protein-spectra) · [Next: Co-expression correlations →](#lesson-section=coexpression-correlations)

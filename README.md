@@ -14,6 +14,7 @@ lessons/
   phylogenetics/
   single-cell/
   epidemiology/
+  visualization/
 ```
 
 Each lesson directory owns its notebooks, manifest, source datasets, validation,
@@ -85,6 +86,9 @@ for jumping directly to any notebook. `npm test` verifies the adjacent links.
     Tukey results with the published smoking/BMI boxplot.
   - `lessons/biostatistics/bdsr-nhanes-regression`: exact height-weight OLS
     and both published regression figures.
+  - `lessons/biostatistics/bdsr-lung-survival`: exact `survival::lung`
+    observations, source Kaplan-Meier calculations, and all three canonical
+    PNGs from the selected survival sections.
   - `lessons/phylogenetics/treedata-metadata-attachment`: Chapter 7 Figure 7.1
     using the exact tree, tip, node, and published SVG assets.
   - `lessons/phylogenetics/treedata-snp-traits`: Chapter 7 Figure 7.2 using
@@ -94,6 +98,15 @@ for jumping directly to any notebook. `npm test` verifies the adjacent links.
   - `lessons/ecology/stats4nr-redpine-ols`: exact correlation, OLS, and AIC
     over 450 real field observations; the source table's intercept typo is
     disclosed rather than forced by changing data.
+- Priority-3 source ports that passed the same gate:
+  - `lessons/visualization/dataviz-protocols`: three connected protocols over
+    exact plot-ready experimental tables—fluorescent-protein spectra,
+    differential-expression volcano ranking, and CFP/YFP co-expression—with
+    all three canonical source PNGs copied byte for byte.
+
+The current P1–P3 re-audit, including additions, exclusions, and capability
+holds, is recorded in [`PRIORITY_AUDIT.md`](PRIORITY_AUDIT.md). Priority is an
+adoption order, not a quota or a promise to port every chapter.
 
 ## No-synthetic-data audit
 
@@ -111,8 +124,9 @@ for jumping directly to any notebook. `npm test` verifies the adjacent links.
 - Five earlier, broader *Biological Data Science with R* companions are retained under
   `archive/p2-non-fidelity-bdsr`, but are no longer published or registered.
   They used independently redrawn plots or substituted analysis paths rather
-  than one-to-one source outputs. The three bounded NHANES replacements listed
-  above are the active lessons from that book.
+  than one-to-one source outputs. The three bounded NHANES replacements and
+  bounded lung-survival replacement listed above are the active lessons from
+  that book.
 - The broader *Statistics in Natural Resources* fishing-model candidate is
   retained under `archive/p2-non-fidelity-stats4nr`, but is not published or
   registered. BioLang's current Poisson GLM did not reproduce the source

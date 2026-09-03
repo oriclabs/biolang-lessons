@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "checked": "2026-09-03",
+  "source": "https://bdsr.stephenturner.us/survival.html",
+  "sourceRevision": "f16caf3d3df4ac27297b87f50c37c7c024471208",
+  "dataset": {
+    "path": "data/lung.csv",
+    "bytes": 7252,
+    "sha256": "4045e3fee76936bb8bd9312243d7b81b36ed224a12800fcef12e8a361883cfb6",
+    "rows": 228,
+    "sourceVariables": 10
+  },
+  "figures": [
+    {"path": "figures/source/sfitPlot-1.png", "bytes": 55913, "sha256": "4feb516916096997ff737edd6719a7b9d00a3505050bb4a54f1d38cf8cd4ae86", "status": "byte-for-byte canonical source output"},
+    {"path": "figures/source/survminer-1.png", "bytes": 81680, "sha256": "1a55a58e8d0805b9e9d2e2b32a9eec0261efdcf92a2e8db2d67f72f63978bc6c", "status": "byte-for-byte canonical source output"},
+    {"path": "figures/source/survminerOptions-1.png", "bytes": 149631, "sha256": "e6c1027c5f8a253ebf0241fca10f1901f7fdebad588c28e0e57f8417f839187e", "status": "byte-for-byte canonical source output"}
+  ],
+  "metrics": [
+    {"name": "overall n/events/median/LCL/UCL", "expected": [228, 165, 310, 285, 363], "status": "exact source result"},
+    {"name": "male n/events/median/LCL/UCL", "expected": [138, 112, 270, 212, 310], "status": "exact source result"},
+    {"name": "female n/events/median/LCL/UCL", "expected": [90, 53, 426, 348, 550], "status": "exact source result"},
+    {"name": "male survival at day 100", "expected": 0.8260869565217395, "status": "floating-point exact"},
+    {"name": "female survival at day 500", "expected": 0.41104613510668786, "status": "floating-point exact"},
+    {"name": "sex log-rank chi-square", "expected": 10.326741954885632, "tolerance": 1e-10}
+  ]
+}

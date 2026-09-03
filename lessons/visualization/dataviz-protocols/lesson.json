@@ -1,0 +1,112 @@
+{
+  "schema": 2,
+  "id": "dataviz-protocols",
+  "title": "DataViz Protocols for Wet-Lab Scientists",
+  "summary": "Three connected, source-faithful visualization protocols using exact experimental tables, calculations, and byte-for-byte canonical PNGs: fluorescent-protein spectra, a differential-expression volcano plot, and CFP/YFP co-expression correlations.",
+  "runtime": "browser",
+  "estimatedMemoryMb": 128,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "DataViz protocols - An introduction to data visualization protocols for wet lab scientists",
+    "url": "https://joachimgoedhart.github.io/DataViz-protocols/",
+    "repository": "https://github.com/JoachimGoedhart/DataViz-protocols",
+    "revision": "6f1108772c72a934b9a80c037f0cbc836875f719",
+    "copyright": "Joachim Goedhart",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "Each notebook is deliberately bounded to a source-produced plot-ready table and its corresponding analysis. All CSVs and final PNGs are byte-for-byte copies from the pinned source revision; no synthetic data, redrawn figures, or substituted analysis paths are used."
+  },
+  "datasets": [
+    {
+      "id": "dataviz-protocol-1-table",
+      "title": "Protocol 1 plot-ready fluorescent-protein spectra",
+      "path": "data/protocol_1.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/visualization/dataviz-protocols/data/protocol_1.csv",
+      "bytes": 53781,
+      "sha256": "67c2107ba8f6bb6738bc8f56d4f81267fc0dd2f36b646c1c7687610f52633f00",
+      "mediaType": "text/csv",
+      "source": "DataViz Protocol 1; spectra originally exported from FPbase",
+      "citation": "Goedhart J. DataViz protocols, Protocol 1; FPbase fluorescent-protein spectra.",
+      "rights": "Exact CC BY-NC-SA 4.0 source teaching artifact; excluded from the repository MIT grant. FPbase attribution is retained."
+    },
+    {
+      "id": "dataviz-protocol-14-table",
+      "title": "Protocol 14 differential-expression results and classifications",
+      "path": "data/protocol_14.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/visualization/dataviz-protocols/data/protocol_14.csv",
+      "bytes": 351387,
+      "sha256": "3cc3d1db9224b92ead52b86bba7b40442c648e94eb2579321fec2a324d51b642",
+      "mediaType": "text/csv",
+      "source": "DataViz Protocol 14; Becares et al. Cell Reports differential-expression data",
+      "citation": "Becares et al. 2019, Cell Reports, DOI 10.1016/j.celrep.2018.12.094; Goedhart J. DataViz Protocol 14.",
+      "rights": "Exact CC BY-NC-SA 4.0 source teaching artifact; excluded from the repository MIT grant. Original study citation is retained."
+    },
+    {
+      "id": "dataviz-protocol-16-table",
+      "title": "Protocol 16 tidy CFP/YFP co-expression measurements",
+      "path": "data/protocol_16.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/visualization/dataviz-protocols/data/protocol_16.csv",
+      "bytes": 185267,
+      "sha256": "40129fa28fc005253655aaeee5f3e6c91df5cae231eb8c43c1cccde43cd24109",
+      "mediaType": "text/csv",
+      "source": "DataViz Protocol 16; Goedhart et al. CFP/YFP co-expression measurements",
+      "citation": "Goedhart et al. 2011, PLOS ONE, DOI 10.1371/journal.pone.0027321; Goedhart J. DataViz Protocol 16.",
+      "rights": "Exact CC BY-NC-SA 4.0 source teaching artifact; excluded from the repository MIT grant. Original PLOS study citation is retained."
+    }
+  ],
+  "lessons": [
+    {
+      "id": "fluorescent-protein-spectra",
+      "title": "Protocol 1: Fluorescent-Protein Spectra",
+      "summary": "Inspect the exact plot-ready FPbase spectra table and the canonical four-protein excitation/emission figure.",
+      "entry": "01-fluorescent-protein-spectra.bln",
+      "discoverability": {
+        "problems": ["compare fluorescent-protein excitation and emission spectra", "inspect normalized spectral measurements"],
+        "methods": ["spectral data inspection", "long-format visualization preparation"],
+        "plots": ["filled spectral line plot"],
+        "terms": ["FPbase", "fluorescent protein", "excitation spectrum", "emission spectrum", "wavelength", "normalized intensity"],
+        "aliases": ["DataViz Protocol 1", "fluorescent protein spectra", "FP spectra"],
+        "functions": ["read_csv", "filter", "col", "min", "max"]
+      }
+    },
+    {
+      "id": "volcano-plot",
+      "title": "Protocol 14: Volcano Plot",
+      "summary": "Apply the source's exact fold-change and significance thresholds, rank its top ten genes, and inspect the canonical volcano plot.",
+      "entry": "02-volcano-plot.bln",
+      "discoverability": {
+        "problems": ["identify significant differential-expression hits", "rank genes for volcano-plot annotation"],
+        "methods": ["dual-threshold classification", "Manhattan-distance hit ranking"],
+        "plots": ["volcano plot"],
+        "terms": ["differential expression", "log2 fold change", "minus log10 p-value", "increased gene", "decreased gene", "top hit"],
+        "aliases": ["DataViz Protocol 14", "differential gene volcano", "omics hit plot"],
+        "functions": ["read_csv", "filter", "mutate", "arrange", "abs"]
+      }
+    },
+    {
+      "id": "coexpression-correlations",
+      "title": "Protocol 16: Co-expression Correlations",
+      "summary": "Calculate the source's six complete-pair Pearson R-squared values for CFP/YFP co-expression systems and inspect its canonical faceted figure.",
+      "entry": "03-coexpression-correlations.bln",
+      "discoverability": {
+        "problems": ["compare fluorescent-protein co-expression systems", "calculate panel-wise complete-pair correlations"],
+        "methods": ["complete-pair filtering", "Pearson correlation", "squared correlation by experimental panel"],
+        "plots": ["faceted scatter plot with through-origin fits"],
+        "terms": ["CFP", "YFP", "dual promoter", "IRES", "2A peptide", "co-expression", "R-squared"],
+        "aliases": ["DataViz Protocol 16", "fluorescent protein correlation", "coexpression scatterplots"],
+        "functions": ["read_csv", "filter", "cor", "col", "table"]
+      }
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["compare fluorescent-protein excitation and emission spectra", "inspect normalized spectral measurements", "identify significant differential-expression hits", "rank genes for volcano-plot annotation", "compare fluorescent-protein co-expression systems", "calculate panel-wise complete-pair correlations"],
+    "methods": ["spectral data inspection", "long-format visualization preparation", "dual-threshold classification", "Manhattan-distance hit ranking", "complete-pair filtering", "Pearson correlation", "squared correlation by experimental panel"],
+    "plots": ["filled spectral line plot", "volcano plot", "faceted scatter plot with through-origin fits"],
+    "terms": ["FPbase", "fluorescent protein", "excitation spectrum", "emission spectrum", "wavelength", "normalized intensity", "differential expression", "log2 fold change", "minus log10 p-value", "increased gene", "decreased gene", "top hit", "CFP", "YFP", "dual promoter", "IRES", "2A peptide", "co-expression", "R-squared"],
+    "aliases": ["DataViz Protocol 1", "fluorescent protein spectra", "FP spectra", "DataViz Protocol 14", "differential gene volcano", "omics hit plot", "DataViz Protocol 16", "fluorescent protein correlation", "coexpression scatterplots"],
+    "functions": ["read_csv", "filter", "col", "min", "max", "mutate", "arrange", "abs", "cor", "table"]
+  },
+  "tags": ["visualization", "wet lab", "fluorescent proteins", "differential expression", "correlation", "CC BY-NC-SA"]
+}

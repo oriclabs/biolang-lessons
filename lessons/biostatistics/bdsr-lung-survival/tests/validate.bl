@@ -1,0 +1,40 @@
+fn km_median(curve) {
+    let reached = range(0, len(curve.survival)) |> filter(|index| curve.survival[index] <= 0.5)
+    curve.times[first(reached)]
+}
+
+fn survival_at(curve, at) {
+    let available = range(0, len(curve.times)) |> filter(|index| curve.times[index] <= at)
+    if len(available) == 0 { return 1.0 }
+    curve.survival[last(available)]
+}
+
+fn test_bdsr_lung_reference_parity() {
+    let source = read_csv("../data/lung.csv")
+    let lung = table({
+        time: source |> col("time"),
+        event: source |> col("status") |> map(|value| if value == 2 { 1 } else { 0 }),
+        sex: source |> col("sex")
+    })
+    let male = lung |> filter(|row| row.sex == 1)
+    let female = lung |> filter(|row| row.sex == 2)
+    let overall_curve = kaplan_meier(lung |> col("time"), lung |> col("event"))
+    let male_curve = kaplan_meier(male |> col("time"), male |> col("event"))
+    let female_curve = kaplan_meier(female |> col("time"), female |> col("event"))
+    let sex_test = log_rank_test(
+        male |> col("time"), male |> col("event"),
+        female |> col("time"), female |> col("event")
+    )
+
+    assert nrow(source) == 228, "exact source rows"
+    assert ncol(source) == 11, "row names plus ten exact source variables"
+    assert lung |> col("event") |> filter(|value| value == 1) |> len() == 165, "exact event count"
+    assert nrow(male) == 138 && nrow(female) == 90, "exact strata sizes"
+    assert km_median(overall_curve) == 310, "overall median"
+    assert km_median(male_curve) == 270, "male median"
+    assert km_median(female_curve) == 426, "female median"
+    assert abs(survival_at(male_curve, 100) - 0.8260869565217395) < 1e-12, "male day-100 survival"
+    assert abs(survival_at(female_curve, 500) - 0.41104613510668786) < 1e-12, "female day-500 survival"
+    assert abs(sex_test.chi2 - 10.326741954885632) < 1e-10, "log-rank statistic"
+}
+

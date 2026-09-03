@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "bdsr-lung-survival",
+  "title": "BDSR: Lung-Cancer Survival",
+  "summary": "A strict port of the BDSR lung-cancer worked example using the exact survival::lung data, matching Kaplan-Meier results, and all three byte-for-byte canonical plots from the selected source sections.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 32,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Biological Data Science with R — Survival Analysis, sections 9.2.2–9.2.3",
+    "url": "https://bdsr.stephenturner.us/survival.html",
+    "repository": "https://github.com/stephenturner/bdsr",
+    "revision": "f16caf3d3df4ac27297b87f50c37c7c024471208",
+    "copyright": "© 2019 Stephen D. Turner, Ph.D.",
+    "licence": "CC BY-NC 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+    "note": "The selected source scope is ported with exact data, calculations, parameters, printed results, and byte-for-byte canonical PNGs. No synthetic data or redrawn figures are used. Copied CC BY-NC material and the survival dataset are excluded from the repository MIT grant."
+  },
+  "series": {
+    "id": "biological-data-science-with-r",
+    "title": "Biological Data Science with R",
+    "url": "https://bdsr.stephenturner.us/",
+    "order": 9,
+    "chapter": "Chapter 9 · Survival analysis · selected worked example"
+  },
+  "datasets": [
+    {
+      "id": "survival-lung",
+      "title": "NCCTG Lung Cancer Data",
+      "path": "data/lung.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/bdsr-lung-survival/data/lung.csv",
+      "bytes": 7252,
+      "sha256": "4045e3fee76936bb8bd9312243d7b81b36ed224a12800fcef12e8a361883cfb6",
+      "mediaType": "text/csv",
+      "source": "The cancer/lung object from the R survival package, serialized by the Rdatasets archive without changing its ten source variables or 228 observations.",
+      "citation": "Loprinzi CL et al. Prospective evaluation of prognostic variables from patient-completed questionnaires. Journal of Clinical Oncology. 1994;12(3):601–607; survival R package.",
+      "rights": "The survival package is LGPL (>= 2). This exact dataset serialization is excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["estimate survival with censored lung-cancer follow-up", "compare survival between male and female patients"],
+    "methods": ["Kaplan-Meier estimator", "life table", "log-rank test", "right-censoring transformation"],
+    "plots": ["Kaplan-Meier plot", "survival curve", "confidence interval", "risk table", "censoring marks"],
+    "terms": ["lung cancer", "survival probability", "censoring", "median survival", "number at risk", "sex-stratified survival", "survfit", "survminer"],
+    "aliases": ["BDSR survival", "lung survival", "KM curve", "time-to-event analysis"],
+    "functions": ["read_csv", "kaplan_meier", "log_rank_test", "filter", "map", "table"]
+  },
+  "tags": ["survival", "Kaplan-Meier", "lung cancer", "clinical", "statistics", "CC BY-NC"]
+}

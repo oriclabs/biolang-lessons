@@ -1,0 +1,52 @@
+# Protocol 1: spectra of fluorescent proteins
+
+This notebook ports the plot-ready portion of [DataViz Protocol 1](https://joachimgoedhart.github.io/DataViz-protocols/complete-protocols.html#protocol-1). Its boundary begins at the exact `protocol_1.csv` written by the source R Markdown after `pivot_longer()`, missing-value removal, and separation of the protein and spectrum labels. Nothing is synthesized or re-shaped differently here.
+
+```biolang
+let spectra = read_csv("data/protocol_1.csv")
+let wavelengths = spectra |> col("Wavelength")
+let intensities = spectra |> col("Intensity")
+{
+    rows: nrow(spectra),
+    columns: ncol(spectra),
+    minimum_wavelength_nm: min(wavelengths),
+    maximum_wavelength_nm: max(wavelengths),
+    minimum_normalized_intensity: min(intensities),
+    maximum_normalized_intensity: max(intensities)
+}
+```
+
+The source table contains the excitation (`EX`) and emission (`EM`) spectra for mTurquoise2, mNeonGreen, mScarlet-I, and miRFP670. The published protocol orders those proteins from shorter to longer wavelengths, overlays lines and filled areas, fixes the axes to 350–810 nm and 0–1.1 normalized intensity, and applies blue, green, orange, and red fills.
+
+## Exact published output
+
+![DataViz Protocol 1: spectra of fluorescent proteins](figures/source/Protocol_01.png)
+
+This is the source repository's `Protocol_01.png`, copied byte for byte. It is not rendered again by BioLang.
+
+```biolang
+let mturquoise_em = spectra |> filter(|row| row["Fluorescent Protein"] == "mTurquoise2" && row.Spectrum == "EM")
+let mturquoise_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "mTurquoise2" && row.Spectrum == "EX")
+let mneongreen_em = spectra |> filter(|row| row["Fluorescent Protein"] == "mNeonGreen" && row.Spectrum == "EM")
+let mneongreen_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "mNeonGreen" && row.Spectrum == "EX")
+let mscarlet_em = spectra |> filter(|row| row["Fluorescent Protein"] == "mScarlet-I" && row.Spectrum == "EM")
+let mscarlet_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "mScarlet-I" && row.Spectrum == "EX")
+let mirfp_em = spectra |> filter(|row| row["Fluorescent Protein"] == "miRFP670" && row.Spectrum == "EM")
+let mirfp_ex = spectra |> filter(|row| row["Fluorescent Protein"] == "miRFP670" && row.Spectrum == "EX")
+
+assert nrow(spectra) == 1824, "exact source plot-ready rows"
+assert ncol(spectra) == 4, "exact source columns"
+assert min(wavelengths) == 300, "source wavelength minimum"
+assert max(wavelengths) == 811, "source wavelength maximum"
+assert min(intensities) == 0, "normalized intensity minimum"
+assert max(intensities) == 1, "normalized intensity maximum"
+assert nrow(mturquoise_em) == 210 && nrow(mturquoise_ex) == 196, "mTurquoise2 source rows"
+assert nrow(mneongreen_em) == 277 && nrow(mneongreen_ex) == 251, "mNeonGreen source rows"
+assert nrow(mscarlet_em) == 229 && nrow(mscarlet_ex) == 261, "mScarlet-I source rows"
+assert nrow(mirfp_em) == 206 && nrow(mirfp_ex) == 194, "miRFP670 source rows"
+"Exact source table and canonical PNG verified."
+```
+
+***
+
+[Next: Volcano plot →](#lesson-section=volcano-plot)

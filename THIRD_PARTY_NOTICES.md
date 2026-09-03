@@ -19,11 +19,17 @@ content remains CC BY 3.0; the repository MIT licence does not override it.
 
 ## Biological Data Science with R
 
-`lessons/biostatistics/bdsr-nhanes-eda`, `bdsr-nhanes-group-tests`, and
-`bdsr-nhanes-regression` adapt bounded portions of the Essential statistics
-chapter under CC BY-NC 4.0. Their nine PNGs are byte-for-byte published copies.
+`lessons/biostatistics/bdsr-nhanes-eda`, `bdsr-nhanes-group-tests`,
+`bdsr-nhanes-regression`, and `bdsr-lung-survival` adapt bounded portions of
+the Essential statistics and Survival Analysis chapters under CC BY-NC 4.0.
+Their twelve PNGs are byte-for-byte published copies.
 The exact NHANES teaching table and dictionary are fetched from the source host
 and checksum-verified rather than redistributed here.
+
+The lung-survival lesson includes an exact CSV serialization of the
+`cancer`/`lung` data object distributed with the LGPL (>= 2) R `survival`
+package. Its dataset citation and separate terms are recorded in the lesson's
+`ATTRIBUTION.md` and manifest.
 
 The five earlier, broader independently written companions are retained only
 in `archive/p2-non-fidelity-bdsr` after failing the strict one-to-one fidelity
@@ -88,3 +94,12 @@ adapt The Carpentries' CC BY 4.0 instructional material and include the exact
 cleaned Portal Project teaching CSV. The latter also includes the byte-for-byte
 published time-series PNG. Upstream code examples are MIT; the adapted
 instructional collections are distributed under CC BY 4.0.
+
+## DataViz protocols
+
+`lessons/visualization/dataviz-protocols` adapts bounded portions of Joachim
+Goedhart's *DataViz protocols* under CC BY-NC-SA 4.0. Its three CSV files and
+three PNG files are byte-for-byte source artifacts from the pinned revision.
+The original FPbase, Becares et al., and Goedhart et al. study attributions are
+retained in the collection manifest and `ATTRIBUTION.md`. These artifacts and
+the adapted lesson content are excluded from the repository MIT grant.
