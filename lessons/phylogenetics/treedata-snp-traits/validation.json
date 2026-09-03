@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "reference": "https://yulab-smu.top/treedata-book/chapter7.html#aligning-graph-to-the-tree-based-on-the-tree-structure",
+  "checked": "2026-09-03",
+  "bookSourceRevision": "1af8f25551105279a2b8b5b1a449eb002936ce9f",
+  "packageSourceRevision": "60b2de7f8df45b440c93cc17513e868ee98c1496",
+  "status": "verified",
+  "metrics": [
+    {"name": "tree tips", "reference": 230, "biolang": 230, "status": "exact"},
+    {"name": "sample information records", "reference": 386, "biolang": 386, "status": "exact"},
+    {"name": "trait records", "reference": 386, "biolang": 386, "status": "exact"},
+    {"name": "tree tips matched to information", "reference": 230, "biolang": 230, "status": "exact"},
+    {"name": "tree tips matched to traits", "reference": 230, "biolang": 230, "status": "exact"},
+    {"name": "gathered SNP marks", "reference": 6482, "biolang": 6482, "status": "exact mechanical source transformation"},
+    {"name": "strains with SNP marks", "reference": 381, "biolang": 381, "status": "exact"},
+    {"name": "aligned positions", "reference": 385, "biolang": 385, "status": "exact"}
+  ],
+  "figures": [
+    {"file": "figures/source/figure-7.2.png", "sourceUrl": "https://yulab-smu.top/treedata-book/treedata_files/figure-html/plottree-1.png", "sha256": "391a67b558e190caeb92c8bf17d4ba1392567e563bbc3bba2045f8788ff7a61b", "bytes": 204566, "status": "byte-for-byte published source copy"}
+  ]
+}
+

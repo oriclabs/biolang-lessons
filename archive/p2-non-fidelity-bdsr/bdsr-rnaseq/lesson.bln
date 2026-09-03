@@ -1,0 +1,539 @@
+# 12 Count-based differential expression analysis of RNA-seq data
+
+This is an independently written BioLang companion to Stephen D. Turner's [RNA-seq chapter](https://bdsr.stephenturner.us/rnaseq.html) in *Biological Data Science with R*. It follows sections 12.1 through 12.7 and all fourteen exercises in the same learning order, using BioLang code and BioLang-rendered figures.
+
+Select **Prepare all** before running. Studio verifies the exact size and SHA-256 of every declared file. The count matrix and annotation table are the chapter's public teaching data. The DESeq2, VST and PCA result files were regenerated independently with R 4.5.2 and DESeq2 1.44.0, then pinned so the browser lesson reproduces the chapter's historical output without linking R or GPL/LGPL software into BioLang.
+
+> **Two deliberately separate paths**
+>
+> The **poor man's DGE** section is native BioLang and intentionally demonstrates why fold change alone is unsafe. The **DESeq2** section reads independently validated oracle results. BioLang does not label its simpler native differential-expression implementation as DESeq2-equivalent.
+
+## 12.1 Background
+
+RNA-seq measures the abundance of RNA molecules in a biological sample. The central question here is whether treatment with dexamethasone changes gene expression in human airway smooth-muscle cells.
+
+### 12.1.1 The biology
+
+The experiment contains four cell lines. Each line was measured once as an untreated control and once after dexamethasone treatment, giving eight samples. Pairing each treated sample with the same cell line helps separate treatment effects from stable differences between cell lines.
+
+**What we want to learn:** which genes change after treatment, how large those changes are, and how strong the evidence is after testing thousands of genes.
+
+### 12.1.2 Data pre-processing
+
+Sequencing begins with reads, but this lesson starts later. Reads were pseudoaligned to a reference transcriptome, transcript abundance was estimated, and transcript estimates were summarised to length-scaled gene counts. The result is a matrix: genes are rows, samples are columns, and each numeric cell is an abundance-like count.
+
+That starting point matters. A count-based model needs count-like measurements and sample metadata; it cannot recover a poor reference, a mistaken sample label, or a biased upstream quantification.
+
+### 12.1.3 Data structure
+
+The analysis needs two tables:
+
+- a **count matrix**, with one gene per row and one sample per numeric column;
+- **sample metadata**, with one sample per row and columns describing treatment and cell line.
+
+The sample IDs must agree and occur in the same order. A beautifully fitted model with misaligned metadata answers the wrong experiment.
+
+## 12.2 Import data
+
+Load both tables and inspect their shapes before calculating anything.
+
+```biolang
+let mycounts = read_csv("airway_scaledcounts.csv")
+let metadata = read_csv("airway_metadata.csv")
+{
+    count_dimensions: [nrow(mycounts), ncol(mycounts)],
+    metadata_dimensions: [nrow(metadata), ncol(metadata)],
+    counts_preview: head(mycounts, 6),
+    metadata: metadata
+}
+```
+
+The count table has 38,694 genes and eight sample columns plus the Ensembl ID. These eight column names match `metadata.id` exactly.
+
+```biolang
+let sample_columns = colnames(mycounts) |> filter(|name| name != "ensgene")
+{
+    count_sample_ids: sample_columns,
+    metadata_sample_ids: col(metadata, "id"),
+    aligned: sample_columns == col(metadata, "id")
+}
+```
+
+## 12.3 Poor man's DGE
+
+This section is a diagnostic demonstration, **not a valid differential-expression analysis**. It ignores library-size normalisation, biological variability, mean–variance dependence, and multiple testing. Its mistakes make the need for a proper count model visible.
+
+#### Exercise 1 — Mean count in controls
+
+Average the four untreated samples gene by gene.
+
+```biolang
+let gene_index = range(0, nrow(mycounts))
+let s9508 = col(mycounts, "SRR1039508")
+let s9509 = col(mycounts, "SRR1039509")
+let s9512 = col(mycounts, "SRR1039512")
+let s9513 = col(mycounts, "SRR1039513")
+let s9516 = col(mycounts, "SRR1039516")
+let s9517 = col(mycounts, "SRR1039517")
+let s9520 = col(mycounts, "SRR1039520")
+let s9521 = col(mycounts, "SRR1039521")
+let control_mean = gene_index |> map(|i|
+    (s9508[i] + s9512[i] + s9516[i] + s9520[i]) / 4.0
+)
+let meancounts_control = table({
+    ensgene: col(mycounts, "ensgene"),
+    controlmean: control_mean
+})
+head(meancounts_control, 6)
+```
+
+#### Exercise 2 — Mean count after treatment
+
+Add the corresponding mean for treated samples.
+
+```biolang
+let treated_mean = gene_index |> map(|i|
+    (s9509[i] + s9513[i] + s9517[i] + s9521[i]) / 4.0
+)
+let meancounts_all = table({
+    ensgene: col(mycounts, "ensgene"),
+    controlmean: control_mean,
+    treatedmean: treated_mean
+})
+head(meancounts_all, 6)
+```
+
+#### Exercise 3 — Compare total depth
+
+Summing the group means is a quick library-depth warning. The control total is about 23.01 million and the treated total about 22.20 million. They are close, but not equal—and equal totals would still not solve gene-specific variability.
+
+```biolang
+{
+    control_total: sum(control_mean),
+    treated_total: sum(treated_mean),
+    treated_over_control: sum(treated_mean) / sum(control_mean)
+}
+```
+
+#### Exercise 4 — Raw mean-count scatter
+
+Each point is a gene. Most genes are crushed near the origin because a few very abundant genes determine the linear axis.
+
+```biolang
+stats_relationship_plot(control_mean, treated_mean, {
+    fit: false, note: false, max_points: 50000, theme: "ggplot", title: "",
+    x_breaks: [0, 100000, 200000, 300000],
+    y_breaks: [0, 100000, 200000, 300000],
+    x_tick_format: "scientific", y_tick_format: "scientific",
+    x_label: "controlmean", y_label: "treatedmean",
+    width: 760, height: 540
+})
+```
+
+**What to observe:** the dense lower-left cloud is not empty; its points are simply overplotted and compressed by the wide count range.
+
+#### Exercise 5 — Log-scale scatter
+
+Keep genes that are positive in both groups, then use base-10 log coordinates. This spreads low and high abundance over comparable visual distances.
+
+```biolang
+let positive_means = meancounts_all |>
+    filter(|row| row.controlmean > 0 and row.treatedmean > 0)
+stats_relationship_plot(col(positive_means, "controlmean"), col(positive_means, "treatedmean"), {
+    fit: false, note: false, max_points: 50000, theme: "ggplot", title: "",
+    x_scale: "log10", y_scale: "log10",
+    x_breaks: [10, 1000, 100000], y_breaks: [10, 1000, 100000],
+    x_label: "controlmean", y_label: "treatedmean",
+    width: 760, height: 540
+})
+```
+
+Log fold change makes increases and decreases symmetric. A value of `+2` is a four-fold increase; `-2` is a four-fold decrease. Zeros must be handled before the logarithm because their ratio or logarithm is undefined.
+
+```biolang
+let positive_control = col(positive_means, "controlmean")
+let positive_treated = col(positive_means, "treatedmean")
+let meancounts = table({
+    ensgene: col(positive_means, "ensgene"),
+    controlmean: positive_control,
+    treatedmean: positive_treated,
+    log2fc: range(0, nrow(positive_means)) |> map(|i|
+        log2(positive_treated[i] / positive_control[i])
+    )
+})
+{
+    genes_positive_in_both_groups: nrow(meancounts),
+    naive_up_over_four_fold: meancounts |> filter(|row| row.log2fc > 2) |> nrow(),
+    naive_down_over_four_fold: meancounts |> filter(|row| row.log2fc < -2) |> nrow()
+}
+```
+
+#### Exercise 6 — Load gene annotation
+
+Ensembl IDs are stable analysis keys; symbols and descriptions make results readable. Load annotation separately so the join remains explicit and auditable.
+
+```biolang
+let anno = read_csv("annotables_grch38.csv")
+{dimensions: [nrow(anno), ncol(anno)], preview: head(anno, 6)}
+```
+
+#### Exercise 7 — Rank the largest naive changes
+
+Add an absolute magnitude only for sorting. Keep the signed `log2fc` because its direction still matters.
+
+```biolang
+let naive_ranked = table({
+    ensgene: col(meancounts, "ensgene"),
+    controlmean: col(meancounts, "controlmean"),
+    treatedmean: col(meancounts, "treatedmean"),
+    log2fc: col(meancounts, "log2fc"),
+    abs_log2fc: col(meancounts, "log2fc") |> map(|value| abs(value))
+}) |> arrange("abs_log2fc", "desc")
+head(naive_ranked, 3)
+```
+
+#### Exercise 8 — Attach annotation, then question the ranking
+
+```biolang
+let naive_annotated = inner_join(naive_ranked, anno, "ensgene")
+head(naive_annotated, 10)
+```
+
+**Would you trust this list? No.** Extreme ratios often come from tiny denominators, and the calculation treats four variable biological replicates as if their means were known perfectly. Annotation makes a weak analysis easier to read; it does not make it valid.
+
+## 12.4 DESeq2 analysis
+
+### 12.4.1 DESeq2 package
+
+DESeq2 models counts with a negative-binomial distribution. Its pipeline estimates sample-specific size factors, learns the mean–dispersion relationship across genes, fits a model for each gene, tests the treatment coefficient, and controls false discoveries across the large family of tests.
+
+> **Understanding the model**
+>
+> **Use it when:** the input is count-like RNA-seq abundance with biological replicates and a clearly specified design.
+>
+> **How to read it:** `log2FoldChange` is the fitted treatment effect; `pvalue` is the single-gene evidence; `padj` controls the expected false-discovery proportion across tested genes.
+>
+> **Watch out for:** sample pairing, batch, sex, cell line, and interactions belong in the design when scientifically relevant. A one-factor design is not automatically appropriate for every experiment.
+
+This browser lesson does not execute DESeq2. The compact result CSV was regenerated by the validation script with DESeq2 1.44.0, the historical version that reproduces the rendered chapter values.
+
+### 12.4.2 Importing data
+
+The model input must preserve the same gene rows, sample columns, and metadata order checked in section 12.2. The chapter design is treatment only: conceptually, expression depends on `dex`.
+
+```biolang
+{
+    count_rows: nrow(mycounts),
+    count_samples: len(sample_columns),
+    metadata_rows: nrow(metadata),
+    design_variable: "dex",
+    design_levels: unique(col(metadata, "dex")),
+    aligned: sample_columns == col(metadata, "id")
+}
+```
+
+### 12.4.3 DESeq pipeline
+
+The independently run oracle produced these pinned sample size factors. Values above one indicate a relatively deeper effective library and values below one a shallower one; they are scaling factors, not treatment effects.
+
+```biolang
+let deseq_size_factors = table({
+    sample: col(metadata, "id"),
+    size_factor: [
+        1.0193796261041632, 0.9005652705509860,
+        1.1784238502286688, 0.6709853559249026,
+        1.1731984384487306, 1.3929360873990382,
+        0.9180029530119794, 0.9504389631365939
+    ]
+})
+deseq_size_factors
+```
+
+The complete pipeline also estimates dispersions and fits negative-binomial GLMs. Those values are not reconstructed from the final CSV, because doing so would create a second, misleading pseudo-DESeq2 implementation.
+
+### 12.4.4 Getting results
+
+Load the raw per-gene result table. Missing adjusted p-values are intentional: DESeq2's independent filtering removes genes with little chance of detection from the multiple-testing step, increasing power at the same false-discovery target.
+
+```biolang
+let de_raw = read_csv("deseq2_results.csv")
+{
+    dimensions: [nrow(de_raw), ncol(de_raw)],
+    preview: head(de_raw, 6),
+    missing_adjusted_p: de_raw |> filter(|row| row.padj == nil) |> nrow()
+}
+```
+
+#### Exercise 9 — Arrange by adjusted p-value
+
+BioLang explicitly filters missing values before sorting so the displayed top rows are the genes with the smallest usable `padj`.
+
+```biolang
+let de_ranked = de_raw |>
+    filter(|row| row.padj != nil) |>
+    arrange("padj", "asc")
+head(de_ranked, 10)
+```
+
+#### Exercise 10 — Join DESeq2 results to annotation
+
+Both tables now use `ensgene` as the key, so the join is direct.
+
+```biolang
+let res = inner_join(de_raw, anno, "ensgene")
+let res_ranked = res |> filter(|row| row.padj != nil) |> arrange("padj", "asc")
+head(res_ranked, 10)
+```
+
+The joined table has 38,957 rows although the result table has 38,694 genes. The historical annotation file contains both missing and duplicate Ensembl keys, so a join can remove some genes and duplicate others. Before annotation there are 2,181 significant Ensembl rows. After the join the chapter reports 2,186 rows representing 2,174 distinct annotated Ensembl IDs. Reporting both counts prevents the join from silently changing the apparent discovery total.
+
+#### Exercise 11 — Count significant results
+
+```biolang
+let sig_results = res |> filter(|row| row.padj != nil and row.padj < 0.05)
+{
+    significant_annotated_rows: nrow(sig_results),
+    unique_significant_annotated_genes: unique(col(sig_results, "ensgene")) |> len(),
+    threshold: "Benjamini-Hochberg adjusted p < 0.05"
+}
+```
+
+#### Exercise 12 — Export significant results
+
+Return the table, then choose **Download CSV** from the Studio output menu. This browser-safe path avoids writing to an arbitrary local filesystem location.
+
+```biolang
+sig_results
+```
+
+<!-- bl:step title="CLI equivalent — write the same table to disk" -->
+
+In a trusted local CLI session, the direct equivalent is:
+
+```text
+write_csv(sig_results, "sigresults.csv")
+```
+
+<!-- /bl:step -->
+
+## 12.5 Data visualization
+
+### 12.5.1 Plotting counts
+
+CRISPLD2 (`ENSG00000103196`) is a glucocorticoid-responsive gene highlighted in the source study. The pinned counts below are DESeq2-normalised, not raw counts.
+
+```biolang
+let crispld2 = read_csv("crispld2_counts.csv")
+crispld2
+```
+
+First reproduce the chapter's simple group-wise point view.
+
+```biolang
+stats_group_plot(col(crispld2, "count"), col(crispld2, "dex"), {
+    box: false, points: "jitter", legend: false, show_n: false,
+    point_style: "open", point_radius: 4,
+    panel_border: true, title_align: "center",
+    y_breaks: [1000, 2000, 5000], y_tick_rotation: -90,
+    theme: "classic", title: "ENSG00000103196",
+    x_label: "group", y_label: "normalized count",
+    width: 700, height: 500
+})
+```
+
+The more informative source figure uses a filled box plot on a base-10 log scale. The values remain counts; the axis controls their spacing and keeps the tick labels in the original units.
+
+```biolang
+stats_group_plot(col(crispld2, "count"), col(crispld2, "dex"), {
+    fill: "group", legend: true, legend_title: "dex",
+    points: "outliers", show_n: false,
+    y_scale: "log10", y_breaks: [1000, 3000, 5000], y_tick_format: "plain",
+    theme: "ggplot", title: "CRISPLD2",
+    x_label: "dex", y_label: "count",
+    width: 760, height: 540
+})
+```
+
+**What to observe:** all four treated samples exceed their control counterparts, although the amount of response varies by cell line.
+
+### 12.5.2 MA and volcano plots
+
+Create the same three significance classes used by ggplot: `FALSE`, `TRUE`, and `NA`. Gray `NA` points in the MA plot are not failed computations; most were excluded by independent filtering.
+
+```biolang
+let ma_rows = res |> filter(|row| row.log2FoldChange != nil and row.baseMean > 0)
+let ma_group = col(ma_rows, "padj") |> map(|value|
+    if value == nil { "NA" } else if value < 0.05 { "TRUE" } else { "FALSE" }
+)
+let ma_x = col(ma_rows, "baseMean")
+```
+
+#### Exercise 13 — MA plot
+
+```biolang
+stats_relationship_plot(ma_x, col(ma_rows, "log2FoldChange"), {
+    group: ma_group, group_order: ["FALSE", "TRUE", "NA"],
+    colors: ["#F8766D", "#00BFC4", "#7F7F7F"],
+    fit: false, theme: "ggplot", legend_title: "sig",
+    x_scale: "log10", x_breaks: [1, 100, 10000], x_tick_format: "plain",
+    max_points: 1000000, note: false,
+    title: "MA plot", x_label: "baseMean",
+    y_label: "log2FoldChange", width: 672, height: 480
+})
+```
+
+**How to read it:** the vertical position is direction and effect size; the horizontal position is mean abundance. A large fold change at extremely low abundance can be uncertain, which is why significance is a separate colour rather than inferred from height alone.
+
+#### Exercise 14 — Volcano plot
+
+```biolang
+let volcano_rows = res |>
+    filter(|row| row.log2FoldChange != nil and row.pvalue != nil and row.pvalue > 0)
+let volcano_group = col(volcano_rows, "padj") |> map(|value|
+    if value == nil { "NA" } else if value < 0.05 { "TRUE" } else { "FALSE" }
+)
+let volcano_y = col(volcano_rows, "pvalue") |> map(|value| -log10(value))
+stats_relationship_plot(col(volcano_rows, "log2FoldChange"), volcano_y, {
+    group: volcano_group, group_order: ["FALSE", "TRUE", "NA"],
+    colors: ["#F8766D", "#00BFC4", "#7F7F7F"],
+    fit: false, theme: "ggplot", legend_title: "sig",
+    max_points: 1000000, note: false,
+    title: "Volcano plot", x_label: "log2FoldChange",
+    y_label: "-1 * log10(pvalue)", width: 672, height: 480
+})
+```
+
+**How to read it:** points farther left or right have larger effects; points higher up have stronger evidence. A volcano plot is a visual summary, not a substitute for the adjusted-p-value decision rule or biological interpretation.
+
+### 12.5.3 Transformation
+
+Raw counts are appropriate for the negative-binomial test, but their variance rises strongly with their mean. That makes ordinary Euclidean distance and PCA dominated by abundant genes. A variance-stabilising transformation moves values to a roughly log-like scale while reducing that mean–variance dependence.
+
+The PCA and heatmap files below contain values regenerated by DESeq2's `vst(dds, blind=FALSE)`. They are pinned oracle artifacts, not values invented by the browser lesson.
+
+### 12.5.4 PCA
+
+PCA compresses thousands of transformed gene measurements into directions that explain the largest sample-to-sample variation. Distance between points represents broad expression dissimilarity; the sign of an axis is arbitrary.
+
+```biolang
+let airway_pca = read_csv("pca.csv")
+pca_plot(airway_pca, {
+    precomputed: true, pc1_col: "PC1", pc2_col: "PC2",
+    group_col: "dex", palette: "ggplot", theme: "publication", legend_title: "group",
+    panel_border: true, point_radius: 5,
+    pc1_variance_percent: 32.336510191572735,
+    pc2_variance_percent: 23.592057582681505,
+    x_label: "PC1: 32% variance", y_label: "PC2: 24% variance",
+    title: "", width: 760, height: 540, format: "svg"
+})
+```
+
+**What to observe:** treatment separates samples mainly along PC1, while cell-line differences contribute strongly to PC2. PCA can reveal treatment structure, outliers, batch effects, and possible sample swaps; it does not test differential expression.
+
+<!-- bl:step title="Enhanced BioLang view — label each sample" -->
+
+```biolang
+pca_plot(airway_pca, {
+    precomputed: true, pc1_col: "PC1", pc2_col: "PC2",
+    group_col: "dex", labels: true, label_col: "sample",
+    palette: "ggplot", theme: "publication", legend_title: "group",
+    panel_border: true, point_radius: 5,
+    pc1_variance_percent: 32.336510191572735,
+    pc2_variance_percent: 23.592057582681505,
+    x_label: "PC1: 32% variance", y_label: "PC2: 24% variance",
+    title: "Airway VST PCA with sample labels",
+    width: 820, height: 560, format: "svg"
+})
+```
+
+<!-- /bl:step -->
+
+### 12.5.5 Bonus: heatmaps
+
+The chapter selects the 25 smallest adjusted p-values, variance-stabilises their counts, scales each gene across samples, and clusters rows and columns using Pearson distance with complete linkage. Green is lower than a gene's own mean, black is near its mean, and red is higher. The oracle CSV retains the historical R leaf orientation; the explicit row and column orders keep the same scientifically equivalent dendrogram from being mirrored by a different renderer.
+
+#### Top 25 dexamethasone-responsive genes
+
+```biolang
+let top25_vst = read_csv("heatmap_top25.csv")
+clustered_heatmap(top25_vst, {
+    order: "hierarchical", distance: "pearson", linkage: "complete",
+    dendrogram: "both", colors: "green-black-red", center: 0,
+    row_labels_side: "right",
+    row_dendrogram_width: 58, column_dendrogram_height: 65,
+    annotation_row_height: 10, annotation_gap: 3, dendrogram_gap: 3,
+    top_padding: 0,
+    row_order: col(top25_vst, "gene"),
+    column_order: ["SRR1039520", "SRR1039512", "SRR1039508", "SRR1039516", "SRR1039517", "SRR1039509", "SRR1039513", "SRR1039521"],
+    column_annotations: {
+        dex: ["control", "control", "control", "control", "treated", "treated", "treated", "treated"],
+        celltype: ["N061011", "N052611", "N61311", "N080611", "N080611", "N61311", "N052611", "N061011"]
+    },
+    annotation_order: ["dex", "celltype"],
+    annotation_colors: {
+        dex: {control: "#9999FF", treated: "#FF66FF"},
+        celltype: {N052611: "#33AAFF", N061011: "#CC66FF", N080611: "#00CC44", N61311: "#FF9922"}
+    },
+    theme: "publication", title: "",
+    legend_title: "row-scaled VST", width: 672, height: 1152,
+    format: "svg"
+})
+```
+
+**What to observe:** the four controls and four treated samples form separate column branches. The two strips above the matrix preserve the source treatment and cell-line annotations after clustering. Read expression colour within a row, not between genes, because each row was scaled independently. A heatmap is strongest as a pattern display; it is weak evidence if the same genes were selected and interpreted without accounting for that selection.
+
+## 12.6 Record session information
+
+Reproducibility needs more than code. Record the BioLang version, lesson checksum, data checksums, historical oracle version, and analysis choices. Studio's exported notebook preserves code and outputs; `lesson.json` and `validation/results/reference.json` preserve the machine-readable provenance.
+
+```biolang
+{
+    lesson: "bdsr-rnaseq",
+    source_chapter: "BDSR chapter 12",
+    oracle: "R 4.5.2; DESeq2 1.44.0",
+    design: "~ dex",
+    genes: nrow(mycounts),
+    samples: nrow(metadata),
+    significant_annotated_rows: nrow(sig_results)
+}
+```
+
+## 12.7 Pathway analysis
+
+A long differential-expression table is difficult to interpret one gene at a time. Pathway analysis asks whether genes belonging to a biological process appear unusually often near the top of the result.
+
+Two common strategies answer different questions:
+
+- **Over-representation analysis** starts with a thresholded gene list and compares overlaps with gene sets. It is simple, but results can change when the cutoff changes.
+- **Ranked enrichment** uses the whole ordered list and asks whether members of a gene set collect near one end. It avoids a hard significance cutoff but still depends on the ranking statistic and gene-set quality.
+
+Prepare both honest inputs before choosing a knowledge base. Gene symbols may be duplicated after annotation, so keep the Ensembl ID as the audit key.
+
+```biolang
+let pathway_inputs = {
+    significant_symbols: sig_results |>
+        filter(|row| row.symbol != nil and row.symbol != "") |>
+        col("symbol") |> unique(),
+    ranked_statistics: res |>
+        filter(|row| row.symbol != nil and row.stat != nil) |>
+        arrange("stat", "desc") |>
+        select("ensgene", "symbol", "stat", "padj")
+}
+{
+    significant_symbols: len(pathway_inputs.significant_symbols),
+    ranked_rows: nrow(pathway_inputs.ranked_statistics),
+    ranked_preview: head(pathway_inputs.ranked_statistics, 10)
+}
+```
+
+**What to report:** gene-set source and version, identifier mapping, tested universe, ranking statistic or threshold, multiple-testing method, effect/enrichment size, and the leading genes driving each result. A pathway label is a hypothesis-generating summary, not proof that the pathway is activated in every cell.
+
+## Closing checklist
+
+- Count columns and metadata rows align.
+- The naive fold-change section is labelled unsafe.
+- DESeq2 values come from a pinned independent oracle, not a look-alike model.
+- Significant counts distinguish joined rows from unique genes.
+- Plot colour means significance class, not effect size alone.
+- PCA and heatmap use variance-stabilised values.
+- Exported results retain gene IDs, provenance, thresholds, and software versions.

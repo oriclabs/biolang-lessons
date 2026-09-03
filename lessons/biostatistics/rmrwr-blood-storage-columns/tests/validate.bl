@@ -1,0 +1,9 @@
+fn test_rmrwr_blood_storage_columns() {
+    let cohort = read_csv("../data/blood_storage.csv")
+    let selected = cohort |> select("RBC.Age.Group", "bGS", "BN+", "OrganConfined", "PreopPSA", "PreopTherapy", "Units", "sGS", "Age", "AA")
+    assert nrow(cohort) == 316 && ncol(cohort) == 20, "official cohort shape"
+    assert colnames(selected) == ["RBC.Age.Group", "bGS", "BN+", "OrganConfined", "PreopPSA", "PreopTherapy", "Units", "sGS", "Age", "AA"], "source order"
+    assert (selected |> col("RBC.Age.Group"))[0] == 3, "first group"
+    assert abs((selected |> col("PreopPSA"))[0] - 14.08) < 0.000000001, "first PSA"
+    assert abs((selected |> col("Age"))[0] - 72.1) < 0.000000001, "first age"
+}

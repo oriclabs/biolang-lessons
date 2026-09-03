@@ -1,0 +1,49 @@
+# Compare NHANES groups
+
+This is a one-to-one port of the Welch-test and smoking-status ANOVA examples in [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Select **Prepare all** to download the exact source-hosted NHANES files.
+
+## Adult age by gender
+
+```biolang
+let nh = read_csv("nhanes.csv")
+let adults = nh |> filter(|row| row.Age >= 18)
+let age_gender = adults |> drop_null("Age") |> drop_null("Gender")
+let female_age = age_gender |> filter(|row| row.Gender == "female") |> col("Age")
+let male_age = age_gender |> filter(|row| row.Gender == "male") |> col("Age")
+let age_test = ttest(female_age, male_age, {variance: "welch"})
+age_test
+```
+
+The source reports (t=1.9122), 3697.2 degrees of freedom, and (p=0.05593). The exact source table gives the same values in BioLang.
+
+## Adult BMI by smoking status
+
+```biolang
+let smoking_complete = adults |> drop_null("BMI") |> drop_null("SmokingStatus")
+let never_bmi = smoking_complete |> filter(|row| row.SmokingStatus == "Never") |> col("BMI")
+let current_bmi = smoking_complete |> filter(|row| row.SmokingStatus == "Current") |> col("BMI")
+let former_bmi = smoking_complete |> filter(|row| row.SmokingStatus == "Former") |> col("BMI")
+let smoking_anova = anova([never_bmi, current_bmi, former_bmi], {variance: "equal"})
+let smoking_tukey = tukey_hsd([never_bmi, current_bmi, former_bmi])
+{anova: smoking_anova, tukey: smoking_tukey}
+```
+
+The source ANOVA reports (F=16.99) with 2 and 3553 degrees of freedom and (p=4.54\times10^{-8}). Its Tukey comparisons show that current smokers differ from both never and former smokers, while former and never smokers do not differ significantly.
+
+![Exact published adult BMI by smoking-status boxplots](figures/source/smoking-bmi-boxplots.png)
+
+The boxplot is the published source PNG copied byte for byte. Missing smoking status remains visible as the source's `NA` group but is excluded from the model.
+
+## Fidelity checks
+
+```biolang
+assert abs(age_test.statistic - 1.9122057082650388) < 0.0000000001, "source Welch statistic"
+assert abs(age_test.df - 3697.193960355615) < 0.000000001, "source Welch degrees of freedom"
+assert abs(age_test.p_value - 0.05592701698725805) < 0.0000000001, "source Welch p-value"
+assert abs(smoking_anova.f_statistic - 16.98847476354365) < 0.000000001, "source ANOVA statistic"
+assert smoking_anova.df_between == 2, "source numerator degrees of freedom"
+assert smoking_anova.df_within == 3553, "source denominator degrees of freedom"
+assert abs(smoking_anova.p_value - 0.000000045399739190266075) < 0.000000000001, "source ANOVA p-value"
+"Exact source calculations and figure checks passed."
+```
+

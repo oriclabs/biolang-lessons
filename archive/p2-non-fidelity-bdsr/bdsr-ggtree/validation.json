@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "status": "validated",
+  "reference": {
+    "chapter": "https://bdsr.stephenturner.us/ggtree.html",
+    "source": "https://github.com/stephenturner/bdsr/blob/main/ggtree.qmd",
+    "note": "The public chapter source and all twelve rendered PNG figures were inspected directly. Numeric checks are independently recomputed from the pinned Newick tree; upstream R code and figure files are not redistributed."
+  },
+  "checks": [
+    {"name": "tip count", "expected": 13, "status": "exact"},
+    {"name": "total node count", "expected": 25, "status": "exact"},
+    {"name": "C and E MRCA", "expected": 17, "status": "exact ape/ggtree numbering"},
+    {"name": "G and H MRCA", "expected": 21, "status": "exact ape/ggtree numbering"},
+    {"name": "B and C MRCA", "expected": 19, "status": "exact ape/ggtree numbering"},
+    {"name": "L and J MRCA", "expected": 23, "status": "exact ape/ggtree numbering"},
+    {"name": "A-B patristic distance", "expected": 8.0, "status": "exact"},
+    {"name": "K-L patristic distance", "expected": 22.0, "status": "exact"},
+    {"name": "basic phylogram branch geometry", "expected": "maximum 1.5 px coordinate error at 672 × 480", "observed": "1.2 px maximum across all 24 horizontal branches", "status": "matched to the published 1344 × 960 PNG after 2:1 coordinate normalization"},
+    {"name": "many-tree facet inputs", "expected": {"seed": 42, "panels": 12, "tip_counts": [10, 25, 50, 100, 10, 25, 50, 100, 10, 25, 50, 100]}, "observed": {"panels": 12, "tip_counts": [10, 25, 50, 100, 10, 25, 50, 100, 10, 25, 50, 100]}, "status": "exact source recipe independently regenerated with R ape 5.8-1 and pinned as ladderized Newick; archived ape 5.8 and 5.8-1 rtree sources were compared and are identical"},
+    {"name": "many-tree facet presentation", "expected": "4 columns × 3 rows, Tree #1 through Tree #12, free per-panel scales, source title", "observed": "all panel inputs and facet structure match; first-panel geometry has 1.1 px maximum coordinate error across the 15 measurable horizontal segments at the displayed 960 × 768 size", "status": "matched topology, orientation, panel structure, and styling to the published 1920 × 1536 PNG after 2:1 coordinate normalization; the coordinate bound applies to the measured first panel"},
+    {"name": "published figures", "expected": 12, "status": "visual oracle inspected and independently redrawn"},
+    {"name": "exercises", "expected": 3, "status": "covered"},
+    {"name": "BEAST/Nexus translated tips", "expected": 76, "status": "exact"},
+    {"name": "influenza alignment dimensions", "expected": [76, 562], "status": "exact"},
+    {"name": "advanced BEAST and MSA chunks", "status": "runnable extension with scope disclosed", "note": "Both are eval=false in the upstream source and produce no published chapter figure. nexus_tree() deliberately strips square-bracket annotations and the lesson does not mislabel the display Newick as preservation of BEAST metadata or calendar time."}
+  ],
+  "commands": [
+    "C:\\work\\bio\\biolang\\target\\debug\\bl.exe test tests\\validate.bl",
+    "C:\\work\\bio\\biolang\\target\\debug\\bl.exe notebook lesson.bln --plot none"
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "schema": 1,
+  "id": "bdsr-rnaseq",
+  "title": "Count-based differential expression analysis of RNA-seq data",
+  "summary": "A complete BioLang companion to BDSR chapter 12: count matrices, all fourteen exercises, the intentionally naive fold-change workflow, independently validated historical DESeq2 results, count plots, MA and volcano plots, VST, PCA, clustered heatmaps, reproducibility, and pathway-analysis inputs.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 96,
+  "attribution": "ATTRIBUTION.md",
+  "source": {
+    "title": "Stephen D. Turner, Ph.D. — Biological Data Science with R: Count-Based Differential Expression Analysis of RNA-seq Data",
+    "url": "https://bdsr.stephenturner.us/rnaseq.html",
+    "repository": "https://github.com/stephenturner/bdsr",
+    "copyright": "© 2019 Stephen D. Turner, Ph.D.",
+    "licence": "CC BY-NC 4.0",
+    "licenceUrl": "https://github.com/stephenturner/bdsr/blob/main/LICENSE",
+    "note": "Independent OriClabs BioLang companion under MIT. It follows the public topic and exercise order but does not copy or relicense upstream prose, R code, tables, or figures. Dataset and generated oracle files retain their separate terms and attribution. This is not an official BDSR publication or endorsement."
+  },
+  "series": {
+    "id": "biological-data-science-with-r",
+    "title": "Biological Data Science with R",
+    "url": "https://bdsr.stephenturner.us/",
+    "order": 12,
+    "chapter": "Chapter 12 · Count-based differential expression analysis of RNA-seq data"
+  },
+  "datasets": [
+    {
+      "id": "airway-counts",
+      "title": "Airway dexamethasone length-scaled gene counts",
+      "path": "airway_scaledcounts.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/transcriptomics/bdsr-rnaseq/airway_scaledcounts.csv",
+      "bytes": 2102792,
+      "sha256": "4d34df15affa22fa5d5539874e148378ea18db1c9d731d175ef1b9f73cbc2927",
+      "mediaType": "text/csv",
+      "source": "BDSR chapter 12 teaching data derived from the airway RNA-seq experiment, GEO GSE52778",
+      "citation": "Himes et al. (2014), RNA-Seq Transcriptome Profiling Identifies CRISPLD2 as a Glucocorticoid Responsive Gene, PLoS ONE 9:e99625; BDSR chapter 12.",
+      "rights": "BDSR-distributed teaching artifact under CC BY-NC 4.0; underlying airway experiment data are distributed by Bioconductor airway under LGPL. Excluded from the repository MIT grant."
+    },
+    {
+      "id": "airway-metadata",
+      "title": "Airway sample metadata",
+      "path": "airway_metadata.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/transcriptomics/bdsr-rnaseq/airway_metadata.csv",
+      "bytes": 325,
+      "sha256": "05bd7e78a0ca5b2a2f60ec715296381ca19f31a8c5a51e70c9f60583fa9fcf97",
+      "mediaType": "text/csv",
+      "source": "BDSR chapter 12 teaching metadata derived from Bioconductor airway",
+      "citation": "Himes et al. (2014), PLoS ONE 9:e99625; Bioconductor airway; BDSR chapter 12.",
+      "rights": "BDSR-distributed teaching artifact under CC BY-NC 4.0; excluded from the repository MIT grant."
+    },
+    {
+      "id": "grch38-annotation",
+      "title": "Historical GRCh38 Ensembl annotation table",
+      "path": "annotables_grch38.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/transcriptomics/bdsr-rnaseq/annotables_grch38.csv",
+      "bytes": 7725530,
+      "sha256": "248f41f197e6af3e992ce65c6c64517d256560d2b5ef51e7e88abf07f9866e5b",
+      "mediaType": "text/csv",
+      "source": "Historical annotables GRCh38 table supplied with BDSR chapter 12",
+      "citation": "Turner S, annotables: Ensembl Annotation Tables, https://github.com/stephenturner/annotables.",
+      "rights": "GPL-3 data artifact from annotables; excluded from the repository MIT grant."
+    },
+    {
+      "id": "deseq2-results",
+      "title": "Pinned historical DESeq2 per-gene results",
+      "path": "deseq2_results.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/transcriptomics/bdsr-rnaseq/deseq2_results.csv",
+      "bytes": 3369353,
+      "sha256": "1becdb90edbfc480bbc6d9719c81ee6d221a9a4ad7fe4454856c48fdec2ddaf3",
+      "mediaType": "text/csv",
+      "source": "Independently regenerated from the pinned airway inputs with R 4.5.2 and DESeq2 1.44.0",
+      "citation": "Love, Huber and Anders (2014), Moderated estimation of fold change and dispersion for RNA-seq data with DESeq2, Genome Biology 15:550.",
+      "rights": "Generated numeric oracle artifact. Underlying data attribution and terms remain applicable; DESeq2 software is not redistributed or linked. Excluded from the repository MIT grant."
+    },
+    {
+      "id": "crispld2-counts",
+      "title": "DESeq2-normalised CRISPLD2 teaching counts",
+      "path": "crispld2_counts.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/transcriptomics/bdsr-rnaseq/crispld2_counts.csv",
+      "bytes": 351,
+      "sha256": "723ad12390026506228db92a326db92153dd52ee6077cc2d526304df6ac41ef2",
+      "mediaType": "text/csv",
+      "source": "Independently regenerated DESeq2 plotCounts data for ENSG00000103196",
+      "citation": "Himes et al. (2014); Love, Huber and Anders (2014).",
+      "rights": "Generated numeric oracle artifact; underlying data terms remain applicable. Excluded from the repository MIT grant."
+    },
+    {
+      "id": "airway-pca",
+      "title": "DESeq2 VST PCA scores",
+      "path": "pca.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/transcriptomics/bdsr-rnaseq/pca.csv",
+      "bytes": 500,
+      "sha256": "5223a1e414fbe4fb3005aee8f5a701072abf696d89bd96b49deb4defa90f4888",
+      "mediaType": "text/csv",
+      "source": "Independently regenerated from DESeq2 VST and plotPCA",
+      "citation": "Love, Huber and Anders (2014).",
+      "rights": "Generated numeric oracle artifact; underlying data terms remain applicable. Excluded from the repository MIT grant."
+    },
+    {
+      "id": "airway-heatmap",
+      "title": "Top-25 row-scaled DESeq2 VST matrix",
+      "path": "heatmap_top25.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/transcriptomics/bdsr-rnaseq/heatmap_top25.csv",
+      "bytes": 3951,
+      "sha256": "285dd21da994140d1a9625d827834f00984612ee25ab9f47a4e3397b24d20f89",
+      "mediaType": "text/csv",
+      "source": "Independently regenerated top-25 DESeq2 VST matrix in the source figure's displayed order",
+      "citation": "Love, Huber and Anders (2014); BDSR chapter 12 source figure used only as an ordering oracle.",
+      "rights": "Generated numeric oracle artifact; underlying data terms remain applicable. Excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "find genes changed by a treatment",
+      "compare replicated RNA-seq conditions",
+      "normalise unequal sequencing depth",
+      "control false discoveries across thousands of genes",
+      "inspect RNA-seq sample structure and outliers",
+      "prepare ranked genes for pathway analysis"
+    ],
+    "methods": [
+      "negative binomial model", "DESeq2", "median-of-ratios size factors",
+      "dispersion estimation", "Wald test", "Benjamini-Hochberg adjustment",
+      "independent filtering", "variance stabilising transformation",
+      "principal component analysis", "Pearson hierarchical clustering"
+    ],
+    "plots": [
+      "RNA-seq mean-count scatter plot", "log-log scatter plot", "box plot",
+      "MA plot", "volcano plot", "PCA plot", "clustered heatmap", "dendrogram"
+    ],
+    "terms": [
+      "RNA-seq", "count matrix", "sample metadata", "dexamethasone", "airway",
+      "Ensembl gene ID", "gene annotation", "log2 fold change", "baseMean",
+      "adjusted p-value", "false discovery rate", "VST", "CRISPLD2",
+      "over-representation analysis", "ranked enrichment", "pathway analysis"
+    ],
+    "aliases": [
+      "differential gene expression", "DGE", "differential expression",
+      "DE analysis", "RNA sequencing", "DEG analysis", "gene expression workflow"
+    ],
+    "functions": [
+      "read_csv", "table", "filter", "arrange", "inner_join", "select",
+      "stats_relationship_plot", "stats_group_plot", "pca_plot", "clustered_heatmap"
+    ]
+  },
+  "tags": ["RNA-seq", "DESeq2", "differential expression", "PCA", "heatmap", "pathway analysis"]
+}

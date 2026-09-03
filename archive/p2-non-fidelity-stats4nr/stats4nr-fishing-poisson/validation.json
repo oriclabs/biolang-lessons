@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "reference": "https://stats4nr.com/count-regression-models#case-study-predicting-fishing-success",
+  "checked": "2026-09-03",
+  "referenceRuntime": "R 4.6.1 stats::glm and the published chapter PNG",
+  "status": "rejected - BioLang Poisson GLM did not converge or match the source model",
+  "metrics": [
+    {"name": "rows", "reference": 250, "biolang": 250, "status": "exact"},
+    {"name": "mean fish count", "reference": 3.296, "biolang": 3.296, "status": "exact"},
+    {"name": "sample variance", "reference": 135.373879518072, "biolang": 135.373879518072, "status": "exact within 1e-9"},
+    {"name": "Poisson coefficients", "reference": [-1.981827, 1.091262, -1.689957, 0.9309359], "status": "rejected - BioLang result did not match"},
+    {"name": "Poisson residual deviance", "reference": 1337.08, "status": "rejected - unavailable from a converged matching fit"},
+    {"name": "Poisson AIC", "reference": 1682.145, "status": "rejected - BioLang returned a non-converged fit with an approximately 2.1e33 AIC"}
+  ],
+  "figures": [
+    {"file": "figures/source/figure-13.2-histogram.png", "sourceUrl": "https://stats4nr.com/stats_4_nr_files/figure-html/unnamed-chunk-305-1.png", "sha256": "e6ba873fdb3a5b061aadd103df15385963385dfd5e0d9f65088a7a951af91716", "bytes": 14698, "status": "byte-for-byte published source copy"}
+  ]
+}

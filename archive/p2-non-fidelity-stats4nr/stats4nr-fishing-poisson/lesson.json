@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "id": "stats4nr-fishing-poisson",
+  "title": "Statistics in Natural Resources: Fishing Count Regression",
+  "summary": "A one-to-one port of the standard Poisson fishing-success example from section 13.2.1, using the exact source data and published histogram.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 24,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Statistics in Natural Resources: Applications with R - Chapter 13",
+    "url": "https://stats4nr.com/count-regression-models",
+    "repository": "https://github.com/mbrussell/stats4nr",
+    "revision": "stats4nr data commit 69da7a618857d63ffbe56ba5d3b56e5b836ddbb9; chapter checked 2026-09-03",
+    "copyright": "Matthew Russell",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "The lesson is limited to the source's standard Poisson workflow. Exact source data and the exact published histogram are included; no synthetic inputs or replacement plots are used."
+  },
+  "series": {
+    "id": "statistics-in-natural-resources",
+    "title": "Statistics in Natural Resources: Applications with R",
+    "url": "https://stats4nr.com/",
+    "order": 13,
+    "chapter": "Chapter 13 - Standard Poisson fishing model"
+  },
+  "datasets": [
+    {
+      "id": "stats4nr-fishing-rda",
+      "title": "Exact stats4nr fishing R data object",
+      "path": "data/fishing.rda",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/ecology/stats4nr-fishing-poisson/data/fishing.rda",
+      "bytes": 948,
+      "sha256": "465bb293dfd9bf75643dfcfaf5d6cbe349d62dd6efba4b44a43d3c5fb3b2a42a",
+      "source": "https://github.com/mbrussell/stats4nr/blob/69da7a618857d63ffbe56ba5d3b56e5b836ddbb9/data/fishing.rda",
+      "citation": "Matthew Russell, stats4nr package",
+      "rights": "CC0 as declared by the stats4nr package DESCRIPTION."
+    },
+    {
+      "id": "stats4nr-fishing-csv",
+      "title": "Lossless CSV export of the exact fishing object",
+      "path": "data/fishing.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/ecology/stats4nr-fishing-poisson/data/fishing.csv",
+      "bytes": 3325,
+      "sha256": "7a6b65cb808e0c4263b94bf29e7814bdf8ffe1546e763c59be16c95e495a3ae3",
+      "source": "Mechanical write.csv export from the pinned fishing.rda using R 4.6.1",
+      "citation": "Matthew Russell, stats4nr package",
+      "rights": "CC0 source data; conversion adds no original content."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["model the number of fish caught", "fit a Poisson count regression", "detect overdispersion in ecological count data"],
+    "methods": ["Poisson generalized linear model", "log link", "rate-ratio interpretation", "mean-variance dispersion check"],
+    "plots": ["histogram of fish counts"],
+    "terms": ["count data", "Poisson regression", "overdispersion", "AIC", "rate ratio", "fishing success"],
+    "aliases": ["stats4nr chapter 13", "natural resources count model", "fishing Poisson example"],
+    "functions": ["read_csv", "mean", "variance", "glm", "exp"]
+  },
+  "tags": ["ecology", "count regression", "Poisson", "CC BY-NC-SA"]
+}
+

@@ -1,0 +1,11 @@
+fn test_stats4nr_fishing_dispersion() {
+    let fishing = read_csv("../data/fishing.csv")
+    let catches = fishing |> col("count")
+    let zeros = fishing |> filter(|row| row.count == 0)
+    assert nrow(fishing) == 250, "source rows"
+    assert ncol(fishing) == 6, "source columns"
+    assert abs(mean(catches) - 3.296) < 0.000000001, "published mean"
+    assert abs(variance(catches) - 135.373879518072) < 0.000000001, "published sample variance"
+    assert nrow(zeros) == 142, "zero-catch groups"
+    assert abs(nrow(zeros) * 100.0 / nrow(fishing) - 56.8) < 0.000000001, "published zero percentage"
+}

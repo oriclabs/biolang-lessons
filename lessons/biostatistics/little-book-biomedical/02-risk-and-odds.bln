@@ -68,3 +68,7 @@ fisher_exact(a, b, c, d, {confidence: 0.95})
 ## What to report
 
 Report the group risks when the design permits them, the effect estimate, its interval, the group counts, and the study design. “The interval excludes 1” is incomplete without the effect's direction and practical size.
+
+***
+
+[← Previous: Start with the study design](#lesson-section=biomedical-01-study-design) · [Next: Evidence of association →](#lesson-section=biomedical-03-association)

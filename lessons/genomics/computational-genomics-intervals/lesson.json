@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "id": "computational-genomics-intervals",
+  "title": "Computational Genomics with R: Genomic Intervals",
+  "summary": "A source-faithful BioLang port of the opening GRanges construction examples and exercises 1-2 from Chapter 6.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 16,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Computational Genomics with R - Operations on Genomic Intervals and Genome Arithmetic",
+    "url": "https://compgenomr.github.io/book/operations-on-genomic-intervals-and-genome-arithmetic.html",
+    "repository": "https://github.com/compgenomr/book",
+    "revision": "212119889edfeaebc7449e0aeb4fce29a574011d",
+    "copyright": "Altuna Akalin",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "Translated from R/GenomicRanges to BioLang for non-commercial use. Source values, order, and exercises are preserved; syntax and explanatory wording were adapted."
+  },
+  "series": {
+    "id": "computational-genomics-with-r",
+    "title": "Computational Genomics with R",
+    "url": "https://compgenomr.github.io/book/",
+    "order": 6,
+    "chapter": "Chapter 6 - Genomic intervals, construction and exercises 1-2"
+  },
+  "datasets": [],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["represent genomic intervals", "inspect interval coordinates", "filter intervals by chromosome or strand"],
+    "methods": ["genomic interval construction", "closed-coordinate width calculation", "interval filtering"],
+    "plots": [],
+    "terms": ["genomic interval", "GRanges", "IRanges", "chromosome", "strand", "coordinate system"],
+    "aliases": ["genome arithmetic", "genomic ranges", "GRanges exercises"],
+    "functions": ["table", "head", "map", "filter"]
+  },
+  "tags": ["genomics", "intervals", "GRanges", "CC BY-NC-SA"]
+}

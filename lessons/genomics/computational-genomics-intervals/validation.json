@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "reference": "https://github.com/compgenomr/book/blob/212119889edfeaebc7449e0aeb4fce29a574011d/06-genomicIntervals.Rmd",
+  "checked": "2026-09-03",
+  "status": "verified",
+  "scope": "createGR, createGRwMetadata, and exercises 1-2",
+  "metrics": [
+    {"name": "chapter example rows", "expected": 3, "biolang": 3, "status": "exact"},
+    {"name": "exercise widths", "expected": [301, 401, 31], "biolang": [301, 401, 31], "status": "exact under the source one-based closed convention"},
+    {"name": "plus-strand exercise rows", "expected": 2, "biolang": 2, "status": "exact"},
+    {"name": "chr1 exercise rows", "expected": 2, "biolang": 2, "status": "exact"}
+  ],
+  "figures": {"expected": 0, "biolang": 0, "status": "exact; selected source scope contains no figure"}
+}

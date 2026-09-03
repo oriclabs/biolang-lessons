@@ -1,0 +1,132 @@
+fn close(observed, expected, tolerance) {
+    abs(observed - expected) <= tolerance
+}
+
+fn test_bdsr_rnaseq_reference_parity() {
+    let counts = read_csv("airway_scaledcounts.csv")
+    let metadata = read_csv("airway_metadata.csv")
+    let annotation = read_csv("annotables_grch38.csv")
+    let genes = range(0, nrow(counts))
+    let s9508 = col(counts, "SRR1039508")
+    let s9509 = col(counts, "SRR1039509")
+    let s9512 = col(counts, "SRR1039512")
+    let s9513 = col(counts, "SRR1039513")
+    let s9516 = col(counts, "SRR1039516")
+    let s9517 = col(counts, "SRR1039517")
+    let s9520 = col(counts, "SRR1039520")
+    let s9521 = col(counts, "SRR1039521")
+
+    assert nrow(counts) == 38694 && ncol(counts) == 9,
+        "count matrix dimensions must match the pinned BDSR input"
+    assert nrow(metadata) == 8 && ncol(metadata) == 4,
+        "metadata dimensions must match the pinned BDSR input"
+    assert colnames(counts) |> filter(|name| name != "ensgene") == col(metadata, "id"),
+        "count columns and metadata rows must remain aligned"
+
+    let control = genes |> map(|i|
+        (s9508[i] + s9512[i] + s9516[i] + s9520[i]) / 4.0
+    )
+    let treated = genes |> map(|i|
+        (s9509[i] + s9513[i] + s9517[i] + s9521[i]) / 4.0
+    )
+    assert close(sum(control), 23005323.75, 1e-8),
+        "control total must match the independently recomputed R reference"
+    assert close(sum(treated), 22196523.75, 1e-8),
+        "treated total must match the independently recomputed R reference"
+
+    let positive = genes |> filter(|i| control[i] > 0 and treated[i] > 0)
+    let log2fc = positive |> map(|i| log2(treated[i] / control[i]))
+    assert len(positive) == 21817, "positive mean-count genes must match R"
+    assert log2fc |> filter(|value| value > 2) |> len() == 250,
+        "naive up-regulated count must match R"
+    assert log2fc |> filter(|value| value < -2) |> len() == 367,
+        "naive down-regulated count must match R"
+
+    let raw = read_csv("deseq2_results.csv")
+    let joined = inner_join(raw, annotation, "ensgene")
+    let significant = joined |> filter(|row| row.padj != nil and row.padj < 0.05)
+    assert nrow(raw) == 38694, "raw DESeq2 oracle must retain one row per gene"
+    assert nrow(joined) == 38957,
+        "historical annotation duplicates must reproduce the chapter's expanded join"
+    assert significant |> nrow() == 2186,
+        "joined significant-row count must reproduce the rendered chapter"
+    assert raw |> filter(|row| row.padj != nil and row.padj < 0.05) |> nrow() == 2181,
+        "raw significant Ensembl count must match historical DESeq2"
+    assert significant |> col("ensgene") |> unique() |> len() == 2174,
+        "unique annotated significant Ensembl count must stay explicit"
+    assert joined |> filter(|row| row.padj == nil) |> nrow() == 23665,
+        "independent-filtering NA count must match historical DESeq2"
+
+    let top = raw |> filter(|row| row.padj != nil) |> arrange("padj", "asc") |> first()
+    assert top.ensgene == "ENSG00000152583", "top DESeq2 gene must match R"
+    assert close(top.baseMean, 954.770931565544, 1e-9), "top-gene baseMean must match R"
+    assert close(top.log2FoldChange, 4.36835864527065, 1e-12),
+        "top-gene log2 fold change must match R"
+
+    let crispld2 = read_csv("crispld2_counts.csv")
+    let expected_counts = [
+        774.50016617496885, 6258.791524557425,
+        1100.2740751330823, 6093.0323688547587,
+        736.94830378604127, 2742.1907599335968,
+        842.54522160171393, 6224.99229193666
+    ]
+    assert range(0, 8) |> all(|i| close(col(crispld2, "count")[i], expected_counts[i], 1e-8)),
+        "CRISPLD2 normalised counts must match DESeq2 plotCounts"
+
+    let pca = read_csv("pca.csv")
+    assert close(col(pca, "PC1")[0], -17.607922354087183, 1e-10),
+        "first PCA coordinate must match DESeq2 plotPCA"
+    assert close(col(pca, "PC2")[5], 21.00803416135815, 1e-10),
+        "PCA coordinate range must match DESeq2 plotPCA"
+    let pca_svg = pca_plot(pca, {
+        precomputed: true, pc1_col: "PC1", pc2_col: "PC2",
+        group_col: "dex", palette: "ggplot", legend_title: "group",
+        pc1_variance_percent: 32.336510191572735,
+        pc2_variance_percent: 23.592057582681505,
+        x_label: "PC1: 32% variance", y_label: "PC2: 24% variance",
+        format: "svg"
+    })
+    assert contains(pca_svg, "#f8766d") && contains(pca_svg, "#00bfc4"),
+        "PCA must use the source ggplot treatment palette"
+    assert contains(pca_svg, ">group</text>"),
+        "PCA must preserve the source legend title"
+
+    let heat = read_csv("heatmap_top25.csv")
+    assert nrow(heat) == 25 && ncol(heat) == 9,
+        "heatmap oracle must retain 25 genes and eight samples"
+    assert col(heat, "gene")[0] == "ZBTB16" && col(heat, "gene")[24] == "KCTD12",
+        "heatmap row labels must match the source display"
+    let heat_svg = clustered_heatmap(heat, {
+        order: "hierarchical", distance: "pearson", linkage: "complete",
+        dendrogram: "both", colors: "green-black-red", center: 0,
+        row_order: col(heat, "gene"),
+        column_order: ["SRR1039520", "SRR1039512", "SRR1039508", "SRR1039516", "SRR1039517", "SRR1039509", "SRR1039513", "SRR1039521"],
+        column_annotations: {
+            dex: ["control", "control", "control", "control", "treated", "treated", "treated", "treated"],
+            celltype: ["N061011", "N052611", "N61311", "N080611", "N080611", "N61311", "N052611", "N061011"]
+        },
+        annotation_order: ["dex", "celltype"],
+        annotation_colors: {
+            dex: {control: "#9999FF", treated: "#FF66FF"},
+            celltype: {N052611: "#33AAFF", N061011: "#CC66FF", N080611: "#00CC44", N61311: "#FF9922"}
+        },
+        theme: "publication", format: "svg"
+    })
+    assert contains(heat_svg, "data-distance=\"pearson\""),
+        "heatmap must record Pearson distance in its provenance"
+    assert contains(heat_svg, "data-row-order=\"0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24\"") &&
+        contains(heat_svg, "data-column-order=\"0,1,2,3,4,5,6,7\""),
+        "heatmap leaf orientation must match the rendered source figure"
+    assert contains(heat_svg, "#000000"),
+        "source-matched heatmap palette must include a black centre"
+    assert contains(heat_svg, "data-biolang-column-annotations=\"dex,celltype\"") &&
+        contains(heat_svg, "#9999FF") && contains(heat_svg, "#FF9922"),
+        "heatmap must retain source treatment and cell-line annotation strips"
+
+    {
+        genes: nrow(raw),
+        annotated_rows: nrow(joined),
+        significant_rows: nrow(significant),
+        unique_significant_annotated_genes: significant |> col("ensgene") |> unique() |> len()
+    }
+}

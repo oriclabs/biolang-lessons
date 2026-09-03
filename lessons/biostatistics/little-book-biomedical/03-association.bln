@@ -44,3 +44,7 @@ sparse
 - Adjusted association: stratified or regression methods, not a single pooled table.
 
 A small p-value means the observed table is hard to reconcile with the particular null model. It does not tell you why the association exists. Always show an RR or OR with an interval beside the test.
+
+***
+
+[← Previous: Risk, relative risk, and odds ratios](#lesson-section=biomedical-02-risk-and-odds) · [Next: Stratification and confounding →](#lesson-section=biomedical-04-stratification)

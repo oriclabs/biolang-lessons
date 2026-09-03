@@ -1,0 +1,11 @@
+fn test_computational_genomics_intervals() {
+    let exercise = table([
+        {chrom: "chr1", start: 10000, end: 10300, strand: "+", score: 10},
+        {chrom: "chr1", start: 11100, end: 11500, strand: "-", score: 20},
+        {chrom: "chr2", start: 20000, end: 20030, strand: "+", score: 15}
+    ])
+    let widths = exercise |> map(|row| row.end - row.start + 1)
+    assert widths == [301, 401, 31], "source exercise widths must remain exact"
+    assert nrow(exercise |> filter(|row| row.strand == "+")) == 2, "plus strand count"
+    assert nrow(exercise |> filter(|row| row.chrom == "chr1")) == 2, "chr1 count"
+}

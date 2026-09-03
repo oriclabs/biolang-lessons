@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "status": "validated",
+  "reference": {
+    "source": "A Little Book of R for Bioinformatics exercise answers",
+    "url": "https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/src/chapter_answers.html",
+    "inputs": ["NC_001477.1", "NC_001542.1"]
+  },
+  "checks": [
+    { "name": "Exercise 1 · forward-strand Dengue ORFs", "expected": 116, "status": "exact" },
+    { "name": "Exercise 3 · protein from the rightmost Dengue ORF", "expected": "MEWCC", "status": "exact" },
+    { "name": "Exercise 4 · Dengue ORFs at least 30 bases", "expected": 62, "status": "exact" },
+    { "name": "Exercise 5 · Dengue ORFs longer than 248 bases", "expected": 2, "status": "exact" },
+    { "name": "Exercise 7 · forward-strand rabies ORFs", "expected": 111, "status": "exact" },
+    { "name": "Exercise 8 · 99% length threshold", "expected": 260, "status": "source-reported-unseeded",
+      "note": "The source did not publish the seed or generated sequences. The exact source figure and reported value are retained; no replacement data are generated." },
+    { "name": "Exercise 9 · rabies ORFs above the threshold", "expected": 6, "status": "exact" },
+    { "name": "source figures", "status": "byte-for-byte source copies", "count": 4,
+      "sha256": ["09171955126fd3bcf182f79a8add482cbd2c75ad23db0749bbd3cc6413f40220", "d424f808ba78340c79ea6d526079faf53f92b9a370d0aa518c156a2274288a4b", "7dace60f1d47b3022135edb3840087877b9ca89e60a881bfa78403ab279cd8ce", "1b7c087137327bcd77d27127464ea069a1f5ce79234a346d46441fab6e0012d3"] }
+  ],
+  "commands": [
+    "bl notebook 07-computational-gene-finding.bln"
+  ]
+}

@@ -1,0 +1,19 @@
+# Run from the lesson directory with the current BioLang CLI.
+let counts = read_csv("airway_scaledcounts.csv")
+let metadata = read_csv("airway_metadata.csv")
+let annotation = read_csv("annotables_grch38.csv")
+let results = read_csv("deseq2_results.csv")
+let joined = inner_join(results, annotation, "ensgene")
+let significant = joined |> filter(|row| row.padj != nil and row.padj < 0.05)
+
+{
+    count_dimensions: [nrow(counts), ncol(counts)],
+    metadata_dimensions: [nrow(metadata), ncol(metadata)],
+    aligned: colnames(counts) |> filter(|name| name != "ensgene") == col(metadata, "id"),
+    result_rows: nrow(results),
+    annotated_result_rows: nrow(joined),
+    significant_annotated_rows: nrow(significant),
+    raw_significant_genes: results |> filter(|row| row.padj != nil and row.padj < 0.05) |> nrow(),
+    unique_significant_annotated_genes: significant |> col("ensgene") |> unique() |> len(),
+    missing_adjusted_p_annotated: joined |> filter(|row| row.padj == nil) |> nrow()
+}

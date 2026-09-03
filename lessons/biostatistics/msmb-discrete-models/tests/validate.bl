@@ -1,0 +1,8 @@
+fn test_msmb_discrete_models() {
+    let poisson = range(0, 13) |> map(|k| dpois(k, 5.0))
+    let binomial = range(0, 16) |> map(|k| dbinom(k, 15, 0.3))
+    assert abs(dpois(3, 5.0) - 0.14037389581428056) < 1e-15, "Poisson point mass"
+    assert abs(sum(poisson) - 0.997981148372563) < 1e-11, "displayed Poisson mass"
+    assert abs(sum(binomial) - 1.0) < 1e-11, "binomial mass"
+    assert binomial[4] > binomial[3] && binomial[4] > binomial[5], "mode at four"
+}

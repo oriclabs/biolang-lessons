@@ -1,0 +1,87 @@
+# NHANES exploratory data analysis
+
+This is a bounded one-to-one port of the descriptive-statistics and exploratory-data-analysis sequence in [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Select **Prepare all** first: Studio downloads the two exact source-hosted files and verifies their sizes and SHA-256 checksums.
+
+## Import the published teaching extract
+
+```biolang
+let nh = read_csv("nhanes.csv")
+let dictionary = read_csv("nhanes_dd.csv")
+{people: nrow(nh), variables: ncol(nh), dictionary_rows: nrow(dictionary)}
+```
+
+The source uses the 5,000-person, 32-variable resampled NHANES teaching table. It is appropriate for reproducing the lesson, but it is not a replacement for survey-weighted analysis of the original NHANES sample.
+
+## Reproduce the source exercises
+
+```biolang
+let pulse = nh |> drop_null("Pulse") |> col("Pulse")
+let diastolic = nh |> drop_null("BPDia") |> col("BPDia")
+let age = nh |> col("Age")
+let income = nh |> drop_null("Income") |> col("Income")
+{
+    mean_pulse: mean(pulse),
+    diastolic_range: [summary(diastolic).min, summary(diastolic).max],
+    age_quartiles: [quantile(age, 0.25), quantile(age, 0.5), quantile(age, 0.75)],
+    income_variance: variance(income),
+    income_standard_deviation: stdev(income)
+}
+```
+
+These are the same calculations and the same source table used by the chapter exercises.
+
+## Histograms
+
+The next four PNGs are the actual rendered files published by the source—not BioLang approximations.
+
+### BMI, 30 bins
+
+![Published BDSR BMI histogram](figures/source/histograms-1.png)
+
+### Weight in kilograms, 30 bins
+
+![Published BDSR weight histogram](figures/source/histograms-2.png)
+
+### Weight converted to pounds, 80 bins
+
+![Published BDSR weight-in-pounds histogram](figures/source/histograms-3.png)
+
+### Age, 30 bins
+
+![Published BDSR age histogram](figures/source/histograms-4.png)
+
+## Height and weight
+
+The source first plots all available observations and colours points by gender.
+
+![Published BDSR height-and-weight scatter plot](figures/source/scatter-height-weight.png)
+
+It then filters to `Age >= 18` and adds one linear-model smooth per gender.
+
+![Published BDSR adult height-and-weight model plot](figures/source/scatter-adult-height-weight.png)
+
+```biolang
+let everyone_complete = nh |> drop_null("Height") |> drop_null("Weight") |> drop_null("Gender")
+let adults_complete = nh |> filter(|row| row.Age >= 18) |> drop_null("Height") |> drop_null("Weight") |> drop_null("Gender")
+{
+    complete_height_weight_gender: nrow(everyone_complete),
+    complete_adult_height_weight_gender: nrow(adults_complete)
+}
+```
+
+## Fidelity checks
+
+```biolang
+assert nrow(nh) == 5000, "exact source row count"
+assert ncol(nh) == 32, "exact source column count"
+assert abs(mean(pulse) - 73.63382) < 0.00001, "source pulse mean"
+assert summary(diastolic).min == 0, "source minimum diastolic pressure"
+assert summary(diastolic).max == 116, "source maximum diastolic pressure"
+assert quantile(age, 0.25) == 17, "source lower age quartile"
+assert quantile(age, 0.5) == 36, "source median age"
+assert quantile(age, 0.75) == 54, "source upper age quartile"
+assert nrow(everyone_complete) == 4834, "source complete-case count"
+assert nrow(adults_complete) == 3676, "source adult complete-case count"
+"Exact source data and published-figure checks passed."
+```
+

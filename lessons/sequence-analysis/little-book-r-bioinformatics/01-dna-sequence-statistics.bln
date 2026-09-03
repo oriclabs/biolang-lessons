@@ -1,0 +1,324 @@
+# A Little Book of R for Bioinformatics
+
+## Chapter 1 · DNA sequence statistics
+
+This BioLang adaptation follows the first chapter of Avril Coghlan's *A Little Book of R for Bioinformatics*. It uses the same versioned NCBI records and solves every end-of-chapter exercise. The original is licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/); details and changes are recorded in `ATTRIBUTION.md`.
+
+The sections now follow the source teaching order: packages, FASTA, sequence databases, retrieval, writing and reading files, sequence length, composition, GC content, DNA words, and exercises.
+
+You do not need to memorise syntax. The useful habit is to turn each biological question into a small operation: load a sequence, choose a region, count something, and check the denominator.
+
+## 1. Bioinformatics packages and their BioLang equivalents
+
+The source loads SeqinR and Biostrings as add-on R packages. BioLang exposes the equivalent sequence operations directly.
+
+| Question | Source R operation | BioLang operation |
+|---|---|---|
+| Read FASTA | `read.fasta()` | `read_fasta()` |
+| Sequence length | `length()` | `len()` |
+| Base composition | `table()` / `count()` | `base_counts()` |
+| GC fraction | `GC()` | `gc_content()` |
+| Complement | `comp()` | `complement()` |
+| Locate DNA words | `count()` | `kmer_index()` |
+
+In the CLI, `?gc_content` opens help for a particular function.
+
+## 2. FASTA: a label followed by a sequence
+
+A FASTA record has a header beginning with `>` and one or more sequence lines. The header identifies the record; the remaining letters are the biological sequence. Here the two records are pinned to accession versions so a future database revision cannot silently change the lesson.
+
+```biolang
+let dengue_record = first(read_fasta("data/NC_001477.1.fasta"))
+let leprae_record = first(read_fasta("data/NC_002677.1.fasta"))
+
+table({
+    accession: [dengue_record.id, leprae_record.id],
+    description: [dengue_record.description, leprae_record.description],
+    nucleotides: [dengue_record.length, leprae_record.length]
+})
+```
+
+**What to notice:** an accession without a version, such as `NC_001477`, names a record lineage. `NC_001477.1` identifies the exact sequence used here.
+
+## 3. The NCBI sequence database
+
+NCBI Nucleotide, the European ENA, and Japan's DDBJ exchange sequence records. An **accession** identifies a record family; its version suffix identifies an exact revision. This is why the prepared lesson records include `.1`.
+
+| Example | Versioned record | Role in the chapter |
+|---|---|---|
+| Dengue virus 1 | `NC_001477.1` | worked example |
+| *Mycobacterium leprae* TN | `NC_002677.1` | end-of-chapter exercises |
+
+## 4. Retrieving a sequence through the NCBI website
+
+The source illustrates NCBI with six screenshots. That website has changed since the chapter was published, so old button positions would now mislead learners. The durable flow is still the same:
+
+1. search NCBI Nucleotide for the accession;
+2. verify organism, record type, and accession version;
+3. choose the FASTA view or download;
+4. record the version with the analysis.
+
+Studio's **Prepare all** step performs the reproducible equivalent: it downloads the registered file and verifies its byte size and SHA-256 checksum before the notebook runs.
+
+### Original chapter screenshots
+
+The six images below are the exact screenshots embedded in the source chapter,
+not redraws. They document the historical NCBI interface and WordPad workflow;
+use the steps above for the current interface.
+
+![Original source screenshot: search NCBI for NC_001477](figures/source/P1_image0.png)
+
+![Original source screenshot: NCBI database results](figures/source/P1_image1.png)
+
+![Original source screenshot: open the Nucleotide result](figures/source/P1_image2.png)
+
+![Original source screenshot: the NC_001477 nucleotide record](figures/source/P1_image3.png)
+
+![Original source screenshot: export the record as FASTA](figures/source/P1_image4.png)
+
+![Original source screenshot: the downloaded FASTA in WordPad](figures/source/P1_image5.png)
+
+## 5. Retrieving sequence data in code
+
+The source builds a SeqinR helper that searches remote databases. A browser lesson should not make an unrecorded network request on every run. Preparation retrieves the exact external records once; analysis then stays local and repeatable.
+
+```biolang
+let prepared_records = table({
+    accession: [dengue_record.id, leprae_record.id],
+    description: [dengue_record.description, leprae_record.description],
+    nucleotides: [dengue_record.length, leprae_record.length]
+})
+prepared_records
+```
+
+## 6. Writing and reading FASTA
+
+The source writes the retrieved sequence to `den1.fasta` and reads it back. In Studio the prepared FASTA already is that saved interchange file. Native BioLang can use `write_fasta(records, path)`; the browser uses its download controls instead of writing arbitrary computer paths.
+
+The useful round-trip check is that the parsed record still has the intended header and length.
+
+```biolang
+{
+    fasta_header: ">" + dengue_record.id + " " + dengue_record.description,
+    first_50: subseq(dengue_record.seq, 0, 50),
+    first_50_length: len(subseq(dengue_record.seq, 0, 50))
+}
+```
+
+## 7. Work with a DNA value
+
+`read_fasta()` returns a table because one FASTA file may contain many records. Selecting the first row's `seq` field gives a typed DNA value. BioLang then prevents protein-only operations being accidentally applied to DNA.
+
+```biolang
+let dengue = dengue_record.seq
+let leprae = leprae_record.seq
+
+{
+    dengue_type: type(dengue),
+    first_50: subseq(dengue, 0, 50),
+    length: len(dengue)
+}
+```
+
+BioLang's `subseq(sequence, start, end)` uses a zero-based start and an end that is not included. Therefore `subseq(dengue, 0, 50)` contains exactly 50 bases. The biological position is one larger than the zero-based program index.
+
+## 8. Length of a DNA sequence
+
+```biolang
+len(dengue)
+```
+
+**Result:** 10,735 nucleotides, matching the source chapter.
+
+## 9. Base composition
+
+Base composition answers “how many A, C, G, and T letters occur?” It is a first quality check and a compact description of a genome, not an explanation of why the composition arose.
+
+```biolang
+let dengue_bases = base_counts(dengue)
+table({
+    base: ["A", "C", "G", "T"],
+    count: [dengue_bases.A, dengue_bases.C, dengue_bases.G, dengue_bases.T]
+})
+```
+
+## 10. GC content
+
+GC content is the fraction `(G + C) / sequence length`. A fraction of `0.4667` and a percentage of `46.67%` describe the same result. Always state which scale you report.
+
+```biolang
+let dengue_gc = gc_content(dengue)
+{
+    fraction: dengue_gc,
+    percent: 100 * dengue_gc,
+    hand_check: 1.0 * (dengue_bases.G + dengue_bases.C) / dengue_bases.total
+}
+```
+
+If a sequence contains ambiguous symbols, decide whether they belong in the denominator. Neither choice is universally right: including them describes the whole assembled record; excluding them describes only confidently called A/C/G/T positions.
+
+## 11. DNA words and direction
+
+A k-mer is a word of length `k`. Adjacent words overlap: `ATG` contains the 2-mers `AT` and `TG`. The table below counts directional words exactly as the original chapter does.
+
+```biolang
+fn selected_dinucleotide_counts(seq) {
+    let positions = kmer_index(seq, 2)
+    {CC: len(positions.CC), CG: len(positions.CG), GC: len(positions.GC)}
+}
+
+let dengue_words = kmer_index(dengue, 2)
+table({
+    word: ["AA", "AC", "AG", "AT", "CA", "CC", "CG", "CT", "GA", "GC", "GG", "GT", "TA", "TC", "TG", "TT"],
+    count: [
+        len(dengue_words.AA), len(dengue_words.AC), len(dengue_words.AG), len(dengue_words.AT),
+        len(dengue_words.CA), len(dengue_words.CC), len(dengue_words.CG), len(dengue_words.CT),
+        len(dengue_words.GA), len(dengue_words.GC), len(dengue_words.GG), len(dengue_words.GT),
+        len(dengue_words.TA), len(dengue_words.TC), len(dengue_words.TG), len(dengue_words.TT)
+    ]
+})
+```
+
+`kmer_count()` is excellent for many genomics workflows, but its default canonical representation groups a word with its reverse complement. This lesson uses `kmer_index()` because `CG` and `GC` must remain separate to answer the exercises exactly.
+
+# Exercises and worked solutions
+
+Try each question before expanding or running its solution step.
+
+## Exercise 1 · Last twenty Dengue nucleotides
+
+What are the last 20 nucleotides of `NC_001477.1`?
+
+<!-- bl:step title="Solution 1 · Last twenty nucleotides" -->
+
+The final 20 bases start at `length - 20`. Omitting the end argument continues to the end of the sequence.
+
+```biolang
+let exercise_1 = subseq(dengue, len(dengue) - 20)
+exercise_1
+```
+
+**Answer:** `CTGTTGAATCAACAGGTTCT`.
+
+<!-- /bl:step -->
+
+## Exercise 2 · *M. leprae* genome length
+
+How many nucleotides are in `NC_002677.1`?
+
+<!-- bl:step title="Solution 2 · Genome length" -->
+
+```biolang
+let exercise_2 = len(leprae)
+exercise_2
+```
+
+**Answer:** 3,268,203 nucleotides.
+
+<!-- /bl:step -->
+
+## Exercise 3 · Every base symbol
+
+Count A, C, G, T, and any ambiguous symbols in the *M. leprae* record.
+
+<!-- bl:step title="Solution 3 · Base composition" -->
+
+```biolang
+let leprae_bases = base_counts(leprae)
+table({
+    symbol: ["A", "C", "G", "T", "N"],
+    count: [leprae_bases.A, leprae_bases.C, leprae_bases.G, leprae_bases.T, leprae_bases.N]
+})
+```
+
+**Answer:** A 687,041; C 938,713; G 950,202; T 692,247; N 0. The four counts sum to the full sequence length, so this record contains no ambiguous symbols.
+
+<!-- /bl:step -->
+
+## Exercise 4 · GC with two denominators
+
+Calculate GC content (i) using every position and (ii) after excluding non-A/C/G/T positions.
+
+<!-- bl:step title="Solution 4 · GC denominators" -->
+
+```biolang
+let called_bases = leprae_bases.A + leprae_bases.C + leprae_bases.G + leprae_bases.T
+let gc_all_positions = 1.0 * (leprae_bases.G + leprae_bases.C) / leprae_bases.total
+let gc_called_positions = 1.0 * (leprae_bases.G + leprae_bases.C) / called_bases
+{
+    including_ambiguous_positions: gc_all_positions,
+    excluding_ambiguous_positions: gc_called_positions,
+    difference: gc_called_positions - gc_all_positions
+}
+```
+
+**Answer:** both fractions are `0.5779674641` (about 57.80%) because there are no ambiguous positions in this versioned record.
+
+<!-- /bl:step -->
+
+## Exercise 5 · Complement composition
+
+Count the four bases after complementing the genome. Predict the result before running it.
+
+<!-- bl:step title="Solution 5 · Complement counts" -->
+
+```biolang
+let complement_bases = base_counts(complement(leprae))
+table({
+    base: ["A", "C", "G", "T"],
+    original: [leprae_bases.A, leprae_bases.C, leprae_bases.G, leprae_bases.T],
+    complement: [complement_bases.A, complement_bases.C, complement_bases.G, complement_bases.T]
+})
+```
+
+**Answer:** A 692,247; C 950,202; G 938,713; T 687,041. Complementing swaps A with T and C with G; it does not reverse their order.
+
+<!-- /bl:step -->
+
+## Exercise 6 · Three directional dinucleotides
+
+How often do `CC`, `CG`, and `GC` occur in the full *M. leprae* genome?
+
+<!-- bl:step title="Solution 6 · Full-genome words" -->
+
+```biolang
+let full_dinucleotides = selected_dinucleotide_counts(leprae)
+full_dinucleotides
+```
+
+**Answer:** CC 236,971; CG 306,986; GC 293,261.
+
+<!-- /bl:step -->
+
+## Exercise 7 · First and last 1,000 bases
+
+Count the same words in the first and last 1,000 nucleotides. Also prove that each selected region has length 1,000.
+
+<!-- bl:step title="Solution 7 · Compare the genome ends" -->
+
+```biolang
+let leprae_first_1000 = subseq(leprae, 0, 1000)
+let leprae_last_1000 = subseq(leprae, len(leprae) - 1000)
+let first_counts = selected_dinucleotide_counts(leprae_first_1000)
+let last_counts = selected_dinucleotide_counts(leprae_last_1000)
+
+table({
+    region: ["first 1,000", "last 1,000"],
+    length: [len(leprae_first_1000), len(leprae_last_1000)],
+    CC: [first_counts.CC, last_counts.CC],
+    CG: [first_counts.CG, last_counts.CG],
+    GC: [first_counts.GC, last_counts.GC]
+})
+```
+
+**Answer:** first 1,000: CC 82, CG 92, GC 63. Last 1,000: CC 81, CG 87, GC 75. Each region contains 999 overlapping dinucleotide positions.
+
+<!-- /bl:step -->
+
+## 12. Summary
+
+You can now read versioned FASTA records, distinguish record metadata from sequence data, select exact subsequences, count bases, calculate GC content with an explicit denominator, complement DNA, and count directional overlapping words. The next notebook turns one whole-genome number into a plot showing how composition changes along a genome.
+
+***
+
+[Next: DNA Sequence Statistics (2) →](#lesson-section=dna-sequence-statistics-2)

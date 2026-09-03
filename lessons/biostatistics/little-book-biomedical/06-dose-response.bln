@@ -51,3 +51,7 @@ trend
 ```
 
 The slope test gives p ≈ 0.00659 for this simple linear model, matching the source calculation. Before trusting it, inspect curvature, influential dose groups, group sizes, uncertainty, and whether dose was assigned or merely observed.
+
+***
+
+[← Previous: Matched case-control studies](#lesson-section=biomedical-05-matched-studies) · [Next: Sample size and power →](#lesson-section=biomedical-07-trial-planning)

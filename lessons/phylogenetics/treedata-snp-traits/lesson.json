@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "id": "treedata-snp-traits",
+  "title": "Phylogenetic Tree Data Integration: SNP and Trait Panels",
+  "summary": "A one-to-one port of Chapter 7 Figure 7.2 using the exact official tree, metadata, allele, trait, derived SNP, and published figure assets.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 48,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Data Integration, Manipulation and Visualization of Phylogenetic Trees - Chapter 7",
+    "url": "https://yulab-smu.top/treedata-book/chapter7.html",
+    "repository": "https://github.com/YuLab-SMU/treedata-book",
+    "revision": "1af8f25551105279a2b8b5b1a449eb002936ce9f",
+    "copyright": "Guangchuang Yu",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "Exact Figure 7.2 scope. Official TDbook package objects are pinned at commit 60b2de7f8df45b440c93cc17513e868ee98c1496 and retain Artistic-2.0 terms. Browser CSVs and the SNP table are mechanical exports; the PNG is the exact published figure. No synthetic data or replacement plot is used."
+  },
+  "series": {
+    "id": "treedata-book",
+    "title": "Data Integration, Manipulation and Visualization of Phylogenetic Trees",
+    "url": "https://yulab-smu.top/treedata-book/",
+    "order": 7,
+    "chapter": "Chapter 7 - Figure 7.2"
+  },
+  "datasets": [
+    {"id": "treedata-tree", "title": "Figure 7.2 Newick tree", "path": "data/tree.nwk", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/tree.nwk", "bytes": 8977, "sha256": "e5f858abc26ad2cb470bacc13a51ac8e5d90cbb47549762e78c94ab593488171", "mediaType": "text/x-newick", "source": "treedata-book data-backup/tree_example_april2015/tree.nwk", "citation": "YuLab-SMU treedata-book Figure 7.2 data", "rights": "Distributed with the CC BY-NC-SA 4.0 book source."},
+    {"id": "treedata-package-tree", "title": "Official TDbook tree_nwk object", "path": "data/tree_nwk.rda", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/tree_nwk.rda", "bytes": 4808, "sha256": "62a4e586722d38be9faae20fbbd878f8d8bfd2786db69419261a0db6dd43f04e", "mediaType": "application/octet-stream", "source": "TDbook data/tree_nwk.rda at 60b2de7f8df45b440c93cc17513e868ee98c1496", "citation": "YuLab-SMU TDbook companion package", "rights": "Artistic-2.0."},
+    {"id": "treedata-package-info", "title": "Official TDbook df_info object", "path": "data/df_info.rda", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/df_info.rda", "bytes": 2508, "sha256": "67a1963f84751ea06f43d5afcf2979f1d12e132bffe5abccc4c312316e87a654", "mediaType": "application/octet-stream", "source": "TDbook data/df_info.rda at 60b2de7f8df45b440c93cc17513e868ee98c1496", "citation": "YuLab-SMU TDbook companion package", "rights": "Artistic-2.0."},
+    {"id": "treedata-package-alleles", "title": "Official TDbook df_alleles object", "path": "data/df_alleles.rda", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/df_alleles.rda", "bytes": 9368, "sha256": "6901e86b0a039e2814385e34206fc4391d85891e6ec498c526757b1d494bddae", "mediaType": "application/octet-stream", "source": "TDbook data/df_alleles.rda at 60b2de7f8df45b440c93cc17513e868ee98c1496", "citation": "YuLab-SMU TDbook companion package", "rights": "Artistic-2.0."},
+    {"id": "treedata-package-traits", "title": "Official TDbook df_bar_data object", "path": "data/df_bar_data.rda", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/df_bar_data.rda", "bytes": 1692, "sha256": "874ec188d0ebad670e16c20af238dcd09387882f46a2d244a0eab0be1d23c4d6", "mediaType": "application/octet-stream", "source": "TDbook data/df_bar_data.rda at 60b2de7f8df45b440c93cc17513e868ee98c1496", "citation": "YuLab-SMU TDbook companion package", "rights": "Artistic-2.0."},
+    {"id": "treedata-info-export", "title": "Browser export of official sample information", "path": "data/package_info.csv", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/package_info.csv", "bytes": 19400, "sha256": "8edda3d146667211260e113a7b5aae5c3a426f39d77819095361cabc879b71c5", "mediaType": "text/csv", "source": "Mechanical write.csv export of TDbook df_info", "citation": "YuLab-SMU TDbook companion package", "rights": "Artistic-2.0 source object; mechanical format conversion."},
+    {"id": "treedata-trait-export", "title": "Browser export of official trait values", "path": "data/package_bar.csv", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/package_bar.csv", "bytes": 8444, "sha256": "4291b629763161c5d87a12afe874222cac1f014cb4293300183ff1642b5c936a", "mediaType": "text/csv", "source": "Mechanical write.csv export of TDbook df_bar_data", "citation": "YuLab-SMU TDbook companion package", "rights": "Artistic-2.0 source object; mechanical format conversion."},
+    {"id": "treedata-snp-long", "title": "Exact Figure 7.2 gathered SNP marks", "path": "data/snp_data.csv", "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/treedata-snp-traits/data/snp_data.csv", "bytes": 152238, "sha256": "78f26047cd48d1d4b8240a5d3b704b128df5df2d1207ea4115a51120909095d0", "mediaType": "text/csv", "source": "Mechanical execution of the Figure 7.2 R transformation against TDbook df_alleles", "citation": "YuLab-SMU treedata-book Chapter 7 plottree chunk and TDbook data", "rights": "CC BY-NC-SA 4.0 transformation; Artistic-2.0 input data."}
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["align SNPs with a phylogenetic tree", "attach sample metadata to tree tips", "compare traits in phylogenetic order"],
+    "methods": ["tip-label keyed integration", "reference-allele comparison", "gap exclusion", "tree-aligned data panels"],
+    "plots": ["phylogenetic tree with SNP and trait panels"],
+    "terms": ["phylogenetic tree", "SNP", "trait", "tip metadata", "facet plot", "Newick", "tree data integration"],
+    "aliases": ["treedata book figure 7.2", "ggtree facet plot", "tree SNP trait example"],
+    "functions": ["read_text", "nw_parse", "tree_leaves", "read_csv", "filter", "unique"]
+  },
+  "tags": ["phylogenetics", "SNP", "data integration", "CC BY-NC-SA"]
+}

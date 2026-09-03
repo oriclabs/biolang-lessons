@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "reference": "https://stats4nr.com/count-regression-models#case-study-predicting-fishing-success",
+  "checked": "2026-09-03",
+  "sourceRevision": "69da7a618857d63ffbe56ba5d3b56e5b836ddbb9",
+  "status": "verified",
+  "metrics": [
+    {"name": "observations", "reference": 250, "biolang": 250, "status": "exact"},
+    {"name": "variables", "reference": 6, "biolang": 6, "status": "exact"},
+    {"name": "mean fish count", "reference": 3.296, "biolang": 3.296, "status": "exact"},
+    {"name": "sample variance", "reference": 135.373879518072, "biolang": 135.373879518072, "status": "exact within 1e-9"},
+    {"name": "zero-catch groups", "reference": 142, "biolang": 142, "status": "exact"},
+    {"name": "zero-catch percentage", "reference": 56.8, "biolang": 56.8, "status": "exact"}
+  ],
+  "figures": [
+    {"file": "figures/source/fishing-histogram.png", "sourceUrl": "https://stats4nr.com/stats_4_nr_files/figure-html/unnamed-chunk-305-1.png", "sha256": "e6ba873fdb3a5b061aadd103df15385963385dfd5e0d9f65088a7a951af91716", "bytes": 14698, "status": "byte-for-byte published source copy"}
+  ],
+  "excluded": [
+    {"scope": "Poisson and later count models", "reason": "BioLang's current Poisson fit did not converge to the published coefficients; publishing it would violate the one-to-one fidelity rule."}
+  ]
+}

@@ -90,3 +90,7 @@ inverse-variance Q p-value here, but the tests are built from different inputs
 and must not be renamed as one another.
 
 Pooling is justified by a question and a defensible study set, not by the availability of software. Check study design, risk of bias, outcome definitions, follow-up, and heterogeneity. A narrow pooled interval can still be precisely wrong when the contributing studies share bias.
+
+***
+
+[← Previous: Sample size and power](#lesson-section=biomedical-07-trial-planning)

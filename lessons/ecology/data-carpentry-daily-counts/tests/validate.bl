@@ -1,0 +1,12 @@
+fn test_data_carpentry_daily_counts() {
+    let surveys = read_csv("../surveys_complete_77_89.csv")
+    let dated = surveys |> mutate("date_sex", |row| str(row.year) + "|" + str(row.month) + "|" + str(row.day) + "|" + str(row.sex))
+    let daily = dated |> group_by("date_sex") |> summarize(|key, rows| {year: rows[0].year, month: rows[0].month, day: rows[0].day, sex: rows[0].sex, n: nrow(rows)})
+    let largest = daily |> arrange("-n") |> head(1)
+    assert nrow(surveys) == 16878, "source rows"
+    assert ncol(surveys) == 13, "source columns"
+    assert nrow(daily) == 927, "daily-sex groups"
+    assert sum(daily |> col("n")) == 16878, "grouped total"
+    assert largest[0].year == 1980 && largest[0].month == 3 && largest[0].day == 9, "largest date"
+    assert largest[0].sex == "M" && largest[0].n == 116, "largest group"
+}

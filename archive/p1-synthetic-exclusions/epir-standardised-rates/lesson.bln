@@ -1,0 +1,79 @@
+---
+title: "EpiR Handbook: Directly Standardised Rates"
+description: "Reproduce the handbook's direct age-and-sex standardisation workflow for countries A and B."
+author: "BioLang contributors, adapted from the EpiR Handbook"
+license: "CC BY-NC-SA 4.0"
+tags: [epidemiology, standardisation, mortality, rates]
+---
+
+# Directly standardised mortality rates
+
+This lesson is a one-to-one port of the preparation and point-estimate portion of
+the EpiR Handbook standardisation chapter. It uses the same five source tables,
+the same age-and-sex strata, and the same World Standard Population weights.
+
+The selected source scope contains no figure. Confidence intervals are outside
+this first port because the source delegates them to a separate package routine.
+
+```biolang
+let demographics_a = read_csv("country_demographics.csv")
+let demographics_b = read_csv("country_demographics_2.csv", {sep: ";"})
+let deaths_a = read_csv("deaths_countryA.csv")
+let deaths_b = read_csv("deaths_countryB.csv")
+let standard = read_csv("world_standard_population_by_sex.csv")
+
+fn country_rows(country, demographics, deaths, standard_population) {
+  return range(0, nrow(demographics))
+    |> flat_map(|i| [
+      {
+        Country: country,
+        age_cat5: demographics[i].age_cat5,
+        Sex: "Male",
+        Population: demographics[i].m,
+        Deaths: deaths[i].Male,
+        standard_population: standard_population[i * 2].WorldStandardPopulation
+      },
+      {
+        Country: country,
+        age_cat5: demographics[i].age_cat5,
+        Sex: "Female",
+        Population: demographics[i].f,
+        Deaths: deaths[i].Female,
+        standard_population: standard_population[i * 2 + 1].WorldStandardPopulation
+      }
+    ])
+}
+
+let standardised = table(concat(
+  country_rows("A", demographics_a, deaths_a, standard),
+  country_rows("B", demographics_b, deaths_b, standard)
+))
+  |> group_by("Country")
+  |> summarize(|country, rows| {
+    let weighted_deaths = rows
+      |> map(|row| row.Deaths * 1.0 / row.Population * row.standard_population)
+      |> sum()
+    let standard_total = rows |> col("standard_population") |> sum()
+    return {
+      Country: country,
+      deaths: rows |> col("Deaths") |> sum(),
+      population: rows |> col("Population") |> sum(),
+      standard_population: standard_total,
+      rate_per_100000: weighted_deaths / standard_total * 100000.0
+    }
+  })
+  |> arrange("Country")
+
+print(standardised)
+```
+
+The directly standardised rate is a weighted average of stratum-specific rates.
+Using one common reference population makes the two countries comparable even
+when their age and sex structures differ.
+
+```biolang
+assert standardised[0].Country == "A", "first country is A"
+assert abs(standardised[0].rate_per_100000 - 23.56685849327109) < 1e-10, "country A directly standardised rate"
+assert standardised[1].Country == "B", "second country is B"
+assert abs(standardised[1].rate_per_100000 - 19.32549423719546) < 1e-10, "country B directly standardised rate"
+```

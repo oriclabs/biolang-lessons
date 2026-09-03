@@ -1,0 +1,12 @@
+fn test_msmb_celegans_mitochondrial_composition() {
+    let source = read_json("../data/ucsc-ce2-chrM.json")
+    let seq = dna(source.dna)
+    let counts = base_counts(seq)
+    let total = counts.A + counts.C + counts.G + counts.T
+    let expected = total / 4.0
+    let oe = (counts.A - expected) * (counts.A - expected) / expected + (counts.C - expected) * (counts.C - expected) / expected + (counts.G - expected) * (counts.G - expected) / expected + (counts.T - expected) * (counts.T - expected) / expected
+    assert source.genome == "ce2" && source.chrom == "chrM", "pinned UCSC sequence identity"
+    assert len(seq) == 13794 && total == 13794, "published length"
+    assert counts.A == 4335 && counts.C == 1225 && counts.G == 2055 && counts.T == 6179, "published counts"
+    assert abs(oe - 4386.633898796578) < 0.000001, "published statistic"
+}

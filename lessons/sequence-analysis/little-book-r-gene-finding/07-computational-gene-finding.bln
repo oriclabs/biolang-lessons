@@ -1,0 +1,298 @@
+# A Little Book of R for Bioinformatics
+
+## Chapter 7 · Computational Gene-finding
+
+This notebook adapts Avril Coghlan's [Computational Gene-finding](https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/src/chapter7.html) chapter to BioLang. It follows the source order, includes the exact source figures without substitute plots, and includes all nine exercises with worked answers.
+
+An open reading frame is a **candidate**, not proof that a biological gene exists. Sequence-based predictions need annotation evidence and, ultimately, experimental evidence.
+
+## 1. The genetic code
+
+Protein-coding regions are read three bases at a time. `ATG` is the standard start codon; `TAA`, `TAG`, and `TGA` are standard stops. The complete standard code has 64 codons.
+
+```biolang
+let genetic_code = table({
+    codon: [
+        "TTT","TTC","TTA","TTG","TCT","TCC","TCA","TCG","TAT","TAC","TAA","TAG","TGT","TGC","TGA","TGG",
+        "CTT","CTC","CTA","CTG","CCT","CCC","CCA","CCG","CAT","CAC","CAA","CAG","CGT","CGC","CGA","CGG",
+        "ATT","ATC","ATA","ATG","ACT","ACC","ACA","ACG","AAT","AAC","AAA","AAG","AGT","AGC","AGA","AGG",
+        "GTT","GTC","GTA","GTG","GCT","GCC","GCA","GCG","GAT","GAC","GAA","GAG","GGT","GGC","GGA","GGG"
+    ],
+    amino_acid: [
+        "F","F","L","L","S","S","S","S","Y","Y","Stop","Stop","C","C","Stop","W",
+        "L","L","L","L","P","P","P","P","H","H","Q","Q","R","R","R","R",
+        "I","I","I","M (start)","T","T","T","T","N","N","K","K","S","S","R","R",
+        "V","V","V","V","A","A","A","A","D","D","E","E","G","G","G","G"
+    ]
+})
+genetic_code
+```
+
+![Exact source figure: SeqinR genetic-code table](figures/source/P7_image1.png)
+
+**What to notice:** most amino acids have more than one codon. The three stop codons do not encode amino acids.
+
+## 2. Finding start and stop codons
+
+The source begins with the short sequence `AAAATGCAGTAACCCATGCCC`. BioLang's `find_motif()` returns zero-based indexes, so one is added when reporting biological positions.
+
+```biolang
+let s1 = dna"AAAATGCAGTAACCCATGCCC"
+let s1_starts = find_motif(s1, "ATG") |> map(|position| position + 1)
+let s1_taa = find_motif(s1, "TAA") |> map(|position| position + 1)
+{
+    sequence: s1,
+    ATG_start_positions: s1_starts,
+    TAA_start_positions: s1_taa,
+    TAG_start_positions: find_motif(s1, "TAG"),
+    TGA_start_positions: find_motif(s1, "TGA")
+}
+```
+
+**Result:** ATG begins at positions 4 and 16; TAA begins at position 10.
+
+The source then examines the first 500 bases of the Dengue virus 1 record.
+
+```biolang
+let dengue = first(read_fasta("data/NC_001477.1.fasta")).seq
+let dengue_start = subseq(dengue, 0, 500)
+
+fn codon_rows(seq, codon, kind) {
+    find_motif(seq, codon) |> map(|position| {
+        position: position + 1,
+        codon: codon,
+        kind: kind,
+        frame: (position % 3) + 1,
+        start_frame: if kind == "start" { (position % 3) + 1 } else { nil },
+        stop_frame: if kind == "stop" { (position % 3) + 1 } else { nil }
+    })
+}
+
+let dengue_codons = table(
+    concat(
+        codon_rows(dengue_start, "ATG", "start"),
+        concat(
+            codon_rows(dengue_start, "TAA", "stop"),
+            concat(codon_rows(dengue_start, "TAG", "stop"), codon_rows(dengue_start, "TGA", "stop"))
+        )
+    )
+) |> arrange("position")
+
+select(dengue_codons, "position", "codon", "kind", "frame")
+```
+
+## 3. Reading frames
+
+A codon beginning at biological position 1, 4, 7, … is in frame +1. Positions 2, 5, 8, … are frame +2; positions 3, 6, 9, … are frame +3. A start and stop can delimit one ORF only when they share a frame.
+
+Look for a start mark followed to its right by a stop mark on the same horizontal frame.
+
+![Exact source figure: potential starts and stops in three reading frames](figures/source/P7_image3b.png)
+
+The chapter tests positions 137–143:
+
+```biolang
+let frame_example = subseq(dengue_start, 136, 143)
+{
+    sequence: frame_example,
+    start_position: 137,
+    start_frame: ((137 - 1) % 3) + 1,
+    stop_position: 141,
+    stop_frame: ((141 - 1) % 3) + 1
+}
+```
+
+The sequence is `ATGCTGA`, but the ATG is in +2 and the TGA is in +3. Written as codons from the start it is `ATG CTG A`, so those two marks cannot bound one ORF.
+
+## 4. Finding open reading frames on the forward strand
+
+`find_orfs(sequence, minimum_length)` searches all three forward frames. Setting the minimum to zero reproduces the source chapter's definition before any length filtering.
+
+```biolang
+let s1_orfs = find_orfs(s1, 0) |> sort_by(|orf| orf.start)
+s1_orfs
+```
+
+**Result:** one ORF begins at biological position 4, ends at position 12, and has length 9 bases.
+
+```biolang
+let dengue_start_orfs = find_orfs(dengue_start, 0) |> sort_by(|orf| orf.start)
+table(dengue_start_orfs)
+```
+
+The two ORFs are 298–480 in frame +1 and 318–371 in frame +3, matching the source.
+
+![Exact source figure: the two forward-strand ORFs](figures/source/P7_image4.png)
+
+The source draws cyan rectangles in three frame lanes at those exact coordinates.
+
+## 5. Predicting the protein sequence for an ORF
+
+```biolang
+let my_orf = subseq(s1, 3, 12)
+{
+    DNA: my_orf,
+    codons: kmers(my_orf, 3),
+    predicted_protein: translate(my_orf)
+}
+```
+
+The DNA is `ATGCAGTAA`. It encodes methionine and glutamine, followed by a stop. BioLang's `translate()` returns the protein `MQ` and intentionally omits the terminal stop symbol.
+
+## 6. Finding ORFs on the reverse strand
+
+Genes may occur on either DNA strand. The reverse strand, written in its own 5′→3′ direction, is the reverse complement of the forward strand.
+
+```biolang
+let forward = dna"AAAATGCTTAAACCATTGCCC"
+let reverse = reverse_complement(forward)
+let reverse_orfs = find_orfs(reverse, 0) |> sort_by(|orf| orf.start)
+{
+    forward: forward,
+    reverse_complement: reverse,
+    reverse_strand_ORFs: reverse_orfs
+}
+```
+
+**Result:** the reverse complement is `GGGCAATGGTTTAAGCATTTT`; it contains one 9-base ORF from positions 6–14 on that reverse-strand sequence.
+
+## 7. ORF length and chance
+
+Three of the 64 codons are stops. In a simple equal-codon model, any codon therefore has probability `3/64` of being a stop. Short ORFs can arise by chance; a very long stop-free region is more surprising.
+
+Length is evidence, not certainty. Real annotation also considers conservation, transcripts, start context, coding bias, known protein domains, and experimental results.
+
+## 8. Identifying unusually long ORFs
+
+The source compares real ORF lengths with lengths found in ten random sequences of the same size and base composition. Its random seed and generated sequences were not published, so this lesson does not invent replacements. The exact source figure is retained below.
+
+```biolang
+let dengue_orfs = find_orfs(dengue, 0) |> sort_by(|orf| orf.start)
+let dengue_orf_lengths = dengue_orfs |> map(|orf| orf.length)
+{Dengue_ORFs: len(dengue_orfs), longest_Dengue_ORF: max(dengue_orf_lengths)}
+```
+
+The source figure uses the same 50-base bins and displays the first 1,000 bases of the length range. The unusually long real ORF stands apart from the chance distribution.
+
+![Exact source figure: random-sequence and Dengue ORF length histograms](figures/source/P7_image5b.png)
+
+The source reports a 99th percentile of 259.8 bases for its unpublished random draw. Because that draw cannot be reconstructed exactly, the lesson preserves the published image and value without pretending to rerun it.
+
+# Exercises and worked solutions
+
+## Exercise 1 · Forward-strand Dengue ORFs
+
+<!-- bl:step title="Solution 1 · Count all forward ORFs" -->
+
+```biolang
+len(dengue_orfs)
+```
+
+**Answer:** 116, exactly as printed in the source answers.
+
+<!-- /bl:step -->
+
+## Exercise 2 · Rightmost Dengue ORF
+
+<!-- bl:step title="Solution 2 · Sort before selecting the rightmost ORF" -->
+
+```biolang
+let rightmost_dengue_orf = last(dengue_orfs)
+{
+    start_zero_based: rightmost_dengue_orf.start,
+    end_exclusive: rightmost_dengue_orf.end,
+    biological_start: rightmost_dengue_orf.start + 1,
+    biological_end: rightmost_dengue_orf.end
+}
+```
+
+**Answer:** biological coordinates 10,705–10,722. Sorting matters because `find_orfs()` groups its raw result by frame.
+
+<!-- /bl:step -->
+
+## Exercise 3 · Protein from the rightmost ORF
+
+<!-- bl:step title="Solution 3 · Translate the rightmost ORF" -->
+
+```biolang
+rightmost_dengue_orf.protein
+```
+
+**Answer:** `MEWCC`.
+
+<!-- /bl:step -->
+
+## Exercise 4 · ORFs at least 30 bases long
+
+<!-- bl:step title="Solution 4 · Apply a minimum length" -->
+
+```biolang
+len(dengue_orfs |> filter(|orf| orf.length >= 30))
+```
+
+**Answer:** 62.
+
+<!-- /bl:step -->
+
+## Exercise 5 · ORFs longer than 248 bases
+
+<!-- bl:step title="Solution 5 · Count long Dengue ORFs" -->
+
+```biolang
+len(dengue_orfs |> filter(|orf| orf.length > 248))
+```
+
+**Answer:** 2.
+
+<!-- /bl:step -->
+
+## Exercise 6 · Protein length from a 248-base ORF
+
+<!-- bl:step title="Solution 6 · Convert coding bases to amino acids" -->
+
+A 248-base ORF includes a 3-base stop codon. The coding part is therefore 245 bases; only 243 form complete codons. That gives `243 / 3 = 81` amino acids, with two extra bases that do not form a complete codon.
+
+```biolang
+{ORF_bases: 248, bases_before_stop: 245, complete_coding_bases: 243, amino_acids: 81}
+```
+
+<!-- /bl:step -->
+
+## Exercise 7 · Forward-strand rabies ORFs
+
+<!-- bl:step title="Solution 7 · Count rabies ORFs" -->
+
+```biolang
+let rabies = first(read_fasta("data/NC_001542.1.fasta")).seq
+let rabies_orfs = find_orfs(rabies, 0) |> sort_by(|orf| orf.start)
+len(rabies_orfs)
+```
+
+**Answer:** 111.
+
+<!-- /bl:step -->
+
+## Exercise 8 · A 99% chance threshold
+
+<!-- bl:step title="Solution 8 · Read the threshold honestly" -->
+
+**Answer:** 259.8 bases, rounded to 260, exactly as reported by the source. It is not recomputed because the source did not publish the seed or generated sequences.
+
+<!-- /bl:step -->
+
+## Exercise 9 · Rabies ORFs above the threshold
+
+<!-- bl:step title="Solution 9 · Retain ORFs longer than 260 bases" -->
+
+```biolang
+let long_rabies_orfs = rabies_orfs |> filter(|orf| orf.length > 260)
+table(long_rabies_orfs)
+```
+
+**Answer:** 6 ORFs, matching the source answers.
+
+<!-- /bl:step -->
+
+## 9. Summary
+
+You can now locate start and stop codons, calculate reading frames, find forward and reverse-strand ORFs, translate a candidate coding region, inspect the source's exact ORF figures, and explain why an ORF remains a prediction rather than proof of a gene.

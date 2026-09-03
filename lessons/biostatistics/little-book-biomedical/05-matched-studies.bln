@@ -42,3 +42,7 @@ let mcnemar_p = 2.0 * (1.0 - pnorm(sqrt(mcnemar_chi2)))
 ```
 
 This reproduces χ² ≈ 26.41 and p ≈ 2.76×10⁻⁷. The paired design created dependence; an ordinary independent-table test would answer a different question.
+
+***
+
+[← Previous: Stratification and confounding](#lesson-section=biomedical-04-stratification) · [Next: Dose-response →](#lesson-section=biomedical-06-dose-response)

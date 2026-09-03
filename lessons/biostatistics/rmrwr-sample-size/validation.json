@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "reference": "https://github.com/higgi13425/rmrwr-book/blob/8ec6c51e5d9364a5333425c7bdad5bc5184aab9f/io69-sample_size.Rmd",
+  "checked": "2026-09-03",
+  "status": "verified-source-reproduction-with-disclosed-arithmetic-inconsistency",
+  "metrics": [
+    {"name": "rounded planning effect size", "reference": 0.66, "biolang": 0.66, "status": "exact input"},
+    {"name": "required n per arm", "reference": 37.02, "biolang": 37.02232090839318, "status": "matches within 0.03"},
+    {"name": "achieved power at n=25 per arm", "reference": 0.628, "biolang": 0.6280322395420602, "status": "matches within 0.002"},
+    {"name": "source attrition result", "reference": "45 per arm / 90 total", "biolang": "45 per arm / 90 total", "status": "exact source reproduction; source arithmetic inconsistency disclosed"}
+  ],
+  "figures": {"expected": 0, "biolang": 0, "status": "exact for selected scope"}
+}

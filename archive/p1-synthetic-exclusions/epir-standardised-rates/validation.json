@@ -1,0 +1,20 @@
+{
+  "sourceRevision": "9f41d1be90c166ca4754891a5260fd65b093ef8d",
+  "referenceRuntime": "R 4.6.1",
+  "expected": {
+    "A": {
+      "deaths": 11344,
+      "population": 86790567,
+      "standardPopulation": 200000,
+      "ratePer100000": 23.56685849327109
+    },
+    "B": {
+      "deaths": 9955,
+      "population": 52898281,
+      "standardPopulation": 200000,
+      "ratePer100000": 19.32549423719546
+    }
+  },
+  "tolerance": 1e-10,
+  "figureComparison": "not-applicable-selected-source-scope-has-no-figure"
+}

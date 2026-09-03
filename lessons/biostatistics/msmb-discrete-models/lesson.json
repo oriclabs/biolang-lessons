@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "id": "msmb-discrete-models",
+  "title": "Modern Statistics for Modern Biology: Discrete Models",
+  "summary": "An exact BioLang port of the opening Poisson(5) and Binomial(15, 0.3) calculations and source-rendered figures from Chapter 1.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 16,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Modern Statistics for Modern Biology - Generative Models for Discrete Data",
+    "url": "https://www.huber.embl.de/msmb/chap-generative.html",
+    "repository": "https://www.huber.embl.de/msmb/code/",
+    "revision": "Online build 2026-09-02; 01-chap.R downloaded 2026-09-03",
+    "copyright": "Susan Holmes and Wolfgang Huber",
+    "licence": "CC BY-NC-SA",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "R expressions were translated to BioLang. The two displayed PNGs are byte-for-byte copies of the published chapter assets; no replacement plots are used."
+  },
+  "series": {
+    "id": "modern-statistics-for-modern-biology",
+    "title": "Modern Statistics for Modern Biology",
+    "url": "https://www.huber.embl.de/msmb/",
+    "order": 1,
+    "chapter": "Chapter 1 - Opening Poisson and binomial examples"
+  },
+  "datasets": [],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["model mutation counts", "calculate an exact event-count probability", "compare outcomes in repeated binary trials"],
+    "methods": ["Poisson probability mass", "binomial probability mass", "discrete generative modeling"],
+    "plots": ["Poisson probability bar plot", "binomial probability bar plot"],
+    "terms": ["Poisson distribution", "binomial distribution", "probability mass function", "mutation count", "Bernoulli trial"],
+    "aliases": ["MSMB chapter 1", "discrete probability models", "generative models"],
+    "functions": ["dpois", "dbinom", "range", "map", "table"]
+  },
+  "tags": ["statistics", "probability", "Poisson", "binomial", "CC BY-NC-SA"]
+}

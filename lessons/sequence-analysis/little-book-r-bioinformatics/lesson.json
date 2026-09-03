@@ -1,0 +1,218 @@
+{
+  "schema": 2,
+  "id": "little-book-r-bioinformatics",
+  "title": "A Little Book of R for Bioinformatics",
+  "summary": "A two-notebook BioLang port of DNA Sequence Statistics chapters 1 and 2, with in-notebook Previous/Next navigation, the original worked examples, all twelve exercises, source figures, and solved answers.",
+  "runtime": "browser",
+  "estimatedMemoryMb": 160,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "A Little Book of R for Bioinformatics by Avril Coghlan",
+    "url": "https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/",
+    "copyright": "Copyright Avril Coghlan",
+    "licence": "CC BY 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
+    "note": "Adapted from R and SeqinR to BioLang by OriClabs with attribution. All eighteen images displayed by chapters 1-2 and their worked answers are included byte-for-byte. No independently styled replacement plots are used. This is not an official publication or endorsement by the original author."
+  },
+  "series": {
+    "id": "a-little-book-of-r-for-bioinformatics",
+    "title": "A Little Book of R for Bioinformatics",
+    "url": "https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/",
+    "order": 1,
+    "chapter": "Chapters 1-2 · DNA Sequence Statistics"
+  },
+  "datasets": [
+    {
+      "id": "dengue-virus-1",
+      "title": "Dengue virus 1 complete genome",
+      "path": "data/NC_001477.1.fasta",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/sequence-analysis/little-book-r-bioinformatics/data/NC_001477.1.fasta",
+      "bytes": 10935,
+      "sha256": "ab440a65538d153a31366cfedb8c5ae0be96c0f25e7f12a0b9f0cf2599473607",
+      "mediaType": "text/x-fasta",
+      "source": "NCBI RefSeq accession NC_001477.1",
+      "citation": "Dengue virus 1, complete genome, NCBI RefSeq NC_001477.1.",
+      "rights": "Sequence data sourced from NCBI; excluded from the repository MIT grant."
+    },
+    {
+      "id": "mycobacterium-leprae-tn",
+      "title": "Mycobacterium leprae TN complete genome",
+      "path": "data/NC_002677.1.fasta",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/sequence-analysis/little-book-r-bioinformatics/data/NC_002677.1.fasta",
+      "bytes": 3314949,
+      "sha256": "9ad10ce261ff398b992f39bdebe823e8528ffc85f321d082d5286b0c6add2ded",
+      "mediaType": "text/x-fasta",
+      "source": "NCBI RefSeq accession NC_002677.1",
+      "citation": "Mycobacterium leprae TN, complete sequence, NCBI RefSeq NC_002677.1.",
+      "rights": "Sequence data sourced from NCBI; excluded from the repository MIT grant."
+    }
+  ],
+  "lessons": [
+    {
+      "id": "dna-sequence-statistics-1",
+      "title": "DNA Sequence Statistics (1)",
+      "summary": "FASTA, versioned NCBI records, sequence length, base composition, GC content, complements, DNA words, and seven solved exercises.",
+      "entry": "01-dna-sequence-statistics.bln",
+      "discoverability": {
+        "problems": [
+          "inspect a FASTA genome",
+          "calculate genome GC content",
+          "count bases and DNA words",
+          "solve sequence-statistics exercises"
+        ],
+        "methods": [
+          "FASTA parsing",
+          "base composition",
+          "GC content",
+          "sequence complement",
+          "directional k-mer counting"
+        ],
+        "plots": [
+          "base-composition bar plot"
+        ],
+        "terms": [
+          "FASTA",
+          "NCBI accession",
+          "Dengue virus",
+          "Mycobacterium leprae",
+          "DNA",
+          "nucleotide",
+          "ambiguous base",
+          "dinucleotide"
+        ],
+        "aliases": [
+          "SeqinR chapter 1",
+          "DNA sequence statistics 1",
+          "genome composition"
+        ],
+        "functions": [
+          "read_fasta",
+          "subseq",
+          "base_counts",
+          "gc_content",
+          "complement",
+          "kmer_index"
+        ]
+      }
+    },
+    {
+      "id": "dna-sequence-statistics-2",
+      "title": "DNA Sequence Statistics (2)",
+      "summary": "Functions, subsequences, non-overlapping windows, local GC and AT plots, word enrichment, and five solved exercises.",
+      "entry": "02-local-sequence-statistics.bln",
+      "discoverability": {
+        "problems": [
+          "measure local genome composition",
+          "choose a sequence window size",
+          "compare GC and AT content",
+          "calculate observed-to-expected word frequency"
+        ],
+        "methods": [
+          "non-overlapping sliding windows",
+          "local GC analysis",
+          "local AT analysis",
+          "observed-to-expected ratio"
+        ],
+        "plots": [
+          "sliding-window line plot",
+          "multi-panel comparison plot"
+        ],
+        "terms": [
+          "window size",
+          "local GC",
+          "local AT",
+          "k-mer",
+          "rho statistic",
+          "word enrichment",
+          "genome position"
+        ],
+        "aliases": [
+          "SeqinR chapter 2",
+          "DNA sequence statistics 2",
+          "sliding window GC plot"
+        ],
+        "functions": [
+          "range",
+          "map",
+          "subseq",
+          "gc_content",
+          "motif_count"
+        ]
+      }
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "inspect a FASTA genome",
+      "calculate genome GC content",
+      "count bases and DNA words",
+      "solve sequence-statistics exercises",
+      "measure local genome composition",
+      "choose a sequence window size",
+      "compare GC and AT content",
+      "calculate observed-to-expected word frequency"
+    ],
+    "methods": [
+      "FASTA parsing",
+      "base composition",
+      "GC content",
+      "sequence complement",
+      "directional k-mer counting",
+      "non-overlapping sliding windows",
+      "local GC analysis",
+      "local AT analysis",
+      "observed-to-expected ratio"
+    ],
+    "plots": [
+      "base-composition bar plot",
+      "sliding-window line plot",
+      "multi-panel comparison plot"
+    ],
+    "terms": [
+      "FASTA",
+      "NCBI accession",
+      "Dengue virus",
+      "Mycobacterium leprae",
+      "DNA",
+      "nucleotide",
+      "ambiguous base",
+      "dinucleotide",
+      "window size",
+      "local GC",
+      "local AT",
+      "k-mer",
+      "rho statistic",
+      "word enrichment",
+      "genome position"
+    ],
+    "aliases": [
+      "SeqinR chapter 1",
+      "DNA sequence statistics 1",
+      "genome composition",
+      "SeqinR chapter 2",
+      "DNA sequence statistics 2",
+      "sliding window GC plot"
+    ],
+    "functions": [
+      "read_fasta",
+      "subseq",
+      "base_counts",
+      "gc_content",
+      "complement",
+      "kmer_index",
+      "range",
+      "map",
+      "motif_count"
+    ]
+  },
+  "tags": [
+    "bioinformatics",
+    "sequence analysis",
+    "FASTA",
+    "GC content",
+    "k-mer",
+    "CC BY"
+  ]
+}

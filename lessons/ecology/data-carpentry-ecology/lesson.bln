@@ -1,0 +1,51 @@
+# Grouped summaries of ecological survey data
+
+This lesson ports the split-apply-combine example from [Data Analysis and Visualization in R for Ecologists](https://datacarpentry.github.io/R-ecology-lesson/). It uses the exact cleaned Portal Project teaching CSV pinned from the source repository.
+
+## Load the survey table
+
+```biolang
+let surveys = read_csv("surveys_complete_77_89.csv")
+{rows: nrow(surveys), columns: ncol(surveys)}
+```
+
+The source asks for mean observed weight and observation count for every species/sex combination. Missing weight is removed before grouping; missing sex remains a valid group, exactly as in the R result.
+
+```biolang
+let weighted = surveys
+    |> drop_null("weight")
+    |> mutate("species_sex", |row| str(row.species_id) + "|" + str(row.sex))
+
+let species_sex_summary = weighted
+    |> group_by("species_sex")
+    |> summarize(|key, rows| {
+        species_id: rows[0].species_id,
+        sex: rows[0].sex,
+        mean_weight: mean(rows |> col("weight")),
+        n: nrow(rows)
+    })
+    |> arrange("mean_weight")
+
+species_sex_summary
+```
+
+The source then reverses the order with `desc(mean_weight)`.
+
+```biolang
+species_sex_summary |> arrange("-mean_weight")
+```
+
+## Exact R-reference checks
+
+```biolang
+assert nrow(surveys) == 16878, "pinned source row count"
+assert nrow(species_sex_summary) == 46, "R produces 46 species/sex groups"
+assert species_sex_summary[0].species_id == "PF", "lowest-mean group species"
+assert species_sex_summary[0].mean_weight == 6.0, "lowest group mean"
+assert species_sex_summary[0].n == 2, "lowest group observations"
+assert species_sex_summary[45].species_id == "NL", "highest-mean group species"
+assert species_sex_summary[45].sex == "M", "highest-mean group sex"
+assert abs(species_sex_summary[45].mean_weight - 167.935211267606) < 1e-12, "highest group mean"
+assert species_sex_summary[45].n == 355, "highest group observations"
+"All dplyr-reference checks passed."
+```

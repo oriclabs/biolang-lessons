@@ -1,0 +1,37 @@
+let demographics_a = read_csv("../country_demographics.csv")
+let demographics_b = read_csv("../country_demographics_2.csv", {sep: ";"})
+let deaths_a = read_csv("../deaths_countryA.csv")
+let deaths_b = read_csv("../deaths_countryB.csv")
+let standard = read_csv("../world_standard_population_by_sex.csv")
+
+fn country_rows(country, demographics, deaths, standard_population) {
+  return range(0, nrow(demographics)) |> flat_map(|i| [
+    {Country: country, Population: demographics[i].m, Deaths: deaths[i].Male, standard_population: standard_population[i * 2].WorldStandardPopulation},
+    {Country: country, Population: demographics[i].f, Deaths: deaths[i].Female, standard_population: standard_population[i * 2 + 1].WorldStandardPopulation}
+  ])
+}
+
+let result = table(concat(
+  country_rows("A", demographics_a, deaths_a, standard),
+  country_rows("B", demographics_b, deaths_b, standard)
+)) |> group_by("Country") |> summarize(|country, rows| {
+  let weighted = rows |> map(|row| row.Deaths * 1.0 / row.Population * row.standard_population) |> sum()
+  let standard_total = rows |> col("standard_population") |> sum()
+  return {
+    Country: country,
+    deaths: rows |> col("Deaths") |> sum(),
+    population: rows |> col("Population") |> sum(),
+    standard_population: standard_total,
+    rate_per_100000: weighted / standard_total * 100000.0
+  }
+}) |> arrange("Country")
+
+assert result[0].deaths == 11344, "country A deaths"
+assert result[0].population == 86790567, "country A population"
+assert result[0].standard_population == 200000, "country A standard population"
+assert abs(result[0].rate_per_100000 - 23.56685849327109) < 1e-10, "country A directly standardised rate"
+assert result[1].deaths == 9955, "country B deaths"
+assert result[1].population == 52898281, "country B population"
+assert result[1].standard_population == 200000, "country B standard population"
+assert abs(result[1].rate_per_100000 - 19.32549423719546) < 1e-10, "country B directly standardised rate"
+print("EpiR direct-standardisation validation passed")

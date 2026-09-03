@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "id": "computational-genomics-refseq-tss",
+  "title": "Computational Genomics with R: RefSeq Transcription Starts",
+  "summary": "A one-to-one port of the Chapter 6 RefSeq BED-to-TSS workflow using the exact hg19 chromosome 21 package file and a mechanical browser CSV export.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 20,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Computational Genomics with R - Operations on genomic intervals with GenomicRanges",
+    "url": "https://compgenomr.github.io/book/operations-on-genomic-intervals-with-genomicranges-package.html",
+    "repository": "https://github.com/compgenomr/book",
+    "revision": "212119889edfeaebc7449e0aeb4fce29a574011d",
+    "copyright": "Altuna Akalin",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "The source workflow and exact compGenomRData BED object are preserved. No synthetic intervals or replacement figures are used."
+  },
+  "series": {
+    "id": "computational-genomics-with-r",
+    "title": "Computational Genomics with R",
+    "url": "https://compgenomr.github.io/book/",
+    "order": 7,
+    "chapter": "Chapter 6 - RefSeq BED import and transcription start sites"
+  },
+  "datasets": [
+    {
+      "id": "compgenomr-refseq-hg19-chr21-bed",
+      "title": "RefSeq hg19 chromosome 21 BED",
+      "path": "refseq.hg19.chr21.bed",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/genomics/computational-genomics-refseq-tss/refseq.hg19.chr21.bed",
+      "bytes": 86214,
+      "sha256": "d9d49a50d9b9688741be6d3188e6a96439d9548432ff5be77e7ec500c1325b75",
+      "mediaType": "text/tab-separated-values",
+      "source": "compGenomRData inst/extdata/refseq.hg19.chr21.bed at 24484cb77631e1123ead6c329b9d62c160e600c6",
+      "citation": "Altuna Akalin, compGenomRData",
+      "rights": "GPL-3 as declared by the data package DESCRIPTION."
+    },
+    {
+      "id": "compgenomr-refseq-hg19-chr21-csv",
+      "title": "Browser export of RefSeq hg19 chromosome 21 BED",
+      "path": "refseq.hg19.chr21.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/genomics/computational-genomics-refseq-tss/refseq.hg19.chr21.csv",
+      "bytes": 92051,
+      "sha256": "e3fe41c3e982aa5532c5605b0a4db58e7e2a5fe5968c74bebdb62663ad374705",
+      "mediaType": "text/csv",
+      "source": "Mechanical write.csv export of the exact BED file",
+      "citation": "Altuna Akalin, compGenomRData",
+      "rights": "GPL-3 source data; mechanical format conversion."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["import RefSeq genomic intervals", "derive transcription start sites from strand", "remove alternate transcripts with duplicate start sites"],
+    "methods": ["BED import", "strand-aware TSS extraction", "duplicate interval detection"],
+    "plots": [],
+    "terms": ["RefSeq", "BED", "hg19", "chromosome 21", "transcription start site", "strand", "alternative transcript"],
+    "aliases": ["Computational Genomics RefSeq import", "chr21 TSS", "BED to GRanges workflow"],
+    "functions": ["read_csv", "mutate", "map", "unique", "filter"]
+  },
+  "tags": ["genomics", "RefSeq", "BED", "CC BY-NC-SA"]
+}

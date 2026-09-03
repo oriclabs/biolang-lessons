@@ -1,0 +1,16 @@
+fn test_data_carpentry_grouped_summaries() {
+    let surveys = read_csv("../surveys_complete_77_89.csv")
+    let weighted = surveys |> drop_null("weight") |> mutate("species_sex", |row| str(row.species_id) + "|" + str(row.sex))
+    let result = weighted |> group_by("species_sex") |> summarize(|key, rows| {
+        species_id: rows[0].species_id,
+        sex: rows[0].sex,
+        mean_weight: mean(rows |> col("weight")),
+        n: nrow(rows)
+    }) |> arrange("mean_weight")
+    assert nrow(surveys) == 16878, "input rows"
+    assert nrow(result) == 46, "group count"
+    assert result[0].species_id == "PF" && result[0].mean_weight == 6.0 && result[0].n == 2, "first group"
+    assert result[45].species_id == "NL" && result[45].sex == "M", "last group identity"
+    assert abs(result[45].mean_weight - 167.935211267606) < 1e-12, "last group mean"
+    assert result[45].n == 355, "last group n"
+}

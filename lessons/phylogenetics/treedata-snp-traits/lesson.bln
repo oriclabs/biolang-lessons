@@ -1,0 +1,65 @@
+# Align SNP and trait data to a phylogenetic tree
+
+This lesson ports the exact Figure 7.2 workflow from [Chapter 7 of *Data Integration, Manipulation and Visualization of Phylogenetic Trees*](https://yulab-smu.top/treedata-book/chapter7.html). It uses the official `TDbook` package objects used by the published R code and displays the published figure itself.
+
+## Load the source artifacts
+
+```biolang
+let tree = nw_parse(trim(read_text("data/tree.nwk")))
+let info = read_csv("data/package_info.csv")
+let traits = read_csv("data/package_bar.csv")
+let snp_data = read_csv("data/snp_data.csv")
+let tips = tree_leaves(tree)
+{
+    plotted_tree_tips: len(tips),
+    information_records: nrow(info),
+    trait_records: nrow(traits),
+    plotted_snp_marks: nrow(snp_data)
+}
+```
+
+The source contains 386 metadata, trait, and allele records, while the supplied tree contains 230 tips. `ggtree` aligns the panels by label and plots the matching records. The mismatch is part of the source—not an error to hide by changing the data.
+
+## Verify the labels used for alignment
+
+```biolang
+let missing_info = tips |> filter(|tip| nrow(info |> filter(|row| row.id == tip)) == 0)
+let missing_traits = tips |> filter(|tip| nrow(traits |> filter(|row| row.id == tip)) == 0)
+{
+    tree_tips_without_information: missing_info,
+    tree_tips_without_traits: missing_traits
+}
+```
+
+All 230 tree-tip labels occur in both tables. This is the key operation behind the source's aligned Tree, SNP, and Trait panels.
+
+## Inspect the exact SNP transformation result
+
+The source takes the first row of `df_alleles` as strain names, removes that row, transposes the remaining matrix, compares each strain with the first strain, excludes `?` in either allele, and gathers the `TRUE` cells. `snp_data.csv` is the mechanical result of those exact published steps against the official package object.
+
+```biolang
+{
+    first_snp_marks: head(snp_data, 12),
+    strains_with_marks: unique(col(snp_data, "name")) |> len,
+    aligned_positions: unique(col(snp_data, "pos")) |> len
+}
+```
+
+## Exact published result
+
+![Exact published Figure 7.2: tree, SNP, and trait panels](figures/source/figure-7.2.png)
+
+The PNG above is the published Figure 7.2 file copied byte for byte. It is not a BioLang redraw. The lesson deliberately does not generate a substitute composite plot because BioLang does not yet reproduce `ggtree`'s shared tip-coordinate layout exactly.
+
+```biolang
+assert len(tips) == 230, "the supplied source tree has 230 tips"
+assert nrow(info) == 386, "the official source object has 386 information records"
+assert nrow(traits) == 386, "the official source object has 386 trait records"
+assert len(missing_info) == 0, "every plotted tree tip has information"
+assert len(missing_traits) == 0, "every plotted tree tip has a trait"
+assert nrow(snp_data) == 6482, "exact gathered SNP mark count"
+assert len(unique(col(snp_data, "name"))) == 381, "exact strains-with-marks count"
+assert len(unique(col(snp_data, "pos"))) == 385, "exact aligned-position count"
+"All source-artifact checks passed."
+```
+

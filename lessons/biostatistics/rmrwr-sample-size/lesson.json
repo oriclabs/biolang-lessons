@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "id": "rmrwr-sample-size",
+  "title": "Reproducible Medical Research with R: Sample Size",
+  "summary": "A source-mapped BioLang port of the opening two-arm A1c sample-size and constrained-power example.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 16,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Reproducible Medical Research with R - Sample Size Calculations with pwr",
+    "url": "https://peter-higgins-rmrwr.share.connect.posit.cloud/",
+    "repository": "https://github.com/higgi13425/rmrwr-book",
+    "revision": "8ec6c51e5d9364a5333425c7bdad5bc5184aab9f",
+    "copyright": "Peter Higgins and contributors",
+    "licence": "CC0-1.0",
+    "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "note": "The A1c study example and published pwr inputs are translated to BioLang. The source-reported attrition result of 45 per arm and 90 total is reproduced exactly, with its internal arithmetic inconsistency disclosed rather than corrected."
+  },
+  "series": {
+    "id": "reproducible-medical-research-with-r",
+    "title": "Reproducible Medical Research with R",
+    "url": "https://peter-higgins-rmrwr.share.connect.posit.cloud/",
+    "order": 69,
+    "chapter": "Sample Size Calculations - opening continuous endpoint example"
+  },
+  "datasets": [],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["plan a two-arm clinical study", "inflate sample size for participant dropout", "calculate achieved power with a fixed budget"],
+    "methods": ["Cohen effect size", "two-sample t-test power", "attrition inflation"],
+    "plots": [],
+    "terms": ["sample size", "statistical power", "Cohen d", "alpha", "dropout", "participants per arm"],
+    "aliases": ["clinical trial planning", "pwr t test", "A1c study example"],
+    "functions": ["power_t_test", "abs"]
+  },
+  "tags": ["clinical research", "sample size", "power", "CC0"]
+}

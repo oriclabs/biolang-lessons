@@ -1,0 +1,16 @@
+fn test_stats4nr_fishing_poisson() {
+    let fishing = read_csv("../data/fishing.csv")
+    let counts = col(fishing, "count")
+    let model = glm(~count ~ persons + child + camper, fishing, "poisson")
+    let beta = model.coefficients |> map(|term| term.estimate)
+    assert nrow(fishing) == 250, "source row count"
+    assert abs(mean(counts) - 3.296) < 1e-12, "source mean"
+    assert abs(variance(counts) - 135.373879518072) < 1e-9, "source sample variance"
+    assert abs(beta[0] - -1.981827) < 1e-5, "source intercept"
+    assert abs(beta[1] - 1.091262) < 1e-5, "source persons coefficient"
+    assert abs(beta[2] - -1.689957) < 1e-5, "source child coefficient"
+    assert abs(beta[3] - 0.9309359) < 1e-5, "source camper coefficient"
+    assert abs(model.residual_deviance - 1337.08) < 0.01, "source residual deviance"
+    assert abs(model.aic - 1682.145) < 0.01, "source AIC"
+}
+

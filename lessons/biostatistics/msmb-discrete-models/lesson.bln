@@ -1,0 +1,49 @@
+# Generative models for discrete biological data
+
+This lesson ports the opening Poisson and binomial calculations from Chapter 1 of [*Modern Statistics for Modern Biology*](https://www.huber.embl.de/msmb/chap-generative.html). The two figures below are byte-for-byte copies of the PNGs served by the published chapter, so the displayed figures match the source exactly.
+
+## Poisson probability
+
+The chapter first asks for the probability of exactly three events when the expected number is five.
+
+```biolang
+let probability_three_given_five = dpois(3, 5.0)
+probability_three_given_five
+```
+
+The complete displayed range is 0 through 12 events.
+
+```biolang
+let poisson_k = range(0, 13)
+let poisson_probabilities = poisson_k |> map(|k| dpois(k, 5.0))
+table({mutations: poisson_k, probability: poisson_probabilities})
+```
+
+![Poisson(5) probabilities for 0 through 12 mutations](figures/poisson5.png)
+
+## Binomial probability
+
+The chapter next calculates all probabilities for 15 trials with success probability 0.3.
+
+```biolang
+let binomial_k = range(0, 16)
+let binomial_probabilities = binomial_k |> map(|k| dbinom(k, 15, 0.3))
+table({successes: binomial_k, probability: binomial_probabilities})
+```
+
+```biolang
+binomial_probabilities |> map(|p| round(p, 2))
+```
+
+![Theoretical distribution of B(15, 0.3)](figures/binomial-15-03.png)
+
+## Exact checks
+
+```biolang
+assert abs(probability_three_given_five - 0.14037389581428056) < 1e-15, "dpois(3, 5)"
+assert abs(sum(poisson_probabilities) - 0.997981148372563) < 1e-11, "displayed Poisson mass 0:12"
+assert abs(sum(binomial_probabilities) - 1.0) < 1e-11, "complete binomial distribution"
+assert binomial_probabilities[4] > binomial_probabilities[3], "the mode rises to four successes"
+assert binomial_probabilities[4] > binomial_probabilities[5], "four successes is the displayed mode"
+"All R-reference probability checks passed."
+```

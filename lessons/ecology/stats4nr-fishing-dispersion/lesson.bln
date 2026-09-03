@@ -1,0 +1,55 @@
+# Diagnose dispersion in fishing-count data
+
+This lesson is a bounded one-to-one port of the opening fishing case study in [Chapter 13 of *Statistics in Natural Resources: Applications with R*](https://stats4nr.com/count-regression-models). It uses the exact package data and the exact published histogram. It deliberately stops before regression because BioLang's current Poisson fit does not reproduce the source model.
+
+## Load the exact source data
+
+```biolang
+let fishing = read_csv("data/fishing.csv")
+{observations: nrow(fishing), variables: ncol(fishing), first_rows: head(fishing, 10)}
+```
+
+The six variables record whether a group caught no fish, used live bait, brought a camper, its total people and children, and its fish count.
+
+## Exact published histogram
+
+![Published histogram of fish caught](figures/source/fishing-histogram.png)
+
+This is the PNG served by the source chapter, copied byte for byte. It is not a BioLang redraw. The plot shows many zero or low catches and a small number of much larger catches.
+
+## Compare the mean and variance
+
+```biolang
+let catches = fishing |> col("count")
+let catch_mean = mean(catches)
+let catch_variance = variance(catches)
+{
+    mean_fish_caught: catch_mean,
+    variance_fish_caught: catch_variance,
+    variance_to_mean_ratio: catch_variance / catch_mean
+}
+```
+
+The chapter reports a mean of 3.296 and a sample variance of 135.3739. Because the variance is far larger than the mean, the response is overdispersed relative to the Poisson mean-equals-variance assumption.
+
+## Quantify the excess zeros
+
+```biolang
+let zero_catches = fishing |> filter(|row| row.count == 0)
+let zero_percent = nrow(zero_catches) * 100.0 / nrow(fishing)
+{groups_catching_zero_fish: nrow(zero_catches), percent_catching_zero_fish: zero_percent}
+```
+
+The source later reports that 56.8% of groups caught zero fish. That reinforces why the chapter compares overdispersed and zero-inflated count models.
+
+## Fidelity checks
+
+```biolang
+assert nrow(fishing) == 250, "exact source observation count"
+assert ncol(fishing) == 6, "exact source variable count"
+assert abs(catch_mean - 3.296) < 0.000000001, "published mean"
+assert abs(catch_variance - 135.373879518072) < 0.000000001, "published sample variance"
+assert nrow(zero_catches) == 142, "exact zero-catch count"
+assert abs(zero_percent - 56.8) < 0.000000001, "published zero-catch percentage"
+"Exact source data and published-figure checks passed."
+```

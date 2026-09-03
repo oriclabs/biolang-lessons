@@ -1,0 +1,78 @@
+# Fishing success with a Poisson count model
+
+This is a source-faithful port of the standard Poisson part of section 13.2.1 in [*Statistics in Natural Resources: Applications with R*](https://stats4nr.com/count-regression-models). It uses the exact `fishing` data distributed by the source project. The scope stops before the negative-binomial and zero-inflated models because BioLang does not currently reproduce those implementations one to one.
+
+## Inspect the exact source data
+
+```biolang
+let fishing = read_csv("data/fishing.csv")
+{
+    rows: nrow(fishing),
+    columns: ncol(fishing),
+    first_rows: head(fishing, 10)
+}
+```
+
+The source contains 250 visitor groups. `count` is the number of fish caught; `persons`, `child`, and `camper` are the three predictors used in the published Poisson model.
+
+## Count distribution
+
+```biolang
+let counts = col(fishing, "count")
+{
+    mean: mean(counts),
+    variance: variance(counts),
+    zero_groups: counts |> count_if(|x| x == 0),
+    maximum: max(counts)
+}
+```
+
+The source reports mean `3.296` and variance `135.3739`. The large variance relative to the mean is the warning that a standard Poisson model is overdispersed.
+
+![Exact published Figure 13.2: histogram of fish caught](figures/source/figure-13.2-histogram.png)
+
+The image above is the published chapter PNG, copied byte for byte. No BioLang replacement plot is shown.
+
+## Fit the published Poisson model
+
+```biolang
+let poisson = glm(~count ~ persons + child + camper, fishing, "poisson")
+poisson
+```
+
+The coefficient order is intercept, persons, child, camper. The fitted values match the source R model to the tolerances recorded in `validation.json`.
+
+```biolang
+let beta = poisson.coefficients |> map(|term| term.estimate)
+{
+    intercept: beta[0],
+    persons: beta[1],
+    child: beta[2],
+    camper: beta[3],
+    residual_deviance: poisson.residual_deviance,
+    aic: poisson.aic
+}
+```
+
+Exponentiating a coefficient gives its multiplicative effect on the expected count with the other predictors held fixed.
+
+```biolang
+{
+    persons_rate_ratio: exp(beta[1]),
+    child_rate_ratio: exp(beta[2]),
+    camper_rate_ratio: exp(beta[3])
+}
+```
+
+```biolang
+assert nrow(fishing) == 250, "the source data have 250 rows"
+assert abs(mean(counts) - 3.296) < 1e-12, "source mean"
+assert abs(variance(counts) - 135.373879518072) < 1e-9, "source sample variance"
+assert abs(beta[0] - -1.981827) < 1e-5, "source intercept"
+assert abs(beta[1] - 1.091262) < 1e-5, "source persons coefficient"
+assert abs(beta[2] - -1.689957) < 1e-5, "source child coefficient"
+assert abs(beta[3] - 0.9309359) < 1e-5, "source camper coefficient"
+assert abs(poisson.aic - 1682.145) < 0.01, "source AIC"
+"All source-value checks passed."
+```
+

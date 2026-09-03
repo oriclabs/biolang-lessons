@@ -1,0 +1,32 @@
+# Model adult weight from height
+
+This one-to-one lesson ports the simple linear-regression example from [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Select **Prepare all** to obtain the exact source-hosted NHANES files.
+
+```biolang
+let nh = read_csv("nhanes.csv")
+let adults = nh |> filter(|row| row.Age >= 18)
+let height_weight = adults |> drop_null("Height") |> drop_null("Weight")
+let fit = lm(height_weight |> col("Height"), height_weight |> col("Weight"))
+{complete_rows: nrow(height_weight), model: fit}
+```
+
+The fitted equation is `Weight = -73.7058963 + 0.9199614 * Height`, with (R^2=0.2034476), exactly matching the source data calculation.
+
+## Published fitted relationship
+
+![Exact published adult height-weight regression](figures/source/height-weight-lm.png)
+
+## Published extrapolation warning
+
+![Exact published height-weight extrapolation plot](figures/source/height-weight-extrapolation.png)
+
+Both PNGs are copied byte for byte from the chapter. The second extends the axis toward height zero, exposing why the negative intercept should not be interpreted outside the observed range.
+
+```biolang
+assert nrow(height_weight) == 3676, "source complete adult rows"
+assert abs(fit.intercept - (-73.70589629259628)) < 0.000000001, "source intercept"
+assert abs(fit.slope - 0.9199613842262466) < 0.000000001, "source slope"
+assert abs(fit.r_squared - 0.20344761074176798) < 0.000000001, "source R squared"
+"Exact source model and figures verified."
+```
+

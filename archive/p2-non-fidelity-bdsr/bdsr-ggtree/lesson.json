@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "id": "bdsr-ggtree",
+  "title": "Visualizing and annotating phylogenetic trees",
+  "summary": "A complete browser-compatible BioLang companion to BDSR chapter 13: Newick and BEAST/Nexus import, phylograms and cladograms, rectangular, slanted, and circular layouts, all three exercises, ggtree-compatible node numbering, MRCA, clade labels and highlights, taxon links, an influenza H3 alignment, and the source chapter's seeded multi-tree facets.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 24,
+  "attribution": "ATTRIBUTION.md",
+  "source": {
+    "title": "Stephen D. Turner, Ph.D. — Biological Data Science with R: Visualizing and Annotating Phylogenetic Trees",
+    "url": "https://bdsr.stephenturner.us/ggtree.html",
+    "repository": "https://github.com/stephenturner/bdsr",
+    "copyright": "© 2019 Stephen D. Turner, Ph.D.",
+    "licence": "CC BY-NC 4.0",
+    "licenceUrl": "https://github.com/stephenturner/bdsr/blob/main/LICENSE",
+    "note": "Independent OriClabs BioLang companion under MIT. It follows the public section and exercise order but does not copy or relicense upstream prose, R code, tables, or figures. The teaching-tree file retains its separate terms and attribution. This is not an official BDSR publication or endorsement."
+  },
+  "series": {
+    "id": "biological-data-science-with-r",
+    "title": "Biological Data Science with R",
+    "url": "https://bdsr.stephenturner.us/",
+    "order": 13,
+    "chapter": "Chapter 13 · Visualizing and annotating phylogenetic trees"
+  },
+  "datasets": [
+    {
+      "id": "teaching-tree",
+      "title": "BDSR chapter 13 Newick teaching tree",
+      "path": "tree_newick.nwk",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/bdsr-ggtree/tree_newick.nwk",
+      "bytes": 110,
+      "sha256": "31319326f1be39b060f43a32ac2c558fcb8bd1abcf501c6e7d1356a938db41f2",
+      "mediaType": "text/x-newick",
+      "source": "Small made-up phylogeny distributed with BDSR chapter 13",
+      "citation": "Turner SD, Biological Data Science with R, chapter 13.",
+      "rights": "BDSR teaching artifact under CC BY-NC 4.0; excluded from the repository MIT grant."
+    },
+    {
+      "id": "many-trees-seed-42",
+      "title": "Seed-42 random trees for BDSR section 13.6.1",
+      "path": "many_trees_seed42.nwk",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/bdsr-ggtree/many_trees_seed42.nwk",
+      "bytes": 17349,
+      "sha256": "c5ea607930c490fb70b7d26cbf5a474211e068b5da9af48fdbe600183e5ac310",
+      "mediaType": "text/x-newick",
+      "source": "Independently regenerated from the public section 13.6.1 recipe: R set.seed(42), followed by ape::rtree for 10, 25, 50, and 100 tips repeated three times; child order is ladderized to preserve ggtree's displayed orientation.",
+      "citation": "Turner SD, Biological Data Science with R, section 13.6.1; Paradis E and Schliep K (2019), Bioinformatics 35:526-528.",
+      "rights": "Deterministically generated factual tree data; included under the repository MIT grant. No R or ape source or binary is redistributed or linked into BioLang."
+    },
+    {
+      "id": "influenza-beast-tree",
+      "title": "Influenza H3 BEAST tree",
+      "path": "flu_tree_beast.tree",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/bdsr-ggtree/flu_tree_beast.tree",
+      "bytes": 81834,
+      "sha256": "5bd13498b0c9592830392d8f4b3d8600dbdae533bb40f47e5cdcbcbad2d0dda8",
+      "mediaType": "application/x-nexus",
+      "source": "BDSR/BioConnector advanced ggtree teaching data",
+      "citation": "Liang et al. (2014), Journal of Virology 88:10864–10874; Yu et al. (2017), Methods in Ecology and Evolution 8:28–36.",
+      "rights": "BDSR/BioConnector teaching artifact under CC BY-NC-SA 4.0; excluded from the repository MIT grant."
+    },
+    {
+      "id": "influenza-amino-acid-alignment",
+      "title": "Influenza H3 amino-acid alignment",
+      "path": "flu_aasequence.fasta",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/phylogenetics/bdsr-ggtree/flu_aasequence.fasta",
+      "bytes": 45110,
+      "sha256": "8bdf7b1a8c11e2ebb61243ecff7196135c4d5e06be19ccbab81126ce5fe02579",
+      "mediaType": "text/x-fasta",
+      "source": "BDSR/BioConnector advanced ggtree teaching data",
+      "citation": "Liang et al. (2014), Journal of Virology 88:10864–10874; Yu et al. (2017), Methods in Ecology and Evolution 8:28–36.",
+      "rights": "BDSR/BioConnector teaching artifact under CC BY-NC-SA 4.0; excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "draw an existing phylogenetic tree",
+      "compare phylogram and cladogram layouts",
+      "find a most recent common ancestor",
+      "label and highlight a clade",
+      "show reassortment or horizontal transfer links",
+      "compare many trees reproducibly",
+      "align phylogenetic trees with biological metadata"
+    ],
+    "methods": [
+      "Newick parsing", "phylogram", "cladogram", "MRCA calculation",
+      "ape node numbering", "rectangular tree layout", "slanted tree layout",
+      "circular tree layout", "clade annotation", "taxon-link annotation",
+      "BEAST tree provenance", "multiple sequence alignment"
+    ],
+    "plots": [
+      "phylogenetic tree", "phylogram", "cladogram", "rectangular tree",
+      "slanted tree", "circular tree", "dendrogram", "annotated tree",
+      "clade highlight", "clade label", "taxon link", "faceted tree plot"
+    ],
+    "terms": [
+      "phylogenetics", "phylogeny", "topology", "branch length", "tip",
+      "leaf", "internal node", "clade", "common ancestor", "MRCA",
+      "Newick", "Nexus", "BEAST", "ggtree", "ggplot2", "Bioconductor",
+      "evolutionary distance", "substitutions per site", "reassortment",
+      "horizontal gene transfer", "FASTA", "MSA", "PhyloPic"
+    ],
+    "aliases": [
+      "tree visualization", "tree annotation", "evolutionary tree",
+      "phylogenetic visualization", "tree plot", "circular phylogeny",
+      "most recent common ancestor", "multiPhylo"
+    ],
+    "functions": [
+      "read_text", "nw_parse", "nexus_tree", "tree_leaves", "tree_mrca",
+      "patristic_distance", "nw_to_distance_matrix", "phylo_tree",
+      "read_fasta", "alignment_view"
+    ]
+  },
+  "tags": ["phylogenetics", "ggtree", "Newick", "MRCA", "clade annotation", "visualization"]
+}

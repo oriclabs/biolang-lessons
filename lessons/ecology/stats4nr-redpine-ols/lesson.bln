@@ -1,0 +1,44 @@
+# Predict red-pine height from diameter
+
+This lesson ports Exercise 14.1 from [Statistics in Natural Resources: Applications with R](https://stats4nr.com/linear-mixed-models). The data are 450 red pine observations recorded at the Cloquet Forestry Center in Minnesota in 2014; `DBH` is inches and `HT` is feet.
+
+```biolang
+let redpine = read_csv("data/redpine.csv")
+let diameter_height_correlation = cor(redpine |> col("DBH"), redpine |> col("HT"))
+let fit = lm(redpine |> col("DBH"), redpine |> col("HT"))
+{
+    observations: nrow(redpine),
+    correlation: diameter_height_correlation,
+    model: fit
+}
+```
+
+## AIC from the exact fitted residuals
+
+The source asks for `AIC()` and later publishes `3676.1`. R's `lm` likelihood counts the fitted variance as a third parameter.
+
+```biolang
+let residual_squares = redpine |> map(|row| {
+    let residual = row.HT - (fit.intercept + fit.slope * row.DBH)
+    residual * residual
+})
+let residual_sum_squares = sum(residual_squares)
+let observations = nrow(redpine)
+let aic = observations * (log(2.0 * 3.141592653589793) + 1.0 + log(residual_sum_squares / observations)) + 2.0 * 3.0
+{residual_sum_squares: residual_sum_squares, aic: aic}
+```
+
+The source's Table 14.1 prints an OLS intercept of `31.05`, but the exact official object produces `31.155162...`; the table value is not a valid rounding of the data result. The lesson preserves both facts rather than changing the source data to force the typo.
+
+The exercise asks the learner to create a scatter plot but does not publish a canonical answer figure. Therefore this port includes no independently rendered replacement plot.
+
+```biolang
+assert nrow(redpine) == 450, "source field observations"
+assert ncol(redpine) == 5, "source variables"
+assert abs(diameter_height_correlation - 0.768106965908565) < 0.000000001, "exact Pearson correlation"
+assert abs(fit.intercept - 31.15516227358697) < 0.000000001, "exact official-data intercept"
+assert abs(fit.slope - 3.049255405341085) < 0.000000001, "exact slope"
+assert abs(fit.r_squared - 0.5899883110772607) < 0.000000001, "exact R squared"
+assert abs(aic - 3676.142345128096) < 0.000001, "exact R AIC and published 3676.1"
+"Exact real field data and OLS outputs verified."
+```

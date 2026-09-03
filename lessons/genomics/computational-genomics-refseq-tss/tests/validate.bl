@@ -1,0 +1,10 @@
+fn test_computational_genomics_refseq_tss() {
+    let refseq = read_csv("../refseq.hg19.chr21.csv")
+    let rows = refseq |> mutate("tss", |row| if row.strand == "+" { row.start } else { row.end })
+    let keys = rows |> map(|row| row.chrom + "|" + str(row.tss) + "|" + row.strand)
+    assert nrow(refseq) == 571 && ncol(refseq) == 12, "exact BED shape"
+    assert nrow(rows |> filter(|row| row.strand == "+")) == 270, "plus strand"
+    assert nrow(rows |> filter(|row| row.strand == "-")) == 301, "minus strand"
+    assert len(unique(keys)) == 378, "unique TSS ranges"
+    assert rows[0].name == "NR_073202" && rows[0].tss == 42219039, "first TSS"
+}

@@ -1,0 +1,17 @@
+fn test_stats4nr_redpine_ols() {
+    let redpine = read_csv("../data/redpine.csv")
+    let r = cor(redpine |> col("DBH"), redpine |> col("HT"))
+    let fit = lm(redpine |> col("DBH"), redpine |> col("HT"))
+    let rss = redpine |> map(|row| {
+        let e = row.HT - (fit.intercept + fit.slope * row.DBH)
+        e * e
+    }) |> sum()
+    let n = nrow(redpine)
+    let aic = n * (log(2.0 * 3.141592653589793) + 1.0 + log(rss / n)) + 6.0
+    assert nrow(redpine) == 450 && ncol(redpine) == 5, "source shape"
+    assert abs(r - 0.768106965908565) < 0.000000001, "correlation"
+    assert abs(fit.intercept - 31.15516227358697) < 0.000000001, "intercept"
+    assert abs(fit.slope - 3.049255405341085) < 0.000000001, "slope"
+    assert abs(fit.r_squared - 0.5899883110772607) < 0.000000001, "R squared"
+    assert abs(aic - 3676.142345128096) < 0.000001, "AIC"
+}

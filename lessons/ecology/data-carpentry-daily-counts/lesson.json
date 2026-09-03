@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "data-carpentry-daily-counts",
+  "title": "Data Analysis and Visualization in R for Ecologists: Daily Counts",
+  "summary": "A one-to-one port of the daily animal counts by sex using the exact Portal field-data extract and the byte-for-byte published time-series figure.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 48,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Data Analysis and Visualization in R for Ecologists - Working with data",
+    "url": "https://datacarpentry.github.io/R-ecology-lesson/working-with-data.html",
+    "repository": "https://github.com/datacarpentry/R-ecology-lesson",
+    "revision": "df7932244795d6341d7a305bfa6d53f7c721181e",
+    "copyright": "The Carpentries contributors",
+    "licence": "CC BY 4.0; code MIT",
+    "licenceUrl": "https://github.com/datacarpentry/R-ecology-lesson/blob/main/LICENSE.md",
+    "note": "The exact cleaned Portal Project CSV, source grouping fields, row counts, and published solution PNG are preserved. No replacement plot is generated."
+  },
+  "series": {
+    "id": "data-analysis-visualization-r-ecologists",
+    "title": "Data Analysis and Visualization in R for Ecologists",
+    "url": "https://datacarpentry.github.io/R-ecology-lesson/",
+    "order": 5,
+    "chapter": "Working with data - Challenge 4 daily counts"
+  },
+  "datasets": [
+    {
+      "id": "portal-surveys-complete-77-89",
+      "title": "Portal Project cleaned surveys, 1977-1989",
+      "path": "surveys_complete_77_89.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/ecology/data-carpentry-daily-counts/surveys_complete_77_89.csv",
+      "bytes": 1223055,
+      "sha256": "59cbe95a78255e1281660b329be308559f17b55617d51add2a535222778fcd12",
+      "mediaType": "text/csv",
+      "source": "Data Carpentry R ecology lesson; Portal Project teaching data",
+      "citation": "Ernest et al., Portal Project Teaching Database; cleaned extract distributed by The Carpentries",
+      "rights": "Distributed with the CC BY 4.0 lesson; see upstream LICENSE.md and data documentation."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["count field observations by day and sex", "build an ecological time series", "preserve missing sex as a grouping level"],
+    "methods": ["split-apply-combine", "daily grouped counts", "time-series preparation"],
+    "plots": ["daily animal-count time series"],
+    "terms": ["Portal Project", "ecological survey", "daily counts", "sex", "time series", "missing values"],
+    "aliases": ["Data Carpentry daily counts", "R ecology time series", "Portal survey Challenge 4"],
+    "functions": ["read_csv", "mutate", "group_by", "summarize", "arrange"]
+  },
+  "tags": ["ecology", "time series", "grouped counts", "CC BY"]
+}

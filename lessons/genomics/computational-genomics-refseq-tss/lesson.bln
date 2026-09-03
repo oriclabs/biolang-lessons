@@ -1,0 +1,39 @@
+# RefSeq BED intervals to transcription start sites
+
+This lesson ports the real-data BED import example from Chapter 6 of [Computational Genomics with R](https://compgenomr.github.io/book/operations-on-genomic-intervals-with-genomicranges-package.html). The original `refseq.hg19.chr21.bed` from `compGenomRData` is included byte for byte; the CSV is only a mechanical browser-readable export.
+
+```biolang
+let refseq = read_csv("refseq.hg19.chr21.csv")
+{transcripts: nrow(refseq), fields: ncol(refseq), first_rows: head(refseq, 5)}
+```
+
+The source makes a one-base TSS at the BED start for `+` transcripts and at the BED end for `-` transcripts, then removes duplicated genomic TSS ranges.
+
+```biolang
+let tss_rows = refseq |> mutate("tss", |row| if row.strand == "+" { row.start } else { row.end })
+let tss_keys = tss_rows |> map(|row| row.chrom + "|" + str(row.tss) + "|" + row.strand)
+let unique_tss_keys = unique(tss_keys)
+let plus_transcripts = tss_rows |> filter(|row| row.strand == "+")
+let minus_transcripts = tss_rows |> filter(|row| row.strand == "-")
+{
+    transcript_rows: nrow(tss_rows),
+    unique_tss: len(unique_tss_keys),
+    duplicate_tss_rows: nrow(tss_rows) - len(unique_tss_keys),
+    plus_strand: nrow(plus_transcripts),
+    minus_strand: nrow(minus_transcripts)
+}
+```
+
+No plot is shown because this source section publishes tabular code, not a canonical figure.
+
+```biolang
+assert nrow(refseq) == 571, "exact BED transcript rows"
+assert ncol(refseq) == 12, "exact BED columns"
+assert nrow(plus_transcripts) == 270, "source plus-strand transcripts"
+assert nrow(minus_transcripts) == 301, "source minus-strand transcripts"
+assert len(unique_tss_keys) == 378, "source GRanges duplicate-removal result"
+assert nrow(tss_rows) - len(unique_tss_keys) == 193, "alternate transcript duplicates"
+assert tss_rows[0].name == "NR_073202", "first source RefSeq identifier"
+assert tss_rows[0].tss == 42219039, "first minus-strand TSS"
+"Exact RefSeq file and strand-aware TSS transformation verified."
+```

@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "id": "rmrwr-blood-storage-columns",
+  "title": "Reproducible Medical Research with R: Blood-Storage Columns",
+  "summary": "A one-to-one port of the non-contiguous column-selection example using the exact de-identified 316-patient blood-storage cohort.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 16,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Reproducible Medical Research with R - Selecting Columns",
+    "url": "https://peter-higgins-rmrwr.share.connect.posit.cloud/",
+    "repository": "https://github.com/higgi13425/rmrwr-book",
+    "revision": "8ec6c51e5d9364a5333425c7bdad5bc5184aab9f",
+    "copyright": "Peter Higgins and contributors",
+    "licence": "CC0-1.0",
+    "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "note": "The source's exact select(1, bGS:sGS, 3, AA) column order and head output are translated to BioLang using the official de-identified medicaldata object."
+  },
+  "series": {
+    "id": "reproducible-medical-research-with-r",
+    "title": "Reproducible Medical Research with R",
+    "url": "https://peter-higgins-rmrwr.share.connect.posit.cloud/",
+    "order": 5,
+    "chapter": "Selecting Columns - non-contiguous blood-storage example"
+  },
+  "datasets": [
+    {
+      "id": "medicaldata-blood-storage-rda",
+      "title": "Official medicaldata blood_storage object",
+      "path": "data/blood_storage.rda",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/rmrwr-blood-storage-columns/data/blood_storage.rda",
+      "bytes": 4472,
+      "sha256": "634fdd734da48b73a977915fcfedb62f7aea60d479dae54b47eb5038caddd609",
+      "mediaType": "application/octet-stream",
+      "source": "medicaldata data/blood_storage.rda at cf7eea82dad7c30ea6d62efc7bad7d01158e2bf7",
+      "citation": "Retrospective Cohort Study of the Effects of Blood Storage on Prostate Cancer; medicaldata package",
+      "rights": "MIT as declared by the medicaldata package; de-identified cohort."
+    },
+    {
+      "id": "medicaldata-blood-storage-csv",
+      "title": "Browser export of official blood_storage data",
+      "path": "data/blood_storage.csv",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/rmrwr-blood-storage-columns/data/blood_storage.csv",
+      "bytes": 16721,
+      "sha256": "299e519c195b9145673781a207dee30b679146d1d672a5953f41211716d23d98",
+      "mediaType": "text/csv",
+      "source": "Mechanical write.csv export of the official medicaldata object",
+      "citation": "Retrospective Cohort Study of the Effects of Blood Storage on Prostate Cancer; medicaldata package",
+      "rights": "MIT source object; mechanical format conversion."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["select non-contiguous clinical variables", "reorder a clinical table", "inspect a de-identified prostate-cancer cohort"],
+    "methods": ["column selection", "column range expansion", "clinical data inspection"],
+    "plots": [],
+    "terms": ["blood storage", "prostate cancer", "retrospective cohort", "Gleason score", "PSA", "column selection"],
+    "aliases": ["RMRWR selecting columns", "medicaldata blood_storage", "prostate cohort columns"],
+    "functions": ["read_csv", "select", "head", "colnames", "nrow"]
+  },
+  "tags": ["clinical research", "data wrangling", "cohort", "CC0"]
+}

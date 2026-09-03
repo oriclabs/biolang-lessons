@@ -11,11 +11,12 @@ lessons/
   biostatistics/
   bioinformatics/
   genomics/
+  phylogenetics/
   single-cell/
   epidemiology/
 ```
 
-Each lesson directory owns its notebooks, manifest, small fixtures, validation,
+Each lesson directory owns its notebooks, manifest, source datasets, validation,
 and attribution notice. A schema-1 manifest opens one notebook; a schema-2
 manifest is an ordered collection shown as one Studio tab with a selectable
 active section. Each child notebook keeps independent cells, results, and
@@ -46,16 +47,78 @@ new lesson that omits any part of this contract. When a notebook gains an
 important method, plot, or BioLang function, update its discoverability terms
 in the same change.
 
+Every schema-2 notebook also ends with in-content Previous and/or Next links to
+its adjacent section, using `#lesson-section=<section-id>`. Studio handles these
+links without leaving the collection; the section selector remains available
+for jumping directly to any notebook. `npm test` verifies the adjacent links.
+
 ## Current collections
 
-- *Biological Data Science with R* companion series:
-  - `lessons/biostatistics/bdsr-essential`: one practical NHANES lesson.
-  - `lessons/biostatistics/bdsr-survival`: a validated survival-analysis lesson
-    using lung, colon, and fixed-snapshot TCGA teaching data.
-  - `lessons/biostatistics/bdsr-predictive`: a complete predictive-analytics
-    lesson using H7N9 classification and CDC influenza forecasting data.
 - `lessons/biostatistics/little-book-biomedical`: eight connected biomedical
   statistics lessons adapted from Avril Coghlan's CC BY 3.0 booklet.
+- `lessons/sequence-analysis/little-book-r-bioinformatics`: the first two DNA
+  Sequence Statistics chapters from *A Little Book of R for Bioinformatics*.
+  Together with `little-book-r-gene-finding`, this source now exposes three
+  notebooks under one series; the two-notebook collection also has in-content
+  Previous/Next links.
+- Priority-1 source ports, each deliberately bounded to verified workflows:
+  - `lessons/genomics/computational-genomics-intervals`: GRanges construction
+    and the first two Chapter 6 exercises.
+  - `lessons/genomics/computational-genomics-refseq-tss`: the exact real RefSeq
+    hg19 chromosome 21 BED import and strand-aware TSS transformation.
+  - `lessons/biostatistics/msmb-discrete-models`: the opening Poisson and
+    binomial examples, with exact published chapter figures.
+  - `lessons/biostatistics/msmb-celegans-mitochondrial-composition`: the real
+    UCSC ce2 chromosome M composition exercise, stopping before simulation.
+  - `lessons/biostatistics/rmrwr-sample-size`: the opening A1c study-planning
+    example, including the source's attrition-arithmetic discrepancy.
+  - `lessons/biostatistics/rmrwr-blood-storage-columns`: exact selection from
+    the de-identified 316-patient blood-storage cohort.
+  - `lessons/ecology/data-carpentry-ecology`: grouped species/sex summaries
+    using the exact Portal Project teaching CSV.
+  - `lessons/ecology/data-carpentry-daily-counts`: exact daily-by-sex counts
+    from the same field data and the byte-for-byte published solution plot.
+- Priority-2 source ports that passed the strict one-to-one fidelity gate:
+  - `lessons/biostatistics/bdsr-nhanes-eda`: the bounded NHANES descriptive
+    and EDA sequence with source-hosted data and six exact published PNGs.
+  - `lessons/biostatistics/bdsr-nhanes-group-tests`: exact Welch, ANOVA, and
+    Tukey results with the published smoking/BMI boxplot.
+  - `lessons/biostatistics/bdsr-nhanes-regression`: exact height-weight OLS
+    and both published regression figures.
+  - `lessons/phylogenetics/treedata-metadata-attachment`: Chapter 7 Figure 7.1
+    using the exact tree, tip, node, and published SVG assets.
+  - `lessons/phylogenetics/treedata-snp-traits`: Chapter 7 Figure 7.2 using
+    the exact official package objects and byte-for-byte published figure.
+  - `lessons/ecology/stats4nr-fishing-dispersion`: the exact fishing-count
+    dispersion check and source histogram, stopping before unsupported models.
+  - `lessons/ecology/stats4nr-redpine-ols`: exact correlation, OLS, and AIC
+    over 450 real field observations; the source table's intercept typo is
+    disclosed rather than forced by changing data.
+
+## No-synthetic-data audit
+
+- `archive/p1-synthetic-exclusions/epir-standardised-rates` is not published:
+  the EpiR source explicitly labels its country population and death tables
+  fictitious.
+- The MSMB mitochondrial lesson stops before its multinomial simulation.
+- The Stats4NR falcon candidate is archived because its source explicitly says
+  those observations were simulated.
+- A source exercise without a canonical output figure does not receive a
+  locally redrawn substitute. Such lessons remain numeric/tabular only.
+
+## Priority-2 fidelity audit
+
+- Five earlier, broader *Biological Data Science with R* companions are retained under
+  `archive/p2-non-fidelity-bdsr`, but are no longer published or registered.
+  They used independently redrawn plots or substituted analysis paths rather
+  than one-to-one source outputs. The three bounded NHANES replacements listed
+  above are the active lessons from that book.
+- The broader *Statistics in Natural Resources* fishing-model candidate is
+  retained under `archive/p2-non-fidelity-stats4nr`, but is not published or
+  registered. BioLang's current Poisson GLM did not reproduce the source
+  coefficients and failed to converge. The simulated falcon draft is retained
+  there for audit only. The bounded fishing and real red-pine lessons listed
+  above are the active replacements.
 
 ## Validate
 

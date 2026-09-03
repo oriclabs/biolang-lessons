@@ -1,0 +1,297 @@
+# A Little Book of R for Bioinformatics
+
+## Chapter 2 · Local sequence statistics
+
+A whole-genome average can hide regional structure. This notebook follows chapter 2 of Avril Coghlan's CC BY 3.0 book in its original order: language basics, plots, functions, reading sequence data, local GC, sliding windows, DNA-word representation, and all five exercises.
+
+## 1. A little more introduction to BioLang
+
+The source first revisits numbers, lists, indexes, generated sequences, loops, plotting, functions, and comments. These ideas are the tools used to build the sliding-window analysis later.
+
+```biolang
+let x = 100
+let myvector = [30, 16, 303, 99, 11, 111]
+{
+    log10_of_100: log10(x),
+    mean: mean(myvector),
+    third_value: myvector[2]
+}
+```
+
+BioLang indexes lists from zero, so index `2` is the third value. `range(start, end, step)` stops before `end`.
+
+```biolang
+let one_to_ten = range(1, 11)
+let odd_numbers = range(1, 11, 2)
+let squares = one_to_ten |> map(|value| value * value)
+table({number: one_to_ten, square: squares})
+```
+
+The source expresses repetition with a `for` loop. BioLang supports loops too; a pipeline with `map()` is often clearer when one input produces one output.
+
+```biolang
+let selected_numbers = [2, 9, 100, 133]
+table({
+    number: selected_numbers,
+    square: selected_numbers |> map(|value| value * value)
+})
+```
+
+## 2. The source chapter's first two plots
+
+The same five paired measurements are shown first as points, then as points connected in their given order.
+
+```biolang
+let myvector1 = [10, 15, 22, 35, 43]
+let myvector2 = [3, 3.2, 3.9, 4.1, 5.2]
+table({myvector1: myvector1, myvector2: myvector2})
+```
+
+![Exact source figure: five paired measurements as points](figures/source/P2_image1.png)
+
+![Exact source figure: the same measurements connected in order](figures/source/P2_image2.png)
+
+Connecting the dots reveals order, but it does not prove that unmeasured values followed a straight path.
+
+## 3. Defining a reusable function
+
+```biolang
+fn myfunction(value) {
+    20 + value * value
+}
+
+table({input: [10, 25], output: [myfunction(10), myfunction(25)]})
+```
+
+Text after `#` is a comment for the reader. BioLang does not execute it.
+
+## 4. Repetition, functions, and plots
+
+Bioinformatics often repeats one calculation over many positions. A function names the repeated idea; `map()` applies it to every start position.
+
+```biolang
+let numbers = [1, 3, 5, 7, 9]
+let squares = numbers |> map(|value| value * value)
+table({number: numbers, square: squares})
+```
+
+Connecting points makes their order visible. It does not prove that values between measured positions followed a straight path.
+
+## 5. Read the exact sequence data
+
+```biolang
+let dengue = first(read_fasta("data/NC_001477.1.fasta")).seq
+let leprae = first(read_fasta("data/NC_002677.1.fasta")).seq
+{dengue_length: len(dengue), leprae_length: len(leprae)}
+```
+
+## 6. Select a biological region without an off-by-one error
+
+The original example asks for biological positions 452–535, both included. BioLang uses zero-based, half-open ranges, so the equivalent call starts at 451 and ends at 535.
+
+```biolang
+let dengue_452_to_535 = subseq(dengue, 451, 535)
+{length: len(dengue_452_to_535), sequence: dengue_452_to_535}
+```
+
+The length check is part of the analysis: `535 - 451 = 84`, matching the 84 biological positions from 452 through 535.
+
+## 7. Local variation in GC content
+
+The whole Dengue genome is about 46.67% GC, but that average can hide regional differences. The source first calculates six adjacent chunks explicitly.
+
+```biolang
+let dengue_chunk_summary = table({
+    region: ["1–2,000", "2,001–4,000", "4,001–6,000", "6,001–8,000", "8,001–10,000", "10,001–10,735"],
+    start: [1, 2001, 4001, 6001, 8001, 10001],
+    gc: [
+        gc_content(subseq(dengue, 0, 2000)),
+        gc_content(subseq(dengue, 2000, 4000)),
+        gc_content(subseq(dengue, 4000, 6000)),
+        gc_content(subseq(dengue, 6000, 8000)),
+        gc_content(subseq(dengue, 8000, 10000)),
+        gc_content(subseq(dengue, 10000, len(dengue)))
+    ]
+})
+dengue_chunk_summary
+```
+
+Local GC differences are clues, not diagnoses. They can reflect coding structure, mutation bias, transferred DNA, assembly issues, or ordinary variation.
+
+## 8. A non-overlapping sliding-window analysis
+
+The source chapter uses adjacent, non-overlapping windows. This helper discards a short remainder because windows of different lengths would have different measurement precision.
+
+```biolang
+fn composition_windows(seq, window_size) {
+    let starts = range(0, len(seq) - window_size + 1, window_size)
+    table({
+        position: starts |> map(|start| start + 1),
+        gc: starts |> map(|start| gc_content(subseq(seq, start, start + window_size))),
+        at: starts |> map(|start| 1 - gc_content(subseq(seq, start, start + window_size)))
+    })
+}
+
+let dengue_2000 = composition_windows(dengue, 2000)
+dengue_2000
+```
+
+**How to read the table:** `position` is the one-based start of a window. `gc` is a fraction, so `0.465` means 46.5% GC.
+
+The helper drops a final incomplete window, matching the loop in the source chapter. That keeps every plotted estimate based on the same number of bases.
+
+## 9. A sliding-window plot of GC content
+
+![Exact source figure: the chapter's first sliding-window GC plot](figures/source/P2_image3.png)
+
+A small window reveals short fluctuations but is noisy. A large window is steadier but may blur a narrow region. Window size is therefore a resolution choice, not a cosmetic plot setting.
+
+The source next demonstrates the reusable function with 3,000-base and 300-base windows.
+
+```biolang
+let dengue_3000 = composition_windows(dengue, 3000)
+dengue_3000
+```
+
+![Exact source figure: Dengue GC in 3,000-base windows](figures/source/P2_image4.png)
+
+```biolang
+let dengue_300 = composition_windows(dengue, 300)
+dengue_300
+```
+
+![Exact source figure: Dengue GC in 300-base windows](figures/source/P2_image5.png)
+
+**What changes:** the 300-base curve is much more jagged. Both figures come from the same sequence; only the measurement resolution changed.
+
+## 10. Over-represented and under-represented DNA words
+
+The representation ratio ρ compares an observed word frequency with the frequency expected if its component bases occurred independently.
+
+```biolang
+let dengue_bases = base_counts(dengue)
+let dengue_dinucleotides = kmer_index(dengue, 2)
+let observed_gc_word = 1.0 * len(dengue_dinucleotides.GC) / (len(dengue) - 1)
+let expected_gc_word = (1.0 * dengue_bases.G / len(dengue)) * (1.0 * dengue_bases.C / len(dengue))
+{
+    observed_frequency: observed_gc_word,
+    expected_frequency: expected_gc_word,
+    rho_GC: observed_gc_word / expected_gc_word
+}
+```
+
+The result is about `0.865`, so `GC` occurs slightly less often than the simple independent-base model predicts. A ratio alone does not establish statistical significance or a biological cause.
+
+# Exercises and worked solutions
+
+## Exercise 1 · Dengue at two resolutions
+
+Plot Dengue GC content using 200-base and 2,000-base windows. What changes?
+
+<!-- bl:step title="Solution 1 · Dengue window-size comparison" -->
+
+```biolang
+let dengue_200 = composition_windows(dengue, 200)
+{windows_200: nrow(dengue_200), windows_2000: nrow(dengue_2000)}
+```
+
+![Exact source answer figure: Dengue GC in 200-base windows](figures/source/A2_image0.png)
+
+![Exact source answer figure: Dengue GC in 2,000-base windows](figures/source/A2_image1.png)
+
+**Interpretation:** 200-base windows reveal many local rises and falls. The 2,000-base view keeps only the broad pattern. The finer curve suggests troughs near 2,500 and 4,000 bases and broader changes across the genome, but a GC trough alone does not identify a gene or prove horizontal transfer.
+
+<!-- /bl:step -->
+
+## Exercise 2 · *M. leprae* at three resolutions
+
+Plot *M. leprae* GC content with 20,000-base windows, then compare 200, 20,000, and 200,000 bases.
+
+<!-- bl:step title="Solution 2 · Mycobacterium window-size comparison" -->
+
+```biolang
+let leprae_200 = composition_windows(leprae, 200)
+let leprae_20000 = composition_windows(leprae, 20000)
+let leprae_200000 = composition_windows(leprae, 200000)
+{windows_200: nrow(leprae_200), windows_20000: nrow(leprae_20000), windows_200000: nrow(leprae_200000)}
+```
+
+![Exact source answer figure: M. leprae GC in 20,000-base windows](figures/source/A2_image2.png)
+
+![Exact source answer figure: M. leprae GC in 200-base windows](figures/source/A2_image3.png)
+
+![Exact source answer figure: M. leprae GC in 200,000-base windows](figures/source/A2_image4.png)
+
+**Interpretation:** 20,000 bases is a useful compromise for this genome: it shows broad high and low regions without the extreme jaggedness of 200-base windows. The 200,000-base curve can hide local departures. The source answer notes a high region near 1 Mb and troughs near 1.1 Mb and 2.6 Mb.
+
+<!-- /bl:step -->
+
+## Exercise 3 · Whole-genome AT content
+
+Calculate the fraction of *M. leprae* bases that are A or T.
+
+<!-- bl:step title="Solution 3 · AT content" -->
+
+```biolang
+let leprae_bases = base_counts(leprae)
+let leprae_at = 1.0 * (leprae_bases.A + leprae_bases.T) / leprae_bases.total
+let leprae_gc = gc_content(leprae)
+{at: leprae_at, gc: leprae_gc, sum: leprae_at + leprae_gc}
+```
+
+**Answer:** AT = `0.4220325359` (42.20%). Because this record contains only A/C/G/T, AT + GC = 1 exactly apart from floating-point rounding.
+
+<!-- /bl:step -->
+
+## Exercise 4 · Why the AT curve mirrors GC
+
+Plot AT content in 20,000-base windows and compare it with GC.
+
+<!-- bl:step title="Solution 4 · AT and GC together" -->
+
+![Exact source answer figure: M. leprae AT in 20,000-base windows](figures/source/A2_image5.png)
+
+![Exact source answer figure: M. leprae GC in 20,000-base windows](figures/source/A2_image6.png)
+
+**Interpretation:** where GC rises, AT falls by the same amount because every unambiguous base belongs to exactly one of the two groups. With ambiguous positions included in the denominator, the two curves would sum to less than 1.
+
+<!-- /bl:step -->
+
+## Exercise 5 · Is GAC more common than expected?
+
+For *M. leprae*, calculate the observed frequency of `GAC`, the expected frequency under independent base placement, and their ratio ρ (rho).
+
+<!-- bl:step title="Solution 5 · GAC observed-to-expected ratio" -->
+
+```biolang
+let gac_count = motif_count(leprae, "GAC")
+let total_trimers = len(leprae) - 2
+let observed_gac = 1.0 * gac_count / total_trimers
+let frequency_g = 1.0 * leprae_bases.G / leprae_bases.total
+let frequency_a = 1.0 * leprae_bases.A / leprae_bases.total
+let frequency_c = 1.0 * leprae_bases.C / leprae_bases.total
+let expected_gac = frequency_g * frequency_a * frequency_c
+let rho_gac = observed_gac / expected_gac
+
+{
+    gac_count: gac_count,
+    total_overlapping_trimers: total_trimers,
+    observed_frequency: observed_gac,
+    expected_frequency: expected_gac,
+    rho: rho_gac
+}
+```
+
+**Answer:** 61,174 occurrences; observed frequency about `0.01871794`; expected frequency about `0.01755514`; ρ about `1.06624`.
+
+ρ greater than 1 means “more frequent than this simple independent-base model expects.” It does **not** by itself show statistical significance, natural selection, or biological function. Local composition, overlapping words, coding structure, and phylogeny can all affect the ratio.
+
+<!-- /bl:step -->
+
+## 11. Summary
+
+You can now express a repeated sequence analysis as a function, translate biological coordinates safely, compare resolutions rather than accepting one arbitrary window, explain why AT mirrors GC, and interpret an observed-to-expected word ratio without overclaiming its cause.
+
+***
+
+[← Previous: DNA Sequence Statistics (1)](#lesson-section=dna-sequence-statistics-1)

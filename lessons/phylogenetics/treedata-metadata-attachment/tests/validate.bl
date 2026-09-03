@@ -1,0 +1,11 @@
+fn test_treedata_metadata_attachment() {
+    let tips = read_csv("../data/tree_tips.csv")
+    let tip_data = read_csv("../data/tip_data.csv")
+    let node_data = read_csv("../data/node_data.csv")
+    let missing = tips |> filter(|tip| nrow(tip_data |> filter(|row| row.Newick_label == tip.label)) == 0)
+    assert nrow(tips) == 7, "tree tips"
+    assert nrow(tip_data) == 7, "tip metadata"
+    assert nrow(node_data) == 6, "node metadata"
+    assert len(missing) == 0, "tip coverage"
+}
+

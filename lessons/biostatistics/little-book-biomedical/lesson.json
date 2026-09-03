@@ -2,7 +2,7 @@
   "schema": 2,
   "id": "little-book-biomedical-statistics",
   "title": "Biomedical statistics in BioLang",
-  "summary": "One guided medical-statistics course with eight selectable sections on study design, risk, association, confounding, matched studies, dose response, trial planning, and meta-analysis.",
+  "summary": "One guided medical-statistics course with eight selectable sections and in-notebook Previous/Next navigation across study design, risk, association, confounding, matched studies, dose response, trial planning, and meta-analysis.",
   "runtime": "browser",
   "estimatedMemoryMb": 8,
   "attribution": "ATTRIBUTION.md",

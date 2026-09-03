@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "id": "epir-standardised-rates",
+  "title": "EpiR Handbook: Directly Standardised Rates",
+  "summary": "A source-faithful port of direct age-and-sex standardisation for two countries using the exact five source tables.",
+  "version": "1.0.0",
+  "license": "CC BY-NC-SA 4.0",
+  "authors": [
+    "EpiR Handbook contributors",
+    "BioLang contributors"
+  ],
+  "entry": "lesson.bln",
+  "categories": ["epidemiology", "biostatistics"],
+  "tags": ["standardisation", "mortality", "rates", "public-health"],
+  "difficulty": "intermediate",
+  "estimatedMinutes": 35,
+  "compatibility": {
+    "biolang": ">=1.5.0",
+    "studio": ">=0.1.0",
+    "runtimes": ["browser", "desktop", "server"]
+  },
+  "datasets": [
+    {"id": "country-demographics-a", "path": "country_demographics.csv", "url": "https://raw.githubusercontent.com/epirhandbook/Epi_R_handbook/9f41d1be90c166ca4754891a5260fd65b093ef8d/data/standardization/country_demographics.csv", "bytes": 405, "sha256": "444739084a6c92bc4b042a5808eabe0f587af903a232f572fe335b6ee8ae7e8d"},
+    {"id": "country-demographics-b", "path": "country_demographics_2.csv", "url": "https://raw.githubusercontent.com/epirhandbook/Epi_R_handbook/9f41d1be90c166ca4754891a5260fd65b093ef8d/data/standardization/country_demographics_2.csv", "bytes": 407, "sha256": "9fab9a4c814c6dc17c24c64de5be2dbc911ab39936d12b10e0ecee84242efdd6"},
+    {"id": "country-a-deaths", "path": "deaths_countryA.csv", "url": "https://raw.githubusercontent.com/epirhandbook/Epi_R_handbook/9f41d1be90c166ca4754891a5260fd65b093ef8d/data/standardization/deaths_countryA.csv", "bytes": 327, "sha256": "8cfa82cc6bd1edde14a9e194a7c8e6b14f78119ae973f2b80e267a956770e5d5"},
+    {"id": "country-b-deaths", "path": "deaths_countryB.csv", "url": "https://raw.githubusercontent.com/epirhandbook/Epi_R_handbook/9f41d1be90c166ca4754891a5260fd65b093ef8d/data/standardization/deaths_countryB.csv", "bytes": 321, "sha256": "019009f0880c394853b4fc84e56b39d29e5edfc32e6e6df36ea09028f6ff8dea"},
+    {"id": "world-standard-population-by-sex", "path": "world_standard_population_by_sex.csv", "url": "https://raw.githubusercontent.com/epirhandbook/Epi_R_handbook/9f41d1be90c166ca4754891a5260fd65b093ef8d/data/standardization/world_standard_population_by_sex.csv", "bytes": 896, "sha256": "3633e2e31ff2e2dfd3fdbe40dd2b23a78fff2d2a424c4c90b8ca060e20f50bd9"}
+  ],
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "EpiR Handbook - Standardised rates",
+    "url": "https://epirhandbook.com/en/new_pages/standardization.html",
+    "repository": "https://github.com/epirhandbook/Epi_R_handbook",
+    "revision": "9f41d1be90c166ca4754891a5260fd65b093ef8d",
+    "copyright": "EpiR Handbook contributors",
+    "licence": "CC BY-NC-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "Exact source tables and direct point estimates; confidence intervals are outside this selected scope."
+  },
+  "series": {
+    "id": "epir-handbook",
+    "title": "EpiR Handbook",
+    "url": "https://epirhandbook.com/",
+    "order": 1,
+    "chapter": "Standardised rates - preparation and direct point estimates"
+  },
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["compare mortality rates across populations", "adjust rates for age and sex", "calculate directly standardised rates"],
+    "methods": ["direct standardisation", "stratum-specific rate weighting", "age-sex adjustment"],
+    "plots": [],
+    "terms": ["mortality rate", "standard population", "age standardisation", "sex standardisation", "epidemiology"],
+    "aliases": ["EpiR standardization", "directly standardized rate", "DSR"],
+    "functions": ["read_csv", "flat_map", "group_by", "summarize", "arrange"]
+  },
+  "provenance": {
+    "source": "EpiR Handbook",
+    "sourceUrl": "https://epirhandbook.com/en/new_pages/standardization.html",
+    "sourceRepository": "https://github.com/epirhandbook/Epi_R_handbook",
+    "sourceRevision": "9f41d1be90c166ca4754891a5260fd65b093ef8d",
+    "sourcePath": "chapters/standardization.qmd",
+    "adaptation": "One-to-one port of data preparation and directly standardised point estimates; confidence intervals are explicitly out of scope."
+  }
+}

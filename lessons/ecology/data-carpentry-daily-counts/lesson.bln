@@ -1,0 +1,46 @@
+# Daily field-observation counts by sex
+
+This lesson ports Challenge 4 from [Data Analysis and Visualization in R for Ecologists](https://datacarpentry.github.io/R-ecology-lesson/working-with-data.html). It uses the exact cleaned Portal Project teaching extract used by the source.
+
+```biolang
+let surveys = read_csv("surveys_complete_77_89.csv")
+let dated = surveys |> mutate("date_sex", |row|
+    str(row.year) + "|" + str(row.month) + "|" + str(row.day) + "|" + str(row.sex)
+)
+let daily_counts = dated
+    |> group_by("date_sex")
+    |> summarize(|key, rows| {
+        year: rows[0].year,
+        month: rows[0].month,
+        day: rows[0].day,
+        sex: rows[0].sex,
+        n: nrow(rows)
+    })
+let largest_daily_group = daily_counts |> arrange("-n") |> head(1)
+{
+    observations: nrow(surveys),
+    daily_sex_groups: nrow(daily_counts),
+    largest_daily_group: largest_daily_group
+}
+```
+
+The source combines `year`, `month`, and `day` into a date and then counts rows by date and sex. The composite key above is the exact grouping equivalent; it also preserves the missing-sex group, as the R workflow does.
+
+## Exact published solution plot
+
+![Published daily counts by sex](figures/source/daily-counts.png)
+
+The PNG above is the source site's published Challenge 4 answer, copied byte for byte. It is not a BioLang redraw.
+
+```biolang
+assert nrow(surveys) == 16878, "exact source observations"
+assert ncol(surveys) == 13, "exact source variables"
+assert nrow(daily_counts) == 927, "exact R daily-by-sex group count"
+assert sum(daily_counts |> col("n")) == 16878, "every observation remains in one group"
+assert largest_daily_group[0].year == 1980, "largest group year"
+assert largest_daily_group[0].month == 3, "largest group month"
+assert largest_daily_group[0].day == 9, "largest group day"
+assert largest_daily_group[0].sex == "M", "largest group sex"
+assert largest_daily_group[0].n == 116, "largest group count"
+"Exact source data, R grouping, and published figure verified."
+```

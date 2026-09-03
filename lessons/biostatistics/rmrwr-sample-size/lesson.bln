@@ -1,0 +1,64 @@
+# Planning a two-arm clinical study
+
+This lesson ports the opening continuous-endpoint example from [“Sample Size Calculations with `{pwr}`”](https://peter-higgins-rmrwr.share.connect.posit.cloud/), in *Reproducible Medical Research with R*.
+
+## Define the clinical effect
+
+The source proposes a one-year, two-arm study of a drug intended to lower mean hemoglobin A1c from 9.0 to 7.0. Clinicians estimate a plausible A1c range of 5.0 to 17.0 and use range/4 as a rough planning standard deviation.
+
+```biolang
+let placebo_mean = 9.0
+let treatment_mean = 7.0
+let minimum_plausible = 5.0
+let maximum_plausible = 17.0
+
+let difference = abs(placebo_mean - treatment_mean)
+let planning_sd = (maximum_plausible - minimum_plausible) / 4.0
+let cohen_d = difference / planning_sd
+{difference: difference, planning_sd: planning_sd, cohen_d: cohen_d}
+```
+
+The published worked calculation rounds the effect size to `0.66` before calling `pwr.t.test`. We preserve that input so the result matches the source instead of silently substituting `2/3`.
+
+```biolang
+let planned = power_t_test(0.66, 0.05, 0.80)
+planned
+```
+
+The source reports 37.02 participants per arm, rounds this to 37 in its prose, adds eight participants for 20% dropout, and reports 45 per arm (90 total). The following values reproduce that published worked answer exactly.
+
+```biolang
+let complete_per_arm = 37
+let dropout_allowance_per_arm = 8
+let recruited_per_arm = complete_per_arm + dropout_allowance_per_arm
+let recruited_total = 2 * recruited_per_arm
+{
+    complete_per_arm: complete_per_arm,
+    dropout_allowance_per_arm: dropout_allowance_per_arm,
+    recruited_per_arm: recruited_per_arm,
+    recruited_total: recruited_total
+}
+```
+
+## Power with only 25 participants per arm
+
+The source then fixes the affordable total at 50 participants, or 25 per arm, and solves for achieved power.
+
+```biolang
+let constrained = power_t_test(0.66, 0.05, 0.80, {n: 25})
+constrained
+```
+
+## Verification
+
+```biolang
+assert abs(planned.n_raw - 37.02) < 0.03, "published result is about 37.02 per arm"
+assert complete_per_arm == 37, "source prose reports 37 complete participants per arm"
+assert dropout_allowance_per_arm == 8, "source adds eight participants per arm for dropout"
+assert recruited_per_arm == 45, "source reports 45 recruited participants per arm"
+assert recruited_total == 90, "source reports 90 recruited participants in total"
+assert abs(constrained.power - 0.628) < 0.002, "published constrained power is 62.8 percent"
+"All source-result checks passed."
+```
+
+This reproduces the source answer one-to-one. Note that the source's rounding and dropout arithmetic are internally inconsistent with strict upward rounding and division by 0.8; the lesson does not silently replace the published 45/90 result with a corrected value.

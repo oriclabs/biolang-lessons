@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "status": "validated",
+  "reference": {
+    "source": "A Little Book of R for Bioinformatics exercise answers",
+    "url": "https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/src/chapter_answers.html",
+    "inputs": ["NC_001477.1", "NC_002677.1"]
+  },
+  "checks": [
+    {"name": "Dengue genome length", "expected": 10735, "status": "exact"},
+    {"name": "Dengue final 20 bases", "expected": "CTGTTGAATCAACAGGTTCT", "status": "exact"},
+    {"name": "M. leprae genome length", "expected": 3268203, "status": "exact"},
+    {"name": "M. leprae base counts", "expected": {"A": 687041, "C": 938713, "G": 950202, "T": 692247}, "status": "exact"},
+    {"name": "M. leprae GC fraction", "expected": 0.5779674640773538, "status": "numeric parity", "tolerance": 1e-12},
+    {"name": "full directional words CC/CG/GC", "expected": [236971, 306986, 293261], "status": "exact"},
+    {"name": "first 1000 directional words CC/CG/GC", "expected": [82, 92, 63], "status": "exact"},
+    {"name": "last 1000 directional words CC/CG/GC", "expected": [81, 87, 75], "status": "exact"},
+    {"name": "M. leprae AT fraction", "expected": 0.4220325359226462, "status": "numeric parity", "tolerance": 1e-12},
+    {"name": "GAC count", "expected": 61174, "status": "exact"},
+    {"name": "GAC rho", "expected": 1.066236997, "status": "numeric parity", "tolerance": 1e-8},
+    {"name": "chapter 1 source figures", "status": "byte-for-byte source copies", "count": 6, "sha256": ["8486739791e646086bbb49599b3f8bf588cf7c943fedf0d02f5fa87ff6b85e19", "854bcd5a5d2ffacb0629c8243128c23583303f5965d3d97c958b78d9987848c7", "7304315d18dbf6c6842b0da6caacfa8b516531a4ff007434c77eb1095ef66452", "015d692deb0b2506dcef89cf8dc1cc2a9f1f7988077fc1b3d1ec60bb2e8b8e2c", "6974f3f027a3ce47d4080ad0924b10d70c81399b5bc5b0142acc2e6dcc71f50b", "13e810b731d191c6a896619e8131d654b9c737873d112e67a0222d1444b2a6e0"]},
+    {"name": "chapter 2 source figures", "status": "byte-for-byte source copies", "count": 5, "sha256": ["1ad6086c93e7aa970ed42a78e5cfae778671ea76127618f957b7cfc7579f8a88", "12182de82773784529ca6e4e6328d73e95cb8b2f1131bab3c23188e4f77b2636", "e2bce35935a61ed8e4a2183ec54562f1e0bea9d87ad8edaaf43030b2b07b1bb5", "be9691476025f17ada93379df70ad6ef1ae31c4def7678b2020d84ef607bedcd", "d24effa707066cfc01ec23b2a0834bfbf8010677e709425ce077b754c0b0a8a9"]},
+    {"name": "chapter 2 answer figures", "status": "byte-for-byte source copies", "count": 7, "sha256": ["42810ea400e75dcd7e28e6e0c07948d8645c88f99fabccdf75b3e881ab7afdfb", "dfbd1c0a6f88ec14d1b6a550f58846f98677c44fd1a25e5a9b9c1c74d87547f7", "c0016e69ce39b7b9470358fc8d64fd772ce2b54db470c4107cc12896afb407fa", "ba99becec2225ba045ad2668a3558e1f8eaa2c0d14f9bb93afb4f4a379faa944", "a0dc931574f23bbd58d07548b60c72bb8c12ecb96b379a772b341a4d9e034168", "de5631a58d53dda2df2c0ca9bb8469dee30737eefb5602e9bcc10c04a64ad294", "c0016e69ce39b7b9470358fc8d64fd772ce2b54db470c4107cc12896afb407fa"]}
+  ],
+  "commands": [
+    "bl --plot none notebook 01-dna-sequence-statistics.bln",
+    "bl --plot none notebook 02-local-sequence-statistics.bln"
+  ]
+}

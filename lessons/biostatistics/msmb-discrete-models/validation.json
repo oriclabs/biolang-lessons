@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "reference": "https://www.huber.embl.de/msmb/code/01-chap.R",
+  "checked": "2026-09-03",
+  "referenceRuntime": "R 4.6.1 for numerical checks; published chapter PNGs for figures",
+  "status": "verified",
+  "metrics": [
+    {"name": "dpois(3, 5)", "reference": 0.14037389581428056, "biolang": 0.14037389581428056, "status": "exact within 1e-15"},
+    {"name": "sum dpois(0:12, 5)", "reference": 0.997981148372563, "biolang": 0.9979811483724841, "status": "matches within 1e-11"},
+    {"name": "sum dbinom(0:15, 15, .3)", "reference": 1.0000000000000002, "biolang": 1.0000000000035079, "status": "matches within 1e-11"},
+    {"name": "binomial mode", "reference": 4, "biolang": 4, "status": "exact"}
+  ],
+  "figures": [
+    {"file": "figures/poisson5.png", "sourceUrl": "https://www.huber.embl.de/msmb/01-chap_files/figure-html/fig-Poisson5-1.png", "sha256": "199af5bcd49aa2374b8ae15a9990f000acd7d35d510c629fb3d6cbd63787685f", "bytes": 6450, "status": "byte-for-byte published source copy"},
+    {"file": "figures/binomial-15-03.png", "sourceUrl": "https://www.huber.embl.de/msmb/01-chap_files/figure-html/fig-binombarplot-1.png", "sha256": "398670fe2365d197af9986871618df968ecf7d61eed7433a316c665d293d8ae0", "bytes": 10917, "status": "byte-for-byte published source copy"}
+  ]
+}

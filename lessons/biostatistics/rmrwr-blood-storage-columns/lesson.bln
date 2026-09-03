@@ -1,0 +1,33 @@
+# Select non-contiguous clinical columns
+
+This lesson ports the `select(1, bGS:sGS, 3, AA)` example from *Reproducible Medical Research with R*. The input is the exact official `medicaldata::blood_storage` object, a de-identified retrospective cohort of 316 men who underwent radical prostatectomy and received a transfusion.
+
+```biolang
+let cohort = read_csv("data/blood_storage.csv")
+{patients: nrow(cohort), variables: ncol(cohort), first_rows: head(cohort, 6)}
+```
+
+The source mixes a first-column position, the contiguous `bGS:sGS` range, a third-column position, and the named `AA` column. The explicit names below preserve the resulting R order exactly.
+
+```biolang
+let selected = cohort |> select(
+    "RBC.Age.Group",
+    "bGS", "BN+", "OrganConfined", "PreopPSA", "PreopTherapy", "Units", "sGS",
+    "Age",
+    "AA"
+)
+head(selected, 6)
+```
+
+This selected source section contains a printed table, not a plot, so no figure is created or substituted.
+
+```biolang
+assert nrow(cohort) == 316, "official cohort rows"
+assert ncol(cohort) == 20, "official cohort variables"
+assert ncol(selected) == 10, "source selection has ten columns"
+assert colnames(selected) == ["RBC.Age.Group", "bGS", "BN+", "OrganConfined", "PreopPSA", "PreopTherapy", "Units", "sGS", "Age", "AA"], "exact source column order"
+assert (selected |> col("RBC.Age.Group"))[0] == 3, "first source storage group"
+assert abs((selected |> col("PreopPSA"))[0] - 14.08) < 0.000000001, "first source preoperative PSA"
+assert abs((selected |> col("Age"))[0] - 72.1) < 0.000000001, "first source age"
+"Exact clinical object and source column selection verified."
+```

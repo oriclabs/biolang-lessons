@@ -1,0 +1,37 @@
+# Attach tip and node metadata to a tree
+
+This lesson ports [Chapter 7 Figure 7.1](https://yulab-smu.top/treedata-book/chapter7.html#mapping-data-to-the-tree-structure) using the exact `TDbook` objects and exact published SVG.
+
+```biolang
+let tips = read_csv("data/tree_tips.csv")
+let tip_data = read_csv("data/tip_data.csv")
+let node_data = read_csv("data/node_data.csv")
+let missing_tip_metadata = tips |> filter(|tip| nrow(tip_data |> filter(|row| row.Newick_label == tip.label)) == 0)
+{
+    tree_tips: nrow(tips),
+    tip_metadata_rows: nrow(tip_data),
+    internal_node_rows: nrow(node_data),
+    tips_without_metadata: missing_tip_metadata,
+    trophic_habits: unique(col(tip_data, "trophic_habit")),
+    body_mass_range_kg: [summary(col(tip_data, "mass_in_kg")).min, summary(col(tip_data, "mass_in_kg")).max]
+}
+```
+
+The source attaches trophic habit and body mass to seven tips, then attaches vernacular names and posterior values to internal nodes. The labels are taken from the exact package objects, not reconstructed.
+
+![Exact published Figure 7.1 showing attached tip and node metadata](figures/source/figure-7.1.svg)
+
+The SVG above is the published source file copied byte for byte. BioLang does not redraw it.
+
+```biolang
+assert nrow(tips) == 7, "source tree tip count"
+assert nrow(tip_data) == 7, "source tip metadata rows"
+assert nrow(node_data) == 6, "source internal-node metadata rows"
+assert len(missing_tip_metadata) == 0, "every source tree tip has metadata"
+assert len(unique(col(tip_data, "Newick_label"))) == 7, "tip labels are unique"
+assert len(unique(col(tip_data, "trophic_habit"))) == 3, "three source trophic habits"
+assert abs(summary(col(tip_data, "mass_in_kg")).min - 0.73) < 0.000000001, "minimum source mass"
+assert abs(summary(col(tip_data, "mass_in_kg")).max - 618.64) < 0.000000001, "maximum source mass"
+"Exact source objects and published figure verified."
+```
+

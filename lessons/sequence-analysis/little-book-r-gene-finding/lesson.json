@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "id": "little-book-r-gene-finding",
+  "title": "Computational Gene-finding",
+  "summary": "A BioLang port of Computational Gene-finding: codons, reading frames, forward and reverse-strand ORFs, translation, and the source's reported ORF-length comparison, with all nine answers.",
+  "entry": "07-computational-gene-finding.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 160,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "A Little Book of R for Bioinformatics by Avril Coghlan",
+    "url": "https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/src/chapter7.html",
+    "copyright": "Copyright Avril Coghlan",
+    "licence": "CC BY 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
+    "note": "Adapted from R and SeqinR to BioLang by OriClabs with attribution. All four figures displayed in the source chapter are included byte-for-byte. The unseeded random comparison is retained as its exact source image and reported value; no replacement random data are generated. This is not an official publication or endorsement by the original author."
+  },
+  "series": {
+    "id": "a-little-book-of-r-for-bioinformatics",
+    "title": "A Little Book of R for Bioinformatics",
+    "url": "https://a-little-book-of-r-for-bioinformatics.readthedocs.io/en/latest/",
+    "order": 7,
+    "chapter": "Chapter 7 · Computational Gene-finding"
+  },
+  "datasets": [
+    {
+      "id": "dengue-virus-1",
+      "title": "Dengue virus 1 complete genome",
+      "path": "data/NC_001477.1.fasta",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/sequence-analysis/little-book-r-gene-finding/data/NC_001477.1.fasta",
+      "bytes": 10935,
+      "sha256": "ab440a65538d153a31366cfedb8c5ae0be96c0f25e7f12a0b9f0cf2599473607",
+      "mediaType": "text/x-fasta",
+      "source": "NCBI RefSeq accession NC_001477.1",
+      "citation": "Dengue virus 1, complete genome, NCBI RefSeq NC_001477.1.",
+      "rights": "Sequence data sourced from NCBI; excluded from the repository MIT grant."
+    },
+    {
+      "id": "rabies-virus",
+      "title": "Rabies virus complete genome",
+      "path": "data/NC_001542.1.fasta",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/sequence-analysis/little-book-r-gene-finding/data/NC_001542.1.fasta",
+      "bytes": 12147,
+      "sha256": "7ff01311ac43ed5f916a9a6f8ab6bfdcdbe9eb085082e392c695ecfdbf03f67e",
+      "mediaType": "text/x-fasta",
+      "source": "NCBI RefSeq accession NC_001542.1",
+      "citation": "Rabies virus, complete genome, NCBI RefSeq NC_001542.1.",
+      "rights": "Sequence data sourced from NCBI; excluded from the repository MIT grant."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": [
+      "find start and stop codons in a sequence",
+      "work out which reading frame a codon is in",
+      "find open reading frames in a genome",
+      "find ORFs on the reverse strand",
+      "translate a predicted coding region",
+      "decide whether an ORF is longer than chance explains",
+      "choose a length threshold for candidate genes"
+    ],
+    "methods": [
+      "codon table lookup",
+      "motif search",
+      "reading-frame arithmetic",
+      "open reading frame detection",
+      "reverse-complement strand search",
+      "translation",
+      "source-reported random null comparison",
+      "ORF length threshold"
+    ],
+    "plots": [
+      "start and stop codon scatter",
+      "ORF genome track",
+      "ORF length distribution"
+    ],
+    "terms": [
+      "genetic code",
+      "codon",
+      "start codon",
+      "stop codon",
+      "reading frame",
+      "open reading frame",
+      "ORF",
+      "forward strand",
+      "reverse strand",
+      "translation",
+      "null model",
+      "gene prediction",
+      "Dengue virus",
+      "rabies virus"
+    ],
+    "aliases": [
+      "SeqinR chapter 7",
+      "computational gene finding",
+      "ORF finding",
+      "gene prediction in BioLang",
+      "open reading frames tutorial"
+    ],
+    "functions": [
+      "read_fasta",
+      "subseq",
+      "find_motif",
+      "find_orfs",
+      "translate",
+      "reverse_complement",
+      "kmers",
+      "table",
+      "arrange",
+      "select",
+      "sort_by"
+    ]
+  },
+  "tags": [
+    "bioinformatics",
+    "sequence analysis",
+    "gene finding",
+    "ORF",
+    "genetic code",
+    "translation",
+    "CC BY"
+  ]
+}

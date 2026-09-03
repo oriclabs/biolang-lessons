@@ -75,3 +75,7 @@ These are different questions:
 - **Effect modification:** the true association itself differs meaningfully between strata.
 
 Do not decide by glancing at two point estimates alone. Inspect intervals and use a planned homogeneity/interaction analysis. When strata disagree strongly, one pooled number can hide the most important result. The inverse-variance Cochran Q returned by `meta_analysis()` works from study effect estimates and variances; it is not a substitute for this stratified 2x2-table homogeneity test.
+
+***
+
+[← Previous: Evidence of association](#lesson-section=biomedical-03-association) · [Next: Matched case-control studies →](#lesson-section=biomedical-05-matched-studies)

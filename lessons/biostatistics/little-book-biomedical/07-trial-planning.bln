@@ -42,3 +42,7 @@ rct_power(0.05, 0.20, 0.30, 250)
 ```
 
 The approximate power is 0.733. Do not choose the expected effect merely to make the sample affordable. Pre-specify a scientifically meaningful effect and use a method aligned with the planned primary analysis; clustered, repeated, survival, non-inferiority, and adaptive designs need different calculations.
+
+***
+
+[← Previous: Dose-response](#lesson-section=biomedical-06-dose-response) · [Next: Meta-analysis and forest plots →](#lesson-section=biomedical-08-meta-analysis)

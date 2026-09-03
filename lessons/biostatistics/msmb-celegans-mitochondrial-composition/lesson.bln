@@ -1,0 +1,51 @@
+# C. elegans mitochondrial nucleotide composition
+
+This lesson ports the deterministic, real-sequence portion of Exercise 1.8 from [Modern Statistics for Modern Biology](https://www.huber.embl.de/msmb/01-chap.html). It uses the same UCSC `ce2` chromosome M assembly as the source's `BSgenome.Celegans.UCSC.ce2` object.
+
+```biolang
+let ucsc = read_json("data/ucsc-ce2-chrM.json")
+let chromosome_m = dna(ucsc.dna)
+let observed = base_counts(chromosome_m)
+{
+    assembly: ucsc.genome,
+    chromosome: ucsc.chrom,
+    length: len(chromosome_m),
+    counts: observed
+}
+```
+
+The source reports `A=4335`, `C=1225`, `G=2055`, and `T=6179` for 13,794 nucleotides.
+
+```biolang
+let total = observed.A + observed.C + observed.G + observed.T
+let expected = total / 4.0
+let observed_equal =
+    (observed.A - expected) * (observed.A - expected) / expected +
+    (observed.C - expected) * (observed.C - expected) / expected +
+    (observed.G - expected) * (observed.G - expected) / expected +
+    (observed.T - expected) * (observed.T - expected) / expected
+{
+    proportions: {
+        A: observed.A / total,
+        C: observed.C / total,
+        G: observed.G / total,
+        T: observed.T / total
+    },
+    equal_expected_count: expected,
+    observed_equal_statistic: observed_equal
+}
+```
+
+The later random multinomial simulation is not included, so this lesson creates no synthetic sequence or synthetic count table. This exercise section publishes numeric output rather than a canonical figure.
+
+```biolang
+assert len(chromosome_m) == 13794, "published mitochondrial length"
+assert observed.A == 4335, "published A count"
+assert observed.C == 1225, "published C count"
+assert observed.G == 2055, "published G count"
+assert observed.T == 6179, "published T count"
+assert total == 13794, "published total"
+assert abs(expected - 3448.5) < 0.000000001, "published equal-frequency expectation"
+assert abs(observed_equal - 4386.633898796578) < 0.000001, "published observed-equal statistic"
+"Exact UCSC sequence and source composition outputs verified."
+```

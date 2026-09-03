@@ -1,0 +1,18 @@
+fn test_treedata_snp_traits() {
+    let tree = nw_parse(trim(read_text("../data/tree.nwk")))
+    let tips = tree_leaves(tree)
+    let info = read_csv("../data/package_info.csv")
+    let traits = read_csv("../data/package_bar.csv")
+    let snps = read_csv("../data/snp_data.csv")
+    let missing_info = tips |> filter(|tip| nrow(info |> filter(|row| row.id == tip)) == 0)
+    let missing_traits = tips |> filter(|tip| nrow(traits |> filter(|row| row.id == tip)) == 0)
+    assert len(tips) == 230, "source tree tip count"
+    assert nrow(info) == 386, "official package information rows"
+    assert nrow(traits) == 386, "official package trait rows"
+    assert len(missing_info) == 0, "information covers every plotted tip"
+    assert len(missing_traits) == 0, "traits cover every plotted tip"
+    assert nrow(snps) == 6482, "source gathered SNP marks"
+    assert len(unique(col(snps, "name"))) == 381, "strains with SNP marks"
+    assert len(unique(col(snps, "pos"))) == 385, "aligned positions"
+}
+

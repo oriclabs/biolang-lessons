@@ -1,0 +1,73 @@
+fn test_bdsr_ggtree_reference() {
+let source = trim(read_text("tree_newick.nwk"))
+let tree = nw_parse(source)
+let displayed_order = ["B", "A", "C", "D", "E", "G", "F", "H", "L", "K", "J", "I", "M"]
+
+assert len(tree_leaves(tree)) == 13, "teaching tree must contain 13 tips"
+assert nrow(tree) == 25, "13-tip bifurcating tree must contain 25 total nodes"
+assert tree_leaves(tree) == ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"], "Newick tip labels must remain pinned"
+assert tree_mrca(tree, ["C", "E"]) == 17, "C and E MRCA must use ape/ggtree node 17"
+assert tree_mrca(tree, ["G", "H"]) == 21, "G and H MRCA must use ape/ggtree node 21"
+assert tree_mrca(tree, ["B", "C"]) == 19, "B and C MRCA must use ape/ggtree node 19"
+assert tree_mrca(tree, ["L", "J"]) == 23, "L and J MRCA must use ape/ggtree node 23"
+assert abs(patristic_distance(tree, "A", "B") - 8.0) < 1e-12, "A-B patristic distance must preserve branch lengths"
+assert abs(patristic_distance(tree, "K", "L") - 22.0) < 1e-12, "K-L patristic distance must preserve branch lengths"
+
+let annotated = phylo_tree(source, {
+    format: "svg", theme: "publication", title: "",
+    tip_order: displayed_order, show_tip_labels: true,
+    show_node_labels: true, scale_axis: true, right_padding: 170,
+    clade_highlights: [
+        {node: 19, fill: "#0000CD", opacity: 0.45},
+        {node: 23, fill: "#EE9A00", opacity: 0.45}
+    ],
+    clade_labels: [
+        {node: 17, label: "Superclade 17", color: "#CD0000", offset: 0.8}
+    ],
+    taxa_links: [
+        {from: "C", to: "E", color: "#7F7F7F", dashed: true}
+    ]
+})
+assert contains(annotated, "data-clade-node=\"19\""), "SVG must mark the selected B-C clade"
+assert contains(annotated, "data-clade-node=\"23\""), "SVG must mark the selected L-J clade"
+assert contains(annotated, "data-taxa-link=\"C,E\""), "SVG must retain taxon-link provenance"
+assert contains(annotated, "Superclade 17"), "SVG must include the clade label"
+assert contains(annotated, "stroke-dasharray"), "dashed annotation must be encoded in the SVG"
+
+let circular = phylo_tree(source, {
+    format: "svg", layout: "circular", branch_length: "none",
+    tip_order: displayed_order, show_tip_labels: false, show_tip_points: false
+})
+assert contains(circular, "circular layout"), "circular layout must have an accessible description"
+
+let flu_newick = nexus_tree(read_text("flu_tree_beast.tree"))
+let flu_tree = nw_parse(flu_newick)
+let flu_alignment = read_fasta("flu_aasequence.fasta")
+assert len(tree_leaves(flu_tree)) == 76, "BEAST/Nexus translation table must expand all 76 influenza tips"
+assert nrow(flu_alignment) == 76, "influenza amino-acid alignment must contain 76 sequences"
+assert col(flu_alignment, "length")[0] == 562, "influenza amino-acid alignment must retain 562 columns"
+assert not contains(flu_newick, "[&"), "display Newick must not pretend to retain BEAST annotations"
+assert contains(flu_newick, "A/Hokkaido/30-1-a/2013"), "Nexus numeric tip identifiers must be expanded"
+
+let many_trees = read_text("many_trees_seed42.nwk") |> split("\n") |> filter(|line| len(trim(line)) > 0)
+let many_tree_tip_counts = many_trees |> map(|source| len(tree_leaves(nw_parse(source))))
+assert len(many_trees) == 12, "many-tree figure must retain all twelve source panels"
+assert many_tree_tip_counts == [10, 25, 50, 100, 10, 25, 50, 100, 10, 25, 50, 100], "many-tree panels must repeat the source's 10/25/50/100 sequence"
+let many_tree_svg = phylo_tree(many_trees, {
+    format: "svg", theme: "publication",
+    title: "Many trees. Such phylogenetics. Wow.",
+    width: 960, height: 768, columns: 4
+})
+assert contains(many_tree_svg, ">Tree #1</text>"), "faceted tree must label its first panel"
+assert contains(many_tree_svg, ">Tree #12</text>"), "faceted tree must label its final panel"
+assert contains(many_tree_svg, "Faceted comparison of 12 phylogenetic trees in 4 columns."), "faceted tree must describe its panel structure"
+
+{
+    tips: len(tree_leaves(tree)),
+    total_nodes: nrow(tree),
+    mrca: {ce: 17, gh: 21, bc: 19, lj: 23},
+    distances: {ab: patristic_distance(tree, "A", "B"), kl: patristic_distance(tree, "K", "L")},
+    advanced: {tree_tips: len(tree_leaves(flu_tree)), alignment_rows: nrow(flu_alignment)},
+    many_trees: {panels: len(many_trees), tip_counts: many_tree_tip_counts}
+}
+}

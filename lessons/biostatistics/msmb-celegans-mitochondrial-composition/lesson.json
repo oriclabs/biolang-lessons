@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "msmb-celegans-mitochondrial-composition",
+  "title": "Modern Statistics for Modern Biology: C. elegans Mitochondrial Composition",
+  "summary": "A deterministic port of Exercise 1.8 using the exact UCSC ce2 chromosome M sequence and the source-published nucleotide counts, proportions, and observed-equal statistic.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 12,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Modern Statistics for Modern Biology - Generative Models for Discrete Data, Exercise 1.8",
+    "url": "https://www.huber.embl.de/msmb/01-chap.html",
+    "repository": "https://www.huber.embl.de/msmb/code/",
+    "revision": "Online build 2026-06-18; UCSC API sequence retrieved 2026-09-03",
+    "copyright": "Susan Holmes and Wolfgang Huber",
+    "licence": "CC BY-NC-SA",
+    "licenceUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "note": "Only the real mitochondrial-sequence and deterministic composition portion is ported. The source's random multinomial simulation is deliberately excluded under the no-synthetic-data policy."
+  },
+  "series": {
+    "id": "modern-statistics-for-modern-biology",
+    "title": "Modern Statistics for Modern Biology",
+    "url": "https://www.huber.embl.de/msmb/",
+    "order": 2,
+    "chapter": "Chapter 1 - Exercise 1.8, C. elegans mitochondrial composition"
+  },
+  "datasets": [
+    {
+      "id": "ucsc-ce2-chrm-sequence",
+      "title": "C. elegans ce2 chromosome M sequence",
+      "path": "data/ucsc-ce2-chrM.json",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/msmb-celegans-mitochondrial-composition/data/ucsc-ce2-chrM.json",
+      "bytes": 13941,
+      "sha256": "0483b4be5b6cc491f5296eb245a16d8457c482f0fbe12b23ff5da430d60aa586",
+      "mediaType": "application/json",
+      "source": "UCSC Genome Browser API getData/sequence?genome=ce2;chrom=chrM",
+      "citation": "UCSC Genome Browser, Caenorhabditis elegans ce2 assembly, chromosome M",
+      "rights": "Genome sequence data are excluded from the repository MIT grant; see UCSC data-use notices."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["count nucleotides in a mitochondrial genome", "compare observed bases with equal frequencies", "inspect C. elegans mitochondrial composition"],
+    "methods": ["nucleotide composition", "observed-versus-expected statistic", "multinomial model preparation"],
+    "plots": [],
+    "terms": ["Caenorhabditis elegans", "mitochondrial genome", "ce2", "nucleotide frequency", "multinomial", "uniform composition"],
+    "aliases": ["MSMB Exercise 1.8", "worm mitochondrial composition", "C elegans chrM"],
+    "functions": ["read_json", "dna", "base_counts", "len"]
+  },
+  "tags": ["statistics", "genomics", "mitochondrial DNA", "CC BY-NC-SA"]
+}

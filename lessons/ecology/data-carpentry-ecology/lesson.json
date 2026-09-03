@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "data-carpentry-ecology",
+  "title": "Data Analysis and Visualization in R for Ecologists: Grouped Summaries",
+  "summary": "A source-faithful BioLang port of the species-by-sex mean-weight split-apply-combine workflow using the exact teaching dataset.",
+  "entry": "lesson.bln",
+  "runtime": "browser",
+  "estimatedMemoryMb": 48,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "Data Analysis and Visualization in R for Ecologists - Working with Data",
+    "url": "https://datacarpentry.github.io/R-ecology-lesson/",
+    "repository": "https://github.com/datacarpentry/R-ecology-lesson",
+    "revision": "df7932244795d6341d7a305bfa6d53f7c721181e",
+    "copyright": "The Carpentries contributors",
+    "licence": "CC BY 4.0; code MIT",
+    "licenceUrl": "https://github.com/datacarpentry/R-ecology-lesson/blob/main/LICENSE.md",
+    "note": "The grouped-summary code and explanation are translated to BioLang; the exact source CSV and R result order are preserved."
+  },
+  "series": {
+    "id": "data-analysis-visualization-r-ecologists",
+    "title": "Data Analysis and Visualization in R for Ecologists",
+    "url": "https://datacarpentry.github.io/R-ecology-lesson/",
+    "order": 4,
+    "chapter": "Working with Data - group_by, summarize, and arrange"
+  },
+  "datasets": [
+    {
+      "id": "portal-surveys-complete-77-89",
+      "title": "Portal Project cleaned surveys, 1977-1989",
+      "path": "surveys_complete_77_89.csv",
+      "url": "https://raw.githubusercontent.com/datacarpentry/R-ecology-lesson/df7932244795d6341d7a305bfa6d53f7c721181e/episodes/data/cleaned/surveys_complete_77_89.csv",
+      "bytes": 1223055,
+      "sha256": "59cbe95a78255e1281660b329be308559f17b55617d51add2a535222778fcd12",
+      "mediaType": "text/csv",
+      "source": "Data Carpentry R ecology lesson; Portal Project teaching data",
+      "citation": "Ernest et al., Portal Project Teaching Database; cleaned extract distributed by The Carpentries",
+      "rights": "Distributed with the CC BY 4.0 lesson; see upstream LICENSE.md and data documentation."
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["summarize ecological observations by species and sex", "remove missing weights before aggregation", "rank ecological groups by mean weight"],
+    "methods": ["split-apply-combine", "grouped mean", "missing-value filtering"],
+    "plots": [],
+    "terms": ["ecological survey", "species", "sex", "mean weight", "grouped summary", "Portal Project"],
+    "aliases": ["Data Carpentry ecology", "R ecology lesson", "species weight summary"],
+    "functions": ["read_csv", "drop_null", "mutate", "group_by", "summarize", "arrange"]
+  },
+  "tags": ["ecology", "data wrangling", "grouped summaries", "CC BY"]
+}

@@ -1,0 +1,363 @@
+# 13 Visualizing and annotating phylogenetic trees
+
+This independently written BioLang companion follows [chapter 13 of *Biological Data Science with R*](https://bdsr.stephenturner.us/ggtree.html). It keeps the source chapter's section and exercise order while using BioLang code, explanations, and newly rendered figures.
+
+Select **Prepare all** before running. The Newick file is checksum-pinned, so the same topology and branch lengths are used in every browser, CLI, and exported notebook.
+
+> **Scope:** this chapter teaches how to import, draw, and annotate an existing tree. It does not infer a phylogeny from sequence data, and a visually attractive tree is not evidence that the evolutionary model was appropriate.
+
+## 13.1 The ggtree package
+
+The source chapter introduces `ggtree`, an R/Bioconductor extension of ggplot2. BioLang takes a direct-function approach: `phylo_tree()` renders a Newick tree, and options describe the layout, points, labels, highlighted clades, and links.
+
+**Why this is useful:** a tree encodes relationships in its branching order, while branch lengths may encode evolutionary change or time. Annotations connect that structure to sample names, groups, events, and other biological measurements.
+
+**What to protect:** rotating branches around an internal node does not change the topology. Tip order can change visually while the relationships remain identical.
+
+## 13.2 Tree import
+
+Newick is a compact parenthesised representation. Commas separate sibling lineages, parentheses create clades, and numbers after colons are branch lengths. Nexus and specialist outputs can contain additional metadata; always retain the original file and software provenance.
+
+```biolang
+let tree_newick = trim(read_text("tree_newick.nwk"))
+let tree = nw_parse(tree_newick)
+let source_tip_order = ["B", "A", "C", "D", "E", "G", "F", "H", "L", "K", "J", "I", "M"]
+{
+    tips: tree_leaves(tree),
+    tip_count: len(tree_leaves(tree)),
+    internal_node_count: nrow(tree) - len(tree_leaves(tree)),
+    format: "Newick"
+}
+```
+
+The teaching tree has 13 tips and 12 internal nodes. `source_tip_order` reproduces the vertical ordering in the source figures; it changes presentation, not ancestry.
+
+## 13.3 Basic trees
+
+A **phylogram** uses branch length on the horizontal axis. Long horizontal branches mean more of whatever the file's length unit represents—often substitutions per site, but only the data provenance can tell you.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 672, height: 480, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false,
+    line_color: "#000000",
+    left_padding: 10, right_padding: 7,
+    top_padding: 10.5, bottom_padding: 14.5,
+    x_expand: 0.05
+})
+```
+
+Add an axis when readers need to interpret those distances. The topology is unchanged; the axis only makes the branch-length scale explicit.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 672, height: 480, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false,
+    scale_axis: true,
+    line_color: "#000000",
+    left_padding: 10, right_padding: 7,
+    top_padding: 11.7, bottom_padding: 44.7,
+    x_expand: 0.05
+})
+```
+
+A **cladogram** suppresses branch lengths. It is useful when only branching order should be read, but it must not be mistaken for a distance-scaled phylogram.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 672, height: 480, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false,
+    branch_length: "none",
+    line_color: "#000000",
+    left_padding: 10, right_padding: 7,
+    top_padding: 10.5, bottom_padding: 14.5,
+    x_expand: 0.05
+})
+```
+
+Graphical styling does not change the tree. This deliberately strong blue dotted version makes that separation visible.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 672, height: 480, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false,
+    branch_length: "none", line_color: "blue",
+    line_width: 5.5, line_type: "dotted",
+    left_padding: 10, right_padding: 7,
+    top_padding: 10.5, bottom_padding: 14.5,
+    x_expand: 0.05
+})
+```
+
+#### Exercise 1 — Compare layouts
+
+Slanted and circular layouts show the same topology in different geometry. Circular layouts are compact for many tips; rectangular layouts are usually easier for aligning labels and other data.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "Slanted phylogram",
+    width: 672, height: 480, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false, layout: "slanted"
+})
+```
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "Circular phylogram",
+    width: 600, height: 600, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false, layout: "circular"
+})
+```
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "Circular unscaled cladogram",
+    width: 600, height: 600, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false,
+    layout: "circular", branch_length: "none",
+    line_color: "red", line_width: 4
+})
+```
+
+### 13.3.1 Other tree geoms
+
+Tip points identify observed taxa. Internal-node points identify inferred common ancestors. Tip labels make the biological entities readable. They answer different questions, so show only the layers the reader needs.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "Tips, nodes, and labels",
+    width: 720, height: 500, tip_order: source_tip_order,
+    show_tip_labels: true, show_tip_points: true,
+    show_node_points: true, right_padding: 100
+})
+```
+
+#### Exercise 2 — Style tips and nodes
+
+This recreates the exercise's purple diamond tips, purple labels, and large semi-transparent golden internal nodes. Shape and colour help distinguish roles; they do not add biological evidence.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication",
+    title: "Exercise figure: styled tips and internal nodes",
+    width: 760, height: 540, tip_order: source_tip_order,
+    show_tip_labels: true, show_tip_points: true,
+    tip_shape: "diamond", tip_color: "#9932CC",
+    tip_label_color: "#9932CC", tip_label_size: 14,
+    tip_radius: 4, show_node_points: true,
+    node_color: "#DAA520", node_radius: 7, node_opacity: 0.5,
+    right_padding: 110
+})
+```
+
+## 13.4 Tree annotation
+
+Annotations are most trustworthy when they are derived from tip names or checked node identifiers. This lesson uses ggtree-compatible numbering so the same internal nodes can be compared directly with the source chapter.
+
+### 13.4.1 Internal node number
+
+Tips are numbered first, then internal nodes begin at 14. Node labels are a diagnostic view—not usually a final publication figure.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 700, height: 500, tip_order: source_tip_order,
+    show_tip_labels: false, show_tip_points: false,
+    show_node_labels: true, right_padding: 70
+})
+```
+
+Tip labels let us choose biological taxa before calculating their most recent common ancestor (MRCA).
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 700, height: 500, tip_order: source_tip_order,
+    show_tip_labels: true, show_tip_points: false,
+    right_padding: 90
+})
+```
+
+Calculate rather than guess the node numbers. `C` and `E` meet at node 17; `G` and `H` meet at node 21.
+
+```biolang
+{
+    c_and_e: tree_mrca(tree, ["C", "E"]),
+    g_and_h: tree_mrca(tree, ["G", "H"])
+}
+```
+
+### 13.4.2 Labeling clades
+
+A clade bar names every descendant of one internal node. Alignment gives two labels a shared right edge; extra right padding prevents them from being clipped.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 768, height: 480, tip_order: source_tip_order,
+    show_tip_labels: true, show_tip_points: false,
+    x_max: 70, right_padding: 190,
+    clade_labels: [
+        {node: 17, label: "Some random clade", color: "#EE0000", offset: 0.8, align: true},
+        {node: 21, label: "A different clade", color: "blue", offset: 0.8, align: true}
+    ]
+})
+```
+
+Highlighting fills the vertical extent of each descendant group. The highlight stops at that clade's farthest descendant, so it does not imply membership beyond the selected branch.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 672, height: 480, tip_order: source_tip_order,
+    show_tip_labels: true, show_tip_points: false,
+    right_padding: 90,
+    clade_highlights: [
+        {node: 17, fill: "gold", opacity: 0.45},
+        {node: 21, fill: "purple", opacity: 0.45}
+    ]
+})
+```
+
+### 13.4.3 Connecting taxa
+
+Links can represent reassortment, horizontal transfer, or another relationship outside the tree. A link is an annotation, not a new tree branch; its meaning must be stated in the caption.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication", title: "",
+    width: 672, height: 480, tip_order: source_tip_order,
+    show_tip_labels: true, show_tip_points: false,
+    right_padding: 90,
+    taxa_links: [
+        {from: "E", to: "H", color: "#0000CD", curvature: 0.35},
+        {from: "C", to: "G", color: "#EE9A00", curvature: -0.9}
+    ]
+})
+```
+
+#### Exercise 3 — Combine annotations
+
+First derive the two highlighted nodes. The result matches the source exercise: `B+C → 19` and `L+J → 23`.
+
+```biolang
+let bc_node = tree_mrca(tree, ["B", "C"])
+let lj_node = tree_mrca(tree, ["L", "J"])
+{b_and_c: bc_node, l_and_j: lj_node}
+```
+
+Now combine highlights, a superclade label, dashed links, a scale, and a title. Read the tree first; treat the colours and curves as explanatory overlays.
+
+```biolang
+phylo_tree(tree_newick, {
+    format: "svg", theme: "publication",
+    title: "Exercise: combine clades and taxon links",
+    width: 768, height: 624, tip_order: source_tip_order,
+    show_tip_labels: true, show_tip_points: false,
+    scale_axis: true, right_padding: 170,
+    clade_highlights: [
+        {node: bc_node, fill: "#0000CD", opacity: 0.45},
+        {node: lj_node, fill: "#EE9A00", opacity: 0.45}
+    ],
+    clade_labels: [
+        {node: 17, label: "Superclade 17", color: "#CD0000", offset: 0.8, align: false}
+    ],
+    taxa_links: [
+        {from: "C", to: "E", color: "#7F7F7F", curvature: 0.35, dashed: true},
+        {from: "G", to: "J", color: "#7F7F7F", curvature: 0.35, dashed: true}
+    ]
+})
+```
+
+## 13.5 Advanced tree annotation
+
+The source discusses a 76-tip influenza H3 tree inferred by BEAST and a matching amino-acid alignment. Its two code chunks are deliberately non-evaluated upstream, so the published chapter contains no result figure to reproduce.
+
+The important workflow is still practical:
+
+1. retain the original BEAST/Nexus file and its sampling-date metadata;
+2. import the tree with a parser that understands its annotations, not by deleting unknown text blindly;
+3. use the most recent sampling date to map relative node heights onto calendar time;
+4. match alignment sequence names to tree tips before drawing an MSA beside the tree;
+5. label any posterior support, rate, or uncertainty interval with its exact meaning.
+
+BioLang keeps that boundary explicit. `nexus_tree()` extracts a displayable Newick tree, expands the Nexus translation table, and deliberately discards square-bracket annotations. The original Nexus file remains authoritative for posterior support, rates, node heights, and calendar-time interpretation.
+
+```biolang
+let flu_nexus = read_text("flu_tree_beast.tree")
+let flu_newick = nexus_tree(flu_nexus)
+let flu_tree = nw_parse(flu_newick)
+let flu_alignment = read_fasta("flu_aasequence.fasta")
+{
+    tree_tips: len(tree_leaves(flu_tree)),
+    aligned_sequences: nrow(flu_alignment),
+    alignment_columns: col(flu_alignment, "length")[0],
+    tree_tip_example: head(tree_leaves(flu_tree), 3),
+    alignment_id_example: head(col(flu_alignment, "id"), 3)
+}
+```
+
+This dense overview is a branch-length view, not the source's calendar-time `mrsd` view. Small labels are intentional: the objective is to inspect the 76-tip structure without implying that BEAST's dated-tree metadata survived conversion.
+
+```biolang
+phylo_tree(flu_newick, {
+    format: "svg", theme: "publication", title: "Influenza H3 teaching tree",
+    subtitle: "Display Newick extracted from BEAST Nexus; specialist annotations omitted",
+    width: 1040, height: 1120, show_tip_points: false,
+    show_tip_labels: true, tip_label_size: 7,
+    scale_axis: true, right_padding: 330
+})
+```
+
+The source selects amino-acid positions 150–175. The alignment view uses the same window and adds a consensus/conservation summary. Before combining a tree and alignment, verify that both contain the same biological identifiers; a visually aligned row with the wrong tip is worse than an obvious error.
+
+```biolang
+alignment_view(flu_alignment, {
+    format: "svg", theme: "publication",
+    title: "Influenza H3 amino-acid alignment, positions 150–175",
+    start: 150, end: 175, color_by: "protein",
+    width: 1040, height: 1400
+})
+```
+
+## 13.6 Bonus
+
+### 13.6.1 Many trees
+
+Comparing many trees reveals topological variability or sensitivity to sampling. As in the source chapter, the panels below contain three repeats of 10-, 25-, 50-, and 100-tip random trees. The trees were generated independently with the source's `set.seed(42)` recipe and pinned as Newick, so BioLang redraws the same topologies and branch lengths without making every notebook rerun random.
+
+```biolang
+let forest = read_text("many_trees_seed42.nwk") |> split("\n") |> filter(|line| len(trim(line)) > 0)
+phylo_tree(forest, {
+    format: "svg", theme: "publication",
+    title: "Many trees. Such phylogenetics. Wow.",
+    width: 960, height: 768, columns: 4
+})
+```
+
+**What to observe:** each row repeats the same 10 → 25 → 50 → 100 increase, but the topology and branch lengths change between repeats. The free scale lets each tree fill its own panel; it is therefore good for seeing shape and density, but not for comparing absolute horizontal distance between panels.
+
+### 13.6.2 Plot a tree with other data
+
+A useful composite aligns each tip with measurements such as abundance, phenotype, uncertainty, or a genomic feature. The join key must be the tip label, not row position. A mismatched or duplicated key can place valid measurements beside the wrong organism.
+
+BioLang can render the tree and the associated table or plot as separate verified outputs today. A single aligned tree-plus-data facet is intentionally not presented as equivalent to `ggtree::facet_plot()` until shared tip coordinates and clipping are validated end to end.
+
+### 13.6.3 Overlay organism silhouettes
+
+Silhouettes can orient a broad audience, but they are decorative annotations. The source's optional code uses external PhyloPic assets and is not evaluated upstream. This lesson does not copy those images: each asset has its own licence, creator attribution, and taxonomic meaning that must be checked before reuse.
+
+## Takeaways
+
+- Topology, branch length, and visual layout are different concepts.
+- A cladogram hides length; a phylogram displays it.
+- Calculate MRCA nodes from taxa instead of guessing positions.
+- State what colours, clade fills, and taxon links mean.
+- Preserve specialist metadata from BEAST or other inference tools.
+- Make multi-tree demonstrations deterministic when figures must reproduce.
+
+The numeric checks in `tests/validate.bl` pin the teaching tree, ggtree-compatible node numbering, branch distances, all twelve many-tree panel sizes, BEAST/Nexus extraction, alignment dimensions, and the SVG annotation structure used by these figures.

@@ -37,8 +37,9 @@ for (const manifestPath of walk(lessonsRoot).filter(path => path.endsWith(`${sep
 
   if (![1, 2].includes(manifest.schema)) fail(manifestPath, "schema must be 1 or 2");
   if (!/^[a-z0-9][a-z0-9._-]*$/i.test(manifest.id ?? "")) fail(manifestPath, "id is invalid");
-  if (!manifest.title || !manifest.summary) fail(manifestPath, "title and summary are required");
-  if (!manifest.source?.url?.startsWith("https://")) fail(manifestPath, "source.url must use HTTPS");
+  if (!manifest.title || typeof manifest.summary !== "string") fail(manifestPath, "title and summary are required");
+  if (!["browser", "desktop", "remote"].includes(manifest.runtime)) fail(manifestPath, "runtime is invalid");
+  if (!manifest.source?.title || !manifest.source?.url?.startsWith("https://")) fail(manifestPath, "source title and HTTPS URL are required");
   if (!Array.isArray(manifest.datasets) || !Array.isArray(manifest.tags)) fail(manifestPath, "datasets and tags must be arrays");
   if (!validDiscoverability(manifest.discoverability)) {
     fail(manifestPath, "discoverability must provide problems, methods, plots, terms, aliases, and functions arrays; only plots and functions may be empty");
@@ -72,10 +73,36 @@ for (const manifestPath of walk(lessonsRoot).filter(path => path.endsWith(`${sep
     }
   }
 
+  if (manifest.schema === 2) {
+    const entryIds = new Set(entries.map(entry => entry.id));
+    entries.forEach((entry, index) => {
+      if (!safeRelative(entry?.entry) || !existsSync(join(dirname(manifestPath), entry.entry))) return;
+      const notebook = readFileSync(join(dirname(manifestPath), entry.entry), "utf8");
+      const targets = [...notebook.matchAll(/\]\(#lesson-section=([^)]+)\)/g)].map(match => {
+        try { return decodeURIComponent(match[1]); } catch { return ""; }
+      });
+      const unknown = targets.filter(target => !entryIds.has(target));
+      if (unknown.length) fail(manifestPath, `lesson '${entry.id}' links to unknown sections: ${unknown.join(", ")}`);
+      if (index > 0 && !targets.includes(entries[index - 1].id)) {
+        fail(manifestPath, `lesson '${entry.id}' needs a Previous link to '${entries[index - 1].id}'`);
+      }
+      if (index + 1 < entries.length && !targets.includes(entries[index + 1].id)) {
+        fail(manifestPath, `lesson '${entry.id}' needs a Next link to '${entries[index + 1].id}'`);
+      }
+    });
+  }
+
+  const datasetPaths = new Set();
   for (const dataset of manifest.datasets ?? []) {
+    if (!dataset.id || !dataset.title || !dataset.mediaType || !dataset.source || !dataset.citation || !dataset.rights) {
+      fail(manifestPath, `dataset '${dataset.id ?? "unknown"}' is missing required descriptive fields`);
+    }
     if (!safeRelative(dataset.path)) fail(manifestPath, `unsafe dataset path '${dataset.path}'`);
+    if (datasetPaths.has(dataset.path)) fail(manifestPath, `duplicate dataset path '${dataset.path}'`);
+    datasetPaths.add(dataset.path);
     if (!/^https:\/\//.test(dataset.url ?? "")) fail(manifestPath, `dataset '${dataset.id}' must use HTTPS`);
     if (!/^[a-f0-9]{64}$/i.test(dataset.sha256 ?? "")) fail(manifestPath, `dataset '${dataset.id}' has no SHA-256`);
+    if (!Number.isInteger(dataset.bytes) || dataset.bytes <= 0) fail(manifestPath, `dataset '${dataset.id}' has invalid byte size`);
   }
   if (manifest.attribution && !existsSync(join(dirname(manifestPath), manifest.attribution))) fail(manifestPath, `missing attribution '${manifest.attribution}'`);
   if (manifest.sourceMap && !existsSync(join(dirname(manifestPath), manifest.sourceMap))) fail(manifestPath, `missing source map '${manifest.sourceMap}'`);

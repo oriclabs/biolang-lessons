@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "reference": "https://github.com/datacarpentry/R-ecology-lesson/blob/df7932244795d6341d7a305bfa6d53f7c721181e/episodes/working-with-data.Rmd",
+  "checked": "2026-09-03",
+  "referenceRuntime": "R 4.6.1 and dplyr",
+  "status": "verified",
+  "datasetSha256": "59cbe95a78255e1281660b329be308559f17b55617d51add2a535222778fcd12",
+  "metrics": [
+    {"name": "input rows", "reference": 16878, "biolang": 16878, "status": "exact"},
+    {"name": "species-sex groups", "reference": 46, "biolang": 46, "status": "exact"},
+    {"name": "lowest mean group", "reference": {"species_id": "PF", "sex": null, "mean_weight": 6, "n": 2}, "biolang": {"species_id": "PF", "sex": null, "mean_weight": 6, "n": 2}, "status": "exact"},
+    {"name": "highest mean group", "reference": {"species_id": "NL", "sex": "M", "mean_weight": 167.935211267606, "n": 355}, "biolang": {"species_id": "NL", "sex": "M", "mean_weight": 167.935211267606, "n": 355}, "status": "exact within 1e-12"}
+  ],
+  "figures": {"expected": 0, "biolang": 0, "status": "exact for selected scope"}
+}

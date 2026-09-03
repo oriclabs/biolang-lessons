@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "status": "validated",
+  "reference": {
+    "runtime": "R 4.5.2",
+    "packages": {
+      "DESeq2": "1.44.0"
+    },
+    "script": "validation/reference.R",
+    "result": "validation/results/reference.json",
+    "note": "The historical DESeq2 version was selected by measured agreement with the rendered chapter, not assumed. Current DESeq2 was also run during development but does not reproduce every historical value."
+  },
+  "checks": [
+    {"name": "count dimensions", "expected": [38694, 9], "status": "exact"},
+    {"name": "metadata dimensions", "expected": [8, 4], "status": "exact"},
+    {"name": "control mean-count total", "expected": 23005323.75, "status": "exact"},
+    {"name": "treated mean-count total", "expected": 22196523.75, "status": "exact"},
+    {"name": "genes positive in both groups", "expected": 21817, "status": "exact"},
+    {"name": "naive log2FC greater than 2", "expected": 250, "status": "exact"},
+    {"name": "naive log2FC less than -2", "expected": 367, "status": "exact"},
+    {"name": "raw DESeq2 rows", "expected": 38694, "status": "exact"},
+    {"name": "annotation-expanded result rows", "expected": 38957, "status": "exact"},
+    {"name": "significant annotation-expanded rows", "expected": 2186, "status": "exact"},
+    {"name": "raw significant Ensembl rows", "expected": 2181, "status": "exact"},
+    {"name": "unique significant annotated Ensembl genes", "expected": 2174, "status": "exact"},
+    {"name": "joined rows with missing adjusted p-value", "expected": 23665, "status": "exact"},
+    {"name": "CRISPLD2 normalised counts", "status": "numeric parity", "tolerance": 1e-8},
+    {"name": "PCA scores and variance percentages", "status": "numeric parity", "tolerance": 1e-10},
+    {"name": "top-25 VST heatmap matrix", "status": "numeric parity"},
+    {"name": "browser figures", "status": "renderer checked", "note": "BioLang regenerates the analytical figures; upstream PNGs are not copied."}
+  ],
+  "commands": [
+    "C:\\work\\bio\\biolang\\target\\debug\\bl.exe test tests\\validate.bl",
+    "C:\\work\\bio\\biolang\\target\\debug\\bl.exe notebook lesson.bln --plot none"
+  ]
+}
