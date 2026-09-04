@@ -1,0 +1,75 @@
+# 8.3.2-8.3.3 Wilcoxon test and linear models
+
+This notebook directly ports sections 8.3.2 and 8.3.3 of [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Select **Prepare all** to download and verify the exact source-hosted NHANES teaching table.
+
+```biolang
+let nh = read_csv("nhanes.csv")
+let adults = nh |> filter(|row| row.Age >= 18)
+{people: nrow(nh), adults: nrow(adults)}
+```
+
+## 8.3.2 Wilcoxon test
+
+The source first shows that `AlcoholYear` is strongly non-normal. Its `geom_histogram()` uses the default 30 bins; BioLang generates the same histogram from the same adult rows, with the source labels and ggplot panel.
+
+```biolang
+histogram(adults |> col("AlcoholYear"), {
+    bins: 30, bin_rule: "ggplot", theme: "ggplot", title: "",
+    xlabel: "AlcoholYear", ylabel: "count",
+    width: 840, height: 600, format: "svg"
+})
+```
+
+```biolang
+let alcohol_relationship = adults |> drop_null("AlcoholYear") |> drop_null("RelationshipStatus")
+let alcohol_committed = alcohol_relationship
+    |> filter(|row| row.RelationshipStatus == "Committed") |> col("AlcoholYear")
+let alcohol_single = alcohol_relationship
+    |> filter(|row| row.RelationshipStatus == "Single") |> col("AlcoholYear")
+let alcohol_rank_sum = wilcoxon(
+    alcohol_committed, alcohol_single,
+    {method: "normal", continuity: true}
+)
+alcohol_rank_sum
+```
+
+The rendered chapter prints (W=1067954) and (p=0.0001659). With tied ranks, current R and BioLang both retain the half rank and calculate (W=1067954.5); the p-value rounds to the published value.
+
+## 8.3.3 Linear-model equivalence
+
+The source compares adult BMI by relationship status three ways. The equal-variance t-test, two-group ANOVA, and 0/1 indicator regression have the same p-value; the ANOVA F statistic is the squared t statistic.
+
+```biolang
+let bmi_relationship = adults |> drop_null("BMI") |> drop_null("RelationshipStatus")
+let committed_bmi = bmi_relationship
+    |> filter(|row| row.RelationshipStatus == "Committed") |> col("BMI")
+let single_bmi = bmi_relationship
+    |> filter(|row| row.RelationshipStatus == "Single") |> col("BMI")
+let single_indicator = bmi_relationship |> col("RelationshipStatus")
+    |> map(|status| if status == "Single" { 1 } else { 0 })
+
+let equal_variance_t = ttest(committed_bmi, single_bmi, {variance: "equal"})
+let two_group_anova = anova([committed_bmi, single_bmi], {variance: "equal"})
+let indicator_model = lm(single_indicator, bmi_relationship |> col("BMI"))
+{
+    t_test: equal_variance_t,
+    anova: two_group_anova,
+    indicator_model: indicator_model
+}
+```
+
+```biolang
+assert abs(alcohol_rank_sum.u_group_a - 1067954.5) < 0.000000001, "tie-aware source Wilcoxon W"
+assert abs(alcohol_rank_sum.p_value - 0.00016585513405613698) < 0.000000000001, "source Wilcoxon p-value"
+assert abs(equal_variance_t.statistic - -1.5318893541999188) < 0.000000001, "source equal-variance t statistic"
+assert equal_variance_t.df == 3552, "source t-test degrees of freedom"
+assert abs(two_group_anova.f_statistic - 2.3466849935110443) < 0.000000001, "source ANOVA F statistic"
+assert abs(indicator_model.intercept - 28.513425287356096) < 0.000000001, "committed-group mean"
+assert abs(indicator_model.slope - 0.34132453135287805) < 0.000000001, "single-group coefficient"
+assert abs(equal_variance_t.p_value - two_group_anova.p_value) < 0.000000000001, "t-test and ANOVA p-values"
+"Exact source data, calculation, and runtime figure checks passed."
+```
+
+***
+
+[Next: Multiple regression ->](#lesson-section=multiple-regression)

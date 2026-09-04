@@ -1,0 +1,88 @@
+# 8.6 Tidying models
+
+This notebook directly ports the `tidy()`, `augment()`, and `glance()` sequence in section 8.6 of [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). BioLang's diagnostic record already exposes these three views without parsing printed console text.
+
+```biolang
+let nh = read_csv("nhanes.csv")
+let adults = nh |> filter(|row| row.Age >= 18)
+let full_model = stats_multiple_linear_diagnostics(
+    table({
+        PhysActive: adults |> col("PhysActive"),
+        Age: adults |> col("Age"),
+        Gender: adults |> col("Gender")
+    }),
+    adults |> col("Testosterone"),
+    {validation_folds: 0, include_values: true}
+)
+```
+
+## Tidy: one row per coefficient
+
+BioLang's internal feature order is alphabetical, so this table explicitly presents terms in the source formula order.
+
+```biolang
+let coefficients = full_model.coefficients
+let tidy_coefficients = table({
+    term: ["(Intercept)", "PhysActiveYes", "Age", "Gendermale"],
+    estimate: [coefficients[0].estimate, coefficients[3].estimate, coefficients[1].estimate, coefficients[2].estimate],
+    std_error: [coefficients[0].standard_error, coefficients[3].standard_error, coefficients[1].standard_error, coefficients[2].standard_error],
+    p_value: [coefficients[0].p_value, coefficients[3].p_value, coefficients[1].p_value, coefficients[2].p_value]
+})
+tidy_coefficients
+```
+
+```biolang
+tidy_coefficients |> filter(|row| row.term != "(Intercept)") |> select("term", "p_value") |> arrange("p_value")
+```
+
+## Augment: fitted values and residuals
+
+The source plots only males, colours points by physical activity, and scales point size by age. BioLang regenerates that same plot from the fitted model's exact complete rows; the source axis and legend labels are preserved.
+
+```biolang
+let adult_gender = adults |> col("Gender")
+let adult_activity = adults |> col("PhysActive")
+let adult_age = adults |> col("Age")
+let model_points = full_model.fitted_intervals
+let male_model_points = model_points |> filter(|point| adult_gender[point.row] == "male")
+let male_fitted = male_model_points |> map(|point| point.fitted)
+let male_residuals = male_model_points |> map(|point| point.residual)
+let male_activity = male_model_points |> map(|point| adult_activity[point.row])
+let male_age = male_model_points |> map(|point| adult_age[point.row])
+
+stats_relationship_plot(male_fitted, male_residuals, {
+    group: male_activity, size: male_age, fit: false, interval: "none",
+    theme: "ggplot", title: "", x_label: ".fitted", y_label: ".resid",
+    legend_title: "PhysActive", size_legend_title: "Age", note: false,
+    width: 840, height: 600, format: "svg"
+})
+```
+
+## Glance: one model-level row
+
+```biolang
+table({
+    complete_rows: [full_model.complete_rows],
+    excluded_rows: [full_model.excluded_rows],
+    degrees_freedom: [full_model.degrees_freedom],
+    r_squared: [full_model.r_squared],
+    adjusted_r_squared: [full_model.adjusted_r_squared],
+    residual_mse: [full_model.residual_mse]
+})
+```
+
+```biolang
+assert abs(coefficients[0].estimate - 46.69313136232011) < 0.000000001, "source intercept"
+assert abs(coefficients[3].estimate - 9.274924731642368) < 0.000000001, "source physical-activity coefficient"
+assert abs(coefficients[1].estimate - -0.5903616430454974) < 0.000000001, "source age coefficient"
+assert abs(coefficients[2].estimate - 385.1989414002692) < 0.000000001, "source male coefficient"
+assert abs(coefficients[3].p_value - 0.037711845766758775) < 0.000000000001, "source physical-activity p-value"
+assert full_model.complete_rows == 3438 && full_model.excluded_rows == 269, "source complete cases"
+assert abs(full_model.r_squared - 0.6968929855756988) < 0.000000001, "source R squared"
+assert len(male_model_points) == 1730, "source male complete cases"
+"Exact tidy outputs and runtime residual figure passed."
+```
+
+***
+
+[<- Previous: Power and sample size](#lesson-section=power-sample-size)

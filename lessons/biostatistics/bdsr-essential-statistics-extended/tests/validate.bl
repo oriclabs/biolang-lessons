@@ -1,0 +1,45 @@
+let nh = read_csv("../nhanes.csv")
+let adults = nh |> filter(|row| row.Age >= 18)
+
+let alcohol = adults |> drop_null("AlcoholYear") |> drop_null("RelationshipStatus")
+let committed = alcohol |> filter(|row| row.RelationshipStatus == "Committed") |> col("AlcoholYear")
+let single = alcohol |> filter(|row| row.RelationshipStatus == "Single") |> col("AlcoholYear")
+let ranked = wilcoxon(committed, single, {method: "normal", continuity: true})
+assert abs(ranked.u_group_a - 1067954.5) < 0.000000001, "Wilcoxon W"
+assert abs(ranked.p_value - 0.00016585513405613698) < 0.000000000001, "Wilcoxon p"
+
+let testosterone = adults |> col("Testosterone")
+let full = stats_multiple_linear_diagnostics(
+    table({PhysActive: adults |> col("PhysActive"), Age: adults |> col("Age"), Gender: adults |> col("Gender")}),
+    testosterone,
+    {validation_folds: 0, include_values: true}
+)
+assert abs(full.coefficients[1].estimate - -0.5903616430454974) < 0.000000001, "Age coefficient"
+assert abs(full.coefficients[2].estimate - 385.1989414002692) < 0.000000001, "Gender coefficient"
+assert abs(full.coefficients[3].estimate - 9.274924731642368) < 0.000000001, "activity coefficient"
+assert abs(full.r_squared - 0.6968929855756988) < 0.000000001, "full-model R squared"
+
+let gd = adults |> drop_null("Gender") |> drop_null("Diabetes")
+    |> cross_tab("Gender", "Diabetes", {row_order: ["female", "male"], col_order: ["No", "Yes"]})
+let gd_chi = chi_square_contingency(gd |> drop_cols("Gender"))
+assert abs(gd_chi.chi2 - 3.433238629121743) < 0.000000001, "gender-diabetes chi square"
+
+let ri = adults |> drop_null("Race") |> drop_null("Insured")
+    |> cross_tab("Race", "Insured", {row_order: ["Asian", "Black", "Hispanic", "Mexican", "Other", "White"], col_order: ["No", "Yes"]})
+let ri_chi = chi_square_contingency(ri |> drop_cols("Race"))
+assert abs(ri_chi.p_value - 9.754237575941022e-68) / 9.754237575941022e-68 < 0.000000001, "race-insurance p"
+
+let ordered = adults
+    |> mutate("RaceOrder", |row| if row.Race == "White" { 0 } else if row.Race == "Asian" { 1 } else if row.Race == "Black" { 2 } else if row.Race == "Hispanic" { 3 } else if row.Race == "Mexican" { 4 } else if row.Race == "Other" { 5 } else { 6 })
+    |> arrange("RaceOrder")
+let insured = ordered |> col("Insured") |> map(|value| if value == "Yes" { 1 } else if value == "No" { 0 } else { nil })
+let logistic = stats_glm_diagnostics(table({Race: ordered |> col("Race")}), insured, {family: "binomial", include_values: false})
+assert logistic.encodings[0].reference == "White", "White logistic baseline"
+assert abs(logistic.coefficients[0].estimate - 1.9421805410025388) < 0.000000001, "logistic intercept"
+
+let gene_power = power_t_test(1.0 / 0.7, 0.05, nil, {n: 3, strict: false})
+let gwas_n = power_prop_test(0.05, 0.055, {power: 0.8, alpha: 5e-8})
+assert abs(gene_power.power - 0.2709095) < 0.0000001, "R-default gene power"
+assert abs(gwas_n.n_raw - 157589.5) < 0.1, "GWAS sample size"
+
+"BDSR 8.3.2-8.6 source validation passed."

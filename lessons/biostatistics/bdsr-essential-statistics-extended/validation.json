@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "reference": "https://bdsr.stephenturner.us/stats.html",
+  "checked": "2026-09-04",
+  "sourceRevision": "f16caf3d3df4ac27297b87f50c37c7c024471208",
+  "datasetSha256": "82150bdf7d167e56e5f68552f49b6de85a1abfac2396ab5642bd90c945488c81",
+  "status": "verified",
+  "metrics": [
+    {"name": "AlcoholYear Wilcoxon W", "reference": 1067954, "biolang": 1067954.5, "status": "source display omits tied half-rank; current R and BioLang recomputation retain 1067954.5"},
+    {"name": "AlcoholYear Wilcoxon p", "reference": 0.0001659, "biolang": 0.00016585513405613698, "status": "rounded exact"},
+    {"name": "BMI relationship-status equal-variance t", "reference": -1.532, "biolang": -1.5318893541999188, "status": "rounded exact"},
+    {"name": "BMI relationship-status ANOVA F", "reference": 2.347, "biolang": 2.3466849935110443, "status": "rounded exact"},
+    {"name": "testosterone activity coefficient", "reference": 19.267, "biolang": 19.267018611090293, "status": "rounded exact"},
+    {"name": "full testosterone model R squared", "reference": 0.6969, "biolang": 0.6968929855756988, "status": "rounded exact"},
+    {"name": "gender-diabetes Yates chi square", "reference": 3.4332, "biolang": 3.433238629121743, "status": "rounded exact"},
+    {"name": "gender-diabetes Fisher p", "reference": 0.05992, "biolang": 0.05992352432232489, "status": "rounded exact"},
+    {"name": "race-insurance chi square", "reference": 323.3, "biolang": 323.3016487345038, "status": "rounded exact"},
+    {"name": "race-insurance chi-square p", "reference": 9.754238e-68, "biolang": 9.754237575941022e-68, "status": "rounded exact"},
+    {"name": "race-only logistic intercept with White reference", "reference": 1.94218, "biolang": 1.9421805410025388, "status": "rounded exact"},
+    {"name": "adjusted logistic Asian coefficient with White reference", "reference": -0.455, "biolang": -0.4550403000469768, "status": "rounded exact"},
+    {"name": "t power n=20", "reference": 0.7641668, "biolang": 0.7641668, "status": "R-default non-strict tail convention"},
+    {"name": "gene-expression power n=3", "reference": 0.2709095, "biolang": 0.2709095, "status": "R-default non-strict tail convention"},
+    {"name": "two-proportion required n", "reference": 12.37701, "biolang": 12.377014318879656, "status": "rounded exact"},
+    {"name": "GWAS required n", "reference": 157589.5, "biolang": 157589.5, "status": "rounded exact"}
+  ],
+  "figures": [
+    {"sourceChunk": "alcoholhist", "biolang": "histogram", "status": "exact adult AlcoholYear values, 30 ggplot bins, labels, axes, and panel theme"},
+    {"sourceChunk": "first mosaicplot(xt, main=NA)", "biolang": "mosaic_plot layout=base", "status": "exact gender-diabetes table, grey count-area geometry, source order, gaps, outer labels, and no title"},
+    {"sourceChunk": "second mosaicplot(xt, main=NA)", "biolang": "mosaic_plot layout=base", "status": "exact race-insurance table, grey count-area geometry, source order, gaps, outer labels, no title, and wider aspect"},
+    {"sourceChunk": "augment(fit) residual plot", "biolang": "stats_relationship_plot", "status": "exact full-model male rows, fitted values, residuals, physical-activity colours, age sizes, labels, legends, and ggplot panel"}
+  ]
+}

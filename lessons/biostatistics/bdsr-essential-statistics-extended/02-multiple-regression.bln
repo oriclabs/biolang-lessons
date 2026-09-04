@@ -1,0 +1,74 @@
+# 8.3.6 Multiple regression
+
+This notebook directly ports the three nested testosterone models in section 8.3.6 of [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Sections 8.3.4 and 8.3.5 remain available as the separate source-faithful group-comparison and regression lessons.
+
+```biolang
+let nh = read_csv("nhanes.csv")
+let adults = nh |> filter(|row| row.Age >= 18)
+let testosterone_rows = adults |> drop_null("Testosterone") |> drop_null("PhysActive")
+let testosterone_no = testosterone_rows |> filter(|row| row.PhysActive == "No") |> col("Testosterone")
+let testosterone_yes = testosterone_rows |> filter(|row| row.PhysActive == "Yes") |> col("Testosterone")
+let activity_t_test = ttest(testosterone_no, testosterone_yes, {variance: "equal"})
+activity_t_test
+```
+
+The source reports (t=-2.4298), 3436 degrees of freedom, and (p=0.01516). The matching one-predictor linear model follows.
+
+```biolang
+let testosterone = adults |> col("Testosterone")
+let activity_model = stats_multiple_linear_diagnostics(
+    table({PhysActive: adults |> col("PhysActive")}), testosterone,
+    {validation_folds: 0, include_values: false}
+)
+activity_model.coefficients
+```
+
+Adding age removes the physical-activity association at the 0.05 threshold in the source model.
+
+```biolang
+let activity_age_model = stats_multiple_linear_diagnostics(
+    table({
+        PhysActive: adults |> col("PhysActive"),
+        Age: adults |> col("Age")
+    }), testosterone,
+    {validation_folds: 0, include_values: false}
+)
+activity_age_model.coefficients
+```
+
+Adding gender substantially reduces residual variation; the physical-activity coefficient is again significant. The labels use BioLang's explicit bracket notation for treatment contrasts, so `Gender[male]` and `PhysActive[Yes]` are the source's `Gendermale` and `PhysActiveYes` terms.
+
+```biolang
+let full_model = stats_multiple_linear_diagnostics(
+    table({
+        PhysActive: adults |> col("PhysActive"),
+        Age: adults |> col("Age"),
+        Gender: adults |> col("Gender")
+    }), testosterone,
+    {validation_folds: 0, include_values: false}
+)
+{
+    coefficients: full_model.coefficients,
+    complete_rows: full_model.complete_rows,
+    excluded_rows: full_model.excluded_rows,
+    r_squared: full_model.r_squared,
+    adjusted_r_squared: full_model.adjusted_r_squared
+}
+```
+
+```biolang
+assert abs(activity_t_test.statistic - -2.429815439145285) < 0.000000001, "source activity t statistic"
+assert activity_t_test.df == 3436, "source activity t degrees of freedom"
+assert abs(activity_model.coefficients[1].estimate - 19.267018611090293) < 0.000000001, "source activity coefficient"
+assert abs(activity_age_model.coefficients[1].estimate - -0.8002814918848092) < 0.000000001, "source age coefficient"
+assert abs(full_model.coefficients[1].estimate - -0.5903616430454974) < 0.000000001, "source adjusted age coefficient"
+assert abs(full_model.coefficients[2].estimate - 385.1989414002692) < 0.000000001, "source male coefficient"
+assert abs(full_model.coefficients[3].estimate - 9.274924731642368) < 0.000000001, "source adjusted activity coefficient"
+assert full_model.complete_rows == 3438 && full_model.excluded_rows == 269, "source complete cases"
+assert abs(full_model.r_squared - 0.6968929855756988) < 0.000000001, "source multiple R squared"
+"Exact source calculations passed."
+```
+
+***
+
+[<- Previous: Wilcoxon and linear models](#lesson-section=wilcoxon-linear-models) | [Next: Categorical data ->](#lesson-section=categorical-data)

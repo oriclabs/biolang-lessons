@@ -1,0 +1,55 @@
+# 8.5 Power and sample size
+
+This notebook directly ports every displayed calculation and worked exercise in section 8.5 of [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html).
+
+## 8.5.1 T-test power/N
+
+The source uses R's default `strict=FALSE` convention for a two-sided `power.t.test()`: under a specified positive effect, rejection in the opposite tail is not counted as power. BioLang makes that convention explicit.
+
+```biolang
+let t_power_20 = power_t_test(2.0 / 2.3, 0.05, nil, {n: 20, strict: false})
+t_power_20
+```
+
+```biolang
+let t_required = power_t_test(0.8 / 1.5, 0.05, 0.8, {strict: false})
+t_required
+```
+
+The chapter's gene-expression exercises treat a two-fold change as 1 on the log2 scale.
+
+```biolang
+let gene_power = power_t_test(1.0 / 0.7, 0.05, nil, {n: 3, strict: false})
+let gene_required = power_t_test(1.0 / 0.7, 0.05, 0.8, {strict: false})
+{power_with_three_per_group: gene_power, required_for_80_percent: gene_required}
+```
+
+## 8.5.2 Proportions power/N
+
+```biolang
+let proportion_power = power_prop_test(0.8, 0.2, {n: 5})
+let proportion_required = power_prop_test(0.8, 0.2, {power: 0.9})
+{power_with_five_per_group: proportion_power, required_for_90_percent: proportion_required}
+```
+
+The final exercise plans a GWAS for prevalence changing from 5% to 5.5% at genome-wide alpha (5e-8).
+
+```biolang
+let gwas_required = power_prop_test(0.05, 0.055, {power: 0.8, alpha: 5e-8})
+gwas_required
+```
+
+```biolang
+assert abs(t_power_20.power - 0.7641668) < 0.0000001, "source fixed-n t-test power"
+assert abs(t_required.n_raw - 56.16413) < 0.0001, "source t-test required n"
+assert abs(gene_power.power - 0.2709095) < 0.0000001, "source gene-expression power"
+assert abs(gene_required.n_raw - 8.764711) < 0.00001, "source gene-expression required n"
+assert abs(proportion_power.power - 0.4688159) < 0.0000001, "source proportion power"
+assert abs(proportion_required.n_raw - 12.37701) < 0.00001, "source proportion required n"
+assert abs(gwas_required.n_raw - 157589.5) < 0.1, "source GWAS required n"
+"Every published section 8.5 calculation passed."
+```
+
+***
+
+[<- Previous: Categorical data](#lesson-section=categorical-data) | [Next: Tidying models ->](#lesson-section=tidying-models)

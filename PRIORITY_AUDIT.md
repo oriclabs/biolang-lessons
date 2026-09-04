@@ -91,7 +91,7 @@ attribution notice, and source map.
 
 ## Runtime-figure audit
 
-Rechecked 2026-09-04 after restoring the BDSR runtime figures. The four active
+Rechecked 2026-09-04 after restoring the BDSR runtime figures. The five active
 BDSR lessons and the multivariate-analysis collection generate their analytical
 figures in BioLang from exact source data. The audit also found older active
 entries whose analytical output is still a copied published image rather than a
