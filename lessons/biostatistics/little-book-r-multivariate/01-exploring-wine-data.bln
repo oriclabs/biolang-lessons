@@ -46,25 +46,75 @@ The exact group sizes are 59, 71, and 48.
 
 ## Matrix scatterplot
 
-The source first plots the first five chemical measurements as a scatterplot matrix. Diagonal panels contain histograms; off-diagonal panels contain pairwise scatterplots.
+The source first plots the first five chemical measurements as a scatterplot matrix. BioLang constructs all 25 panels from `wine`: density curves on the diagonal and every ordered pairwise scatterplot off the diagonal.
 
-![Canonical matrix scatterplot of V2 through V6](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image1.png)
+```biolang
+fn matrix_panel(data, x_variable, y_variable) {
+    if x_variable == y_variable {
+        density_plot(data |> col(x_variable), {
+            title: x_variable, xlabel: "", ylabel: "",
+            width: 260, height: 220
+        })
+    } else {
+        plot(data |> select(x_variable, y_variable), {
+            type: "scatter", x: x_variable, y: y_variable,
+            xlabel: "", ylabel: "", width: 260, height: 220
+        })
+    }
+}
+
+let matrix_variables = ["V2", "V3", "V4", "V5", "V6"]
+let matrix_panels = matrix_variables |> flat_map(|y_variable|
+    matrix_variables |> map(|x_variable| matrix_panel(wine, x_variable, y_variable)))
+plot_grid(matrix_panels, {
+    columns: 5,
+    panel_labels: ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
+    title: "Scatterplot matrix: V2 through V6",
+    width: 1250, height: 1060, gap: 6,
+    panel_width: 230, panel_height: 185
+})
+```
 
 ## One pair in detail
 
-It next plots V4 against V5, first as points and then with cultivar labels.
+It next plots V4 against V5, first as one point cloud and then with cultivar encoded by colour and identified in the legend.
 
-![Canonical unlabelled V4 versus V5 scatterplot](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image2.png)
+```biolang
+plot(wine |> select("V4", "V5"), {
+    type: "scatter", x: "V4", y: "V5",
+    title: "V4 versus V5", xlabel: "V4", ylabel: "V5",
+    theme: "publication", width: 700, height: 500
+})
+```
 
-![Canonical V4 versus V5 scatterplot labelled by cultivar](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image4.png)
+```biolang
+stats_relationship_plot(wine |> col("V4"), wine |> col("V5"), {
+    group: wine |> col("V1"), group_order: ["1", "2", "3"],
+    fit: false, note: false, legend_title: "Cultivar",
+    title: "V4 versus V5 by cultivar", x_label: "V4", y_label: "V5",
+    width: 760, height: 520
+})
+```
 
-The labelled figure shows that cultivar 2 tends to have lower V4 values than cultivar 1.
+The cultivar-identified figure shows that cultivar 2 tends to have lower V4 values than cultivar 1.
 
 ## Profile plot
 
 Finally, the source puts V2 through V6 on one profile plot. Their different scales are immediately visible, especially the much larger mean and standard deviation of V6.
 
-![Canonical profile plot of V2 through V6](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image5.png)
+```biolang
+let profiles = table({
+    sample: range(1, nrow(wine) + 1),
+    V2: wine |> col("V2"), V3: wine |> col("V3"),
+    V4: wine |> col("V4"), V5: wine |> col("V5"),
+    V6: wine |> col("V6")
+})
+plot(profiles, {
+    type: "line", x: "sample", y: ["V2", "V3", "V4", "V5", "V6"],
+    title: "Profiles of V2 through V6", xlabel: "Sample index", ylabel: "Value",
+    theme: "publication", width: 900, height: 560
+})
+```
 
 ```biolang
 assert nrow(wine) == 178, "exact UCI source rows"
@@ -72,7 +122,7 @@ assert ncol(wine) == 14, "cultivar plus thirteen chemical measurements"
 assert nrow(cultivar_1) == 59 && nrow(cultivar_2) == 71 && nrow(cultivar_3) == 48, "exact cultivar counts"
 assert wine[0].V1 == 1 && abs(wine[0].V2 - 14.23) < 0.000000000001, "exact first source row"
 assert wine[177].V1 == 3 && abs(wine[177].V14 - 560) < 0.000000000001, "exact last source row"
-"Exact source data and four canonical figures verified."
+"Exact source data verified; four figures generated from it by BioLang."
 ```
 
 ***

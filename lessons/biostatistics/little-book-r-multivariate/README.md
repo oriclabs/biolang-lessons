@@ -1,6 +1,6 @@
 # A Little Book of R for Multivariate Analysis
 
-This schema-2 lesson collection ports the complete analytical sequence from Avril Coghlan's CC BY 3.0 booklet using the exact real UCI Wine data and all nine figures published on the selected analysis page.
+This schema-2 lesson collection ports the complete analytical sequence from Avril Coghlan's CC BY 3.0 booklet using the exact real UCI Wine data. BioLang generates all nine corresponding analytical figures at runtime; no published figure files are copied or loaded.
 
 The four notebooks cover exploration, multivariate summaries and standardisation, PCA, and LDA. Each notebook has Previous/Next navigation, while Studio retains its section selector.
 
