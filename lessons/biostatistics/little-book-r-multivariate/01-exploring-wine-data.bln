@@ -46,13 +46,14 @@ The exact group sizes are 59, 71, and 48.
 
 ## Matrix scatterplot
 
-The source first plots the first five chemical measurements as a scatterplot matrix. BioLang constructs all 25 panels from `wine`: density curves on the diagonal and every ordered pairwise scatterplot off the diagonal. The source-style options deliberately add contiguous square boxes, black open points, green least-squares lines, red LOESS curves, and red dashed conditional-spread curves. BioLang's general matrix defaults remain unboxed.
+The source first plots the first five chemical measurements as a scatterplot matrix. BioLang constructs all 25 panels from `wine`: density curves on the diagonal and every ordered pairwise scatterplot off the diagonal. The source-style options deliberately add separated square boxes, black open points, green least-squares lines, red LOESS curves, and red dashed conditional-spread curves. BioLang's general matrix defaults remain unboxed.
 
 ```biolang
 scatterplot_matrix(wine |> select("V2", "V3", "V4", "V5", "V6"), {
     title: "",
     boxed_panels: true,
     panel_size: 170,
+    panel_gap: 8,
     regression: true,
     smooth: true,
     spread: true,

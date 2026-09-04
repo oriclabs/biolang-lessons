@@ -18,7 +18,7 @@ Selected source page: `src/multivariateanalysis.rst`, rendered at https://little
 
 | Upstream figure | BioLang generation | Subject |
 | --- | --- | --- |
-| `_static/image1.png` | `scatterplot_matrix()` over V2-V6 with source-style boxes, ticks, regression, LOESS, and conditional spread | Scatterplot matrix |
+| `_static/image1.png` | `scatterplot_matrix()` over V2-V6 with source-style separated square boxes, ticks, regression, LOESS, and conditional spread | Scatterplot matrix |
 | `_static/image2.png` | `plot()` over exact V4/V5 columns | V4/V5 scatterplot |
 | `_static/image4.png` | `stats_relationship_plot()` grouped by exact V1 cultivar | Cultivar-identified V4/V5 scatterplot |
 | `_static/image5.png` | Multi-series `plot(type: "line")` over exact V2-V6 columns | Profile plot |
