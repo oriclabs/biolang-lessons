@@ -30,9 +30,20 @@ let smoking_tukey = tukey_hsd([never_bmi, current_bmi, former_bmi])
 
 The source ANOVA reports (F=16.99) with 2 and 3553 degrees of freedom and (p=4.54\times10^{-8}). Its Tukey comparisons show that current smokers differ from both never and former smokers, while former and never smokers do not differ significantly.
 
-![Exact published adult BMI by smoking-status boxplots](figures/source/smoking-bmi-boxplots.png)
+The source boxplot also displays people whose smoking status is missing, although that `NA` group is excluded from the fitted ANOVA. BioLang regenerates the same four-group classic-theme boxplot from the exact adult rows.
 
-The boxplot is the published source PNG copied byte for byte. Missing smoking status remains visible as the source's `NA` group but is excluded from the model.
+```biolang
+let smoking_bmi = adults |> drop_null("BMI")
+stats_group_plot(
+    smoking_bmi |> col("BMI"), smoking_bmi |> col("SmokingStatus"),
+    {
+        theme: "classic", points: "outliers", missing_label: "NA",
+        group_order: ["Never", "Current", "Former", "NA"],
+        show_n: false, title: "", x_label: "SmokingStatus", y_label: "BMI",
+        width: 840, height: 600, format: "svg"
+    }
+)
+```
 
 ## Fidelity checks
 
@@ -44,6 +55,5 @@ assert abs(smoking_anova.f_statistic - 16.98847476354365) < 0.000000001, "source
 assert smoking_anova.df_between == 2, "source numerator degrees of freedom"
 assert smoking_anova.df_within == 3553, "source denominator degrees of freedom"
 assert abs(smoking_anova.p_value - 0.000000045399739190266075) < 0.000000000001, "source ANOVA p-value"
-"Exact source calculations and figure checks passed."
+"Exact source calculations and runtime-figure checks passed."
 ```
-

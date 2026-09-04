@@ -1,6 +1,6 @@
 # BDSR lung-cancer survival
 
-This strict-fidelity lesson ports the lung-cancer worked example from BDSR sections 9.2.2–9.2.3. It includes the complete original `survival::lung` data, matches the source Kaplan–Meier results and parameters, and preserves all three selected source figures byte for byte.
+This strict-fidelity lesson ports the lung-cancer worked example from BDSR sections 9.2.2–9.2.3. It includes the complete original `survival::lung` data, matches the source Kaplan–Meier results and parameters, and regenerates all three selected source figures in BioLang.
 
 Run from this directory:
 

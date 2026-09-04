@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "checked": "2026-09-03",
+  "checked": "2026-09-04",
   "source": "https://bdsr.stephenturner.us/survival.html",
   "sourceRevision": "f16caf3d3df4ac27297b87f50c37c7c024471208",
   "dataset": {
@@ -11,9 +11,9 @@
     "sourceVariables": 10
   },
   "figures": [
-    {"path": "figures/source/sfitPlot-1.png", "bytes": 55913, "sha256": "4feb516916096997ff737edd6719a7b9d00a3505050bb4a54f1d38cf8cd4ae86", "status": "byte-for-byte canonical source output"},
-    {"path": "figures/source/survminer-1.png", "bytes": 81680, "sha256": "1a55a58e8d0805b9e9d2e2b32a9eec0261efdcf92a2e8db2d67f72f63978bc6c", "status": "byte-for-byte canonical source output"},
-    {"path": "figures/source/survminerOptions-1.png", "bytes": 149631, "sha256": "e6c1027c5f8a253ebf0241fca10f1901f7fdebad588c28e0e57f8417f839187e", "status": "byte-for-byte canonical source output"}
+    {"sourceChunk": "sfitPlot", "biolang": "kaplan_meier", "status": "exact step curves with source black lines, boxed panel, expansion, ticks, dimensions, and no legend or censor marks verified"},
+    {"sourceChunk": "survminer", "biolang": "kaplan_meier", "status": "exact step curves with source hue palette, censor marks, top legend, expansion, axes, tick schedule, decimals, and dimensions verified"},
+    {"sourceChunk": "survminerOptions", "biolang": "kaplan_meier", "status": "exact step curves and at-risk counts with source confidence bands, p-value, labels, palette, title, top legend, axes, and 1344x1536 layout verified"}
   ],
   "metrics": [
     {"name": "overall n/events/median/LCL/UCL", "expected": [228, 165, 310, 285, 363], "status": "exact source result"},

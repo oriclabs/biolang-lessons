@@ -12,21 +12,43 @@ let fit = lm(height_weight |> col("Height"), height_weight |> col("Weight"))
 
 The fitted equation is `Weight = -73.7058963 + 0.9199614 * Height`, with (R^2=0.2034476), exactly matching the source data calculation.
 
-## Published fitted relationship
+## Fitted relationship
 
-![Exact published adult height-weight regression](figures/source/height-weight-lm.png)
+BioLang regenerates the source's `geom_point() + geom_smooth(method="lm")` figure from the exact 3,676 complete adult observations.
 
-## Published extrapolation warning
+```biolang
+stats_relationship_plot(
+    height_weight |> col("Height"), height_weight |> col("Weight"),
+    {
+        interval: "confidence", confidence: 0.95, theme: "ggplot",
+        title: "", x_label: "Height", y_label: "Weight", note: false,
+        width: 840, height: 600, format: "svg"
+    }
+)
+```
 
-![Exact published height-weight extrapolation plot](figures/source/height-weight-extrapolation.png)
+## Extrapolation warning
 
-Both PNGs are copied byte for byte from the chapter. The second extends the axis toward height zero, exposing why the negative intercept should not be interpreted outside the observed range.
+The second source call keeps the same points and fit but extends the fitted x range toward zero. BioLang reproduces that full-range geometry and the original title.
+
+```biolang
+stats_relationship_plot(
+    height_weight |> col("Height"), height_weight |> col("Weight"),
+    {
+        interval: "confidence", confidence: 0.95, fullrange: true, x_limits: [0, nil],
+        theme: "ggplot", title: "Friends don't let friends extrapolate.",
+        x_label: "Height", y_label: "Weight", note: false,
+        width: 840, height: 600, format: "svg"
+    }
+)
+```
+
+The extended line exposes why the negative intercept should not be interpreted outside the observed height range.
 
 ```biolang
 assert nrow(height_weight) == 3676, "source complete adult rows"
 assert abs(fit.intercept - (-73.70589629259628)) < 0.000000001, "source intercept"
 assert abs(fit.slope - 0.9199613842262466) < 0.000000001, "source slope"
 assert abs(fit.r_squared - 0.20344761074176798) < 0.000000001, "source R squared"
-"Exact source model and figures verified."
+"Exact source model and runtime figures verified."
 ```
-

@@ -8,10 +8,10 @@ The source is licensed under
 adaptation retains that licence. Noncommercial use only.
 
 The NHANES table and dictionary are fetched directly from the BDSR source host
-and checksum-verified; they are not redistributed here. The six PNGs under
-`figures/source` are byte-for-byte copies of the corresponding published
-chapter assets. No synthetic data or independently redrawn figure is included.
+and checksum-verified; they are not redistributed here. The six figures are
+generated at runtime by BioLang from those exact rows using the source bin
+counts, mappings, grouping, smoothing, palette, labels, and theme. No source
+image or synthetic replacement data is included.
 
 The BioLang syntax and explicit fidelity checks are adaptations by OriClabs on
 2026-09-03. This is not an official BDSR publication or endorsement.
-

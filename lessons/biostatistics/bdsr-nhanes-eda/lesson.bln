@@ -32,37 +32,77 @@ These are the same calculations and the same source table used by the chapter ex
 
 ## Histograms
 
-The next four PNGs are the actual rendered files published by the source—not BioLang approximations.
+The source draws four `geom_histogram()` panels. BioLang regenerates each one from the exact NHANES rows with the same bin counts, grey fill, ggplot panel, and axis labels.
 
 ### BMI, 30 bins
 
-![Published BDSR BMI histogram](figures/source/histograms-1.png)
+```biolang
+histogram(nh |> col("BMI"), {
+    bins: 30, bin_rule: "ggplot", theme: "ggplot", title: "",
+    xlabel: "BMI", ylabel: "count", width: 840, height: 600, format: "svg"
+})
+```
 
 ### Weight in kilograms, 30 bins
 
-![Published BDSR weight histogram](figures/source/histograms-2.png)
+```biolang
+let observed_weight = nh |> drop_null("Weight") |> col("Weight")
+histogram(observed_weight, {
+    bins: 30, bin_rule: "ggplot", theme: "ggplot", title: "",
+    xlabel: "Weight", ylabel: "count", width: 840, height: 600, format: "svg"
+})
+```
 
 ### Weight converted to pounds, 80 bins
 
-![Published BDSR weight-in-pounds histogram](figures/source/histograms-3.png)
+```biolang
+let weight_pounds = observed_weight |> map(|value| value * 2.2)
+histogram(weight_pounds, {
+    bins: 80, bin_rule: "ggplot", theme: "ggplot", title: "",
+    xlabel: "Weight * 2.2", ylabel: "count", width: 840, height: 600, format: "svg"
+})
+```
 
 ### Age, 30 bins
 
-![Published BDSR age histogram](figures/source/histograms-4.png)
+```biolang
+histogram(age, {
+    bins: 30, bin_rule: "ggplot", theme: "ggplot", title: "",
+    xlabel: "Age", ylabel: "count", width: 840, height: 600, format: "svg"
+})
+```
 
 ## Height and weight
 
-The source first plots all available observations and colours points by gender.
-
-![Published BDSR height-and-weight scatter plot](figures/source/scatter-height-weight.png)
-
-It then filters to `Age >= 18` and adds one linear-model smooth per gender.
-
-![Published BDSR adult height-and-weight model plot](figures/source/scatter-adult-height-weight.png)
+The source first plots all available observations and colours points by gender. BioLang uses the same complete rows and ggplot hue ordering.
 
 ```biolang
 let everyone_complete = nh |> drop_null("Height") |> drop_null("Weight") |> drop_null("Gender")
+stats_relationship_plot(
+    everyone_complete |> col("Height"), everyone_complete |> col("Weight"),
+    {
+        group: everyone_complete |> col("Gender"), fit: false, interval: "none",
+        theme: "ggplot", title: "", x_label: "Height", y_label: "Weight",
+        legend_title: "Gender", note: false, width: 840, height: 600, format: "svg"
+    }
+)
+```
+
+It then filters to `Age >= 18` and adds one linear-model smooth per gender with the source's grey confidence ribbons.
+
+```biolang
 let adults_complete = nh |> filter(|row| row.Age >= 18) |> drop_null("Height") |> drop_null("Weight") |> drop_null("Gender")
+stats_relationship_plot(
+    adults_complete |> col("Height"), adults_complete |> col("Weight"),
+    {
+        group: adults_complete |> col("Gender"), interval: "confidence", confidence: 0.95,
+        theme: "ggplot", title: "", x_label: "Height", y_label: "Weight",
+        legend_title: "Gender", note: false, width: 840, height: 600, format: "svg"
+    }
+)
+```
+
+```biolang
 {
     complete_height_weight_gender: nrow(everyone_complete),
     complete_adult_height_weight_gender: nrow(adults_complete)
@@ -82,6 +122,5 @@ assert quantile(age, 0.5) == 36, "source median age"
 assert quantile(age, 0.75) == 54, "source upper age quartile"
 assert nrow(everyone_complete) == 4834, "source complete-case count"
 assert nrow(adults_complete) == 3676, "source adult complete-case count"
-"Exact source data and published-figure checks passed."
+"Exact source data and runtime-figure checks passed."
 ```
-

@@ -64,27 +64,78 @@ table({
 })
 ```
 
-## Exact published figures
+## Source-matched BioLang figures
 
-The first source figure is the direct base-R `plot(sfit)` output.
+The first source figure is the direct base-R `plot(sfit)` output. BioLang regenerates the two black curves without a legend.
 
-![Exact BDSR base-R Kaplan-Meier plot](figures/source/sfitPlot-1.png)
+```biolang
+let lung_source_sex = table({
+    time: lung |> col("time"), event: lung |> col("event"),
+    sex: lung |> col("sex") |> map(|value| if value == 1 { "sex=1" } else { "sex=2" })
+})
+kaplan_meier(lung_source_sex, {
+    time: "time", event: "event", group: "sex",
+    confidence: false, legend: false, censor_marks: false,
+    colors: ["#000000", "#000000"], theme: "classic",
+    title: "", xlabel: "", ylabel: "", panel_border: true,
+    scale_expansion: true, scale_expansion_fraction: 0.04,
+    x_ticks: [0, 200, 400, 600, 800, 1000],
+    y_ticks: [0, 0.2, 0.4, 0.6, 0.8, 1.0], y_tick_decimals: 1, y_tick_rotation: -90,
+    text_scale: 2.5, margin_left: 158, margin_right: 80, margin_top: 157, margin_bottom: 196,
+    width: 1344, height: 960, format: "svg"
+})
+```
 
-The second is the source's default `ggsurvplot(sfit)` output.
+The second is the source's default `ggsurvplot(sfit)` output: classic white panel, ggplot hue palette, `Strata` legend, confidence interval off, and risk table off.
 
-![Exact BDSR default survminer Kaplan-Meier plot](figures/source/survminer-1.png)
+```biolang
+kaplan_meier(lung_source_sex, {
+    time: "time", event: "event", group: "sex",
+    confidence: false, risk_table: false,
+    palette: "ggplot", legend_title: "Strata", legend_position: "top", theme: "classic",
+    scale_expansion: true, line_width: 4, censor_size: 7, censor_width: 2.5,
+    title: "", xlabel: "Time", ylabel: "Survival probability", x_title_y: 936, y_title_x: 31,
+    x_ticks: [0, 250, 500, 750, 1000],
+    y_ticks: [0, 0.25, 0.5, 0.75, 1.0], y_tick_decimals: 2,
+    text_scale: 2.4, margin_left: 135, margin_right: 18, margin_top: 127, margin_bottom: 103,
+    width: 1344, height: 960, format: "svg"
+})
+```
 
-The third is the source's configured output with confidence intervals, log-rank p-value, risk table, labels, colours, and title.
-
-![Exact BDSR configured survminer Kaplan-Meier plot](figures/source/survminerOptions-1.png)
-
-All three PNGs are byte-for-byte copies from the published chapter. They are not BioLang redraws. The code above verifies the data and statistical geometry underlying them while the images preserve the exact source rendering.
+The third regenerates the configured source output with confidence intervals, log-rank p-value, risk table, labels, colours, and title.
 
 ```biolang
 let sex_test = log_rank_test(
     male |> col("time"), male |> col("event"),
     female |> col("time"), female |> col("event")
 )
+let lung_display_sex = table({
+    time: lung |> col("time"), event: lung |> col("event"),
+    sex: lung |> col("sex") |> map(|value| if value == 1 { "Male" } else { "Female" })
+})
+kaplan_meier(lung_display_sex, {
+    time: "time", event: "event", group: "sex",
+    confidence: true, risk_table: true,
+    risk_times: [0, 250, 500, 750, 1000],
+    p_label: "p = 0.0013", p_x: 20, p_y: 0.2,
+    colors: ["#1C86EE", "#EE7AE9"], legend_title: "Sex",
+    legend_position: "top", theme: "classic", scale_expansion: true,
+    line_width: 4, censor_size: 7, censor_width: 2.5, confidence_alpha: 0.22,
+    title: "Kaplan-Meier Curve for Lung Cancer Survival", title_align: "left",
+    xlabel: "", ylabel: "Survival probability", y_title_x: 31,
+    x_ticks: [0, 250, 500, 750, 1000],
+    y_ticks: [0, 0.25, 0.5, 0.75, 1.0], y_tick_decimals: 2,
+    risk_table_title: "Number at risk", risk_table_xlabel: "Time",
+    risk_table_ylabel: "Sex", risk_table_colored_labels: true,
+    risk_table_top_offset: 149, risk_table_title_gap: 84, risk_table_row_spacing: 44,
+    risk_table_axis_gap: 22, risk_table_tick_offset: 25,
+    risk_table_xlabel_offset: 60, risk_table_ylabel_x: 28,
+    text_scale: 2.4, margin_left: 135, margin_right: 18, margin_top: 182, margin_bottom: 364,
+    width: 1344, height: 1536, format: "svg"
+})
+```
+
+```biolang
 assert nrow(source) == 228, "source lung rows"
 assert ncol(source) == 11, "CSV contains the source's ten variables plus row names"
 assert km_median(overall_curve) == 310, "overall median"
@@ -93,6 +144,5 @@ assert km_median(female_curve) == 426, "female median"
 assert abs(survival_at(male_curve, 100) - 0.8260869565217395) < 1e-12, "male day-100 survival"
 assert abs(survival_at(female_curve, 500) - 0.41104613510668786) < 1e-12, "female day-500 survival"
 assert abs(sex_test.chi2 - 10.326741954885632) < 1e-10, "source log-rank statistic"
-"Exact dataset, calculations, and canonical figures verified."
+"Exact dataset, calculations, and runtime figures verified."
 ```
-

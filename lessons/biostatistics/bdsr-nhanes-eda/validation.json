@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "reference": "https://bdsr.stephenturner.us/stats.html",
-  "checked": "2026-09-03",
+  "checked": "2026-09-04",
   "sourceRevision": "f16caf3d3df4ac27297b87f50c37c7c024471208",
   "status": "verified",
   "data": [
@@ -17,12 +17,8 @@
     {"name": "complete adult height-weight-gender rows", "reference": 3676, "biolang": 3676, "status": "exact"}
   ],
   "figures": [
-    {"file": "figures/source/histograms-1.png", "bytes": 47005, "sha256": "fe2af87a7fa17724bd216852c51025f3c288bc39e797e4ef15ec3457bd66bdb3", "status": "byte-for-byte published source copy"},
-    {"file": "figures/source/histograms-2.png", "bytes": 48612, "sha256": "ea4bea5ace631b1b8120878a0684ae434fd82904f8837449490291743a77ded2", "status": "byte-for-byte published source copy"},
-    {"file": "figures/source/histograms-3.png", "bytes": 53782, "sha256": "4c1464863496c9cc2846b8c14df38e052ffc118d02258a4117d9cfc9ca8c4ec3", "status": "byte-for-byte published source copy"},
-    {"file": "figures/source/histograms-4.png", "bytes": 51958, "sha256": "0efb5c038e624f83e93e6d109180af74b0a44bbd32dfd0f1236adfd3b37a715d", "status": "byte-for-byte published source copy"},
-    {"file": "figures/source/scatter-height-weight.png", "bytes": 199294, "sha256": "be842c8ed35bfa6b47b70c2de1d0f1b9fb7a06625e49db4b9fbb32beafd1bcb1", "status": "byte-for-byte published source copy"},
-    {"file": "figures/source/scatter-adult-height-weight.png", "bytes": 267779, "sha256": "4ae78d40e99ede7e80c4cb03558e7741513ab41b717712820ee6f361751a425a", "status": "byte-for-byte published source copy"}
+    {"sourceChunk": "histograms", "biolang": "histogram", "count": 4, "status": "exact data, bins, ggplot binning, grey35 fill, axes, labels, and theme verified"},
+    {"sourceChunk": "scatter_heightweight", "biolang": "stats_relationship_plot", "status": "exact complete rows, mappings, factor order, hue palette, axes, and labels verified"},
+    {"sourceChunk": "scatter_heightweight_colgender", "biolang": "stats_relationship_plot", "status": "exact adult filter, complete rows, grouped linear fits, confidence ribbons, palette, axes, and labels verified"}
   ]
 }
-
