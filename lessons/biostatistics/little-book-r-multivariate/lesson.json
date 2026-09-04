@@ -15,7 +15,7 @@
     "copyright": "Copyright 2010 Avril Coghlan",
     "licence": "CC BY 3.0",
     "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
-    "note": "Adapted for BioLang by OriClabs. The exact real UCI Wine dataset is used without synthetic replacement, and the nine figures from the selected source page are copied byte for byte. BioLang recomputes the source summaries and PCA. Because BioLang has no native LDA fitter, the LDA notebook starts from the two coefficient vectors printed by the source and independently reproduces its scores, group separation, allocation rule, and confusion matrix; it does not claim to refit MASS::lda()."
+    "note": "Adapted for BioLang by OriClabs. The exact real UCI Wine dataset is used without synthetic replacement, and the nine figures from the selected source page are copied byte for byte and rendered from immutable commit-pinned URLs. BioLang recomputes the source summaries and PCA. Because BioLang has no native LDA fitter, the LDA notebook starts from the two coefficient vectors printed by the source and independently reproduces its scores, group separation, allocation rule, and confusion matrix; it does not claim to refit MASS::lda()."
   },
   "datasets": [
     {

@@ -89,11 +89,11 @@ The source reports separations 794.6522 and 361.2410, so LD1 accounts for 68.75%
 
 ## Exact published LDA figures
 
-![Canonical stacked histogram for LD1](figures/source/image8.png)
+![Canonical stacked histogram for LD1](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image8.png)
 
-![Canonical stacked histogram for LD2](figures/source/image9.png)
+![Canonical stacked histogram for LD2](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image9.png)
 
-![Canonical scatterplot of LD1 and LD2](figures/source/image10.png)
+![Canonical scatterplot of LD1 and LD2](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image10.png)
 
 Together the two functions separate the three cultivars much better than either function alone.
 

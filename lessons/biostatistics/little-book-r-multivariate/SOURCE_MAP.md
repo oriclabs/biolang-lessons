@@ -31,3 +31,5 @@ Selected source page: `src/multivariateanalysis.rst`, rendered at https://little
 The generic R installation material and its `image3.png` screenshot are not part of the selected multivariate-analysis page. No source analysis section, dataset row, or published figure from the selected page is replaced by synthetic content.
 
 The positional V1-V14 renaming was exercised in both native BioLang and Studio Browser WASM. It changes only table metadata: the checksum-pinned source file and every observation remain unchanged.
+
+Notebook Markdown uses absolute raw-repository URLs for these checksum-recorded figure files so installed Studio lessons render the canonical images instead of resolving relative paths against the Studio host.

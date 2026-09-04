@@ -50,7 +50,7 @@ The source reports component variances 4.7058503, 2.4969737, and 1.4460720 for P
 
 ## How many components?
 
-![Canonical scree plot](figures/source/image6.png)
+![Canonical scree plot](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image6.png)
 
 The source gives three complementary decisions:
 
@@ -70,7 +70,7 @@ table({
 
 For PC1, the strongest absolute loadings include V8, V7, V13, V10, V12, and V14 on one side, and V9, V3, and V5 on the other. PC2 is driven especially by V11 and V2 in contrast with V12. These match the source loadings to its printed precision. As with every eigendecomposition, an entire component may be multiplied by -1 without changing the result.
 
-![Canonical scatterplot of the first two principal components](figures/source/image7.png)
+![Canonical scatterplot of the first two principal components](https://raw.githubusercontent.com/oriclabs/biolang-lessons/fc99cd4/lessons/biostatistics/little-book-r-multivariate/figures/source/image7.png)
 
 The canonical plot uses the source orientation: cultivar 1 is low on PC1, cultivar 3 is high on PC1, and cultivar 2 is high on PC2.
 
