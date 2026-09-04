@@ -1,0 +1,121 @@
+# Multivariate summaries, correlations, and standardisation
+
+Continue with the same exact UCI Wine observations. The source calculates summaries for all thirteen measurements, then separates within-cultivar variation from between-cultivar variation.
+
+```biolang
+let wine = read_csv("data/wine.data", {header: false})
+let measurements = ["col2", "col3", "col4", "col5", "col6", "col7", "col8", "col9", "col10", "col11", "col12", "col13", "col14"]
+let source_names = ["V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14"]
+let means = measurements |> map(|name| mean(wine |> col(name)))
+let standard_deviations = measurements |> map(|name| stdev(wine |> col(name)))
+table({variable: source_names, mean: means, standard_deviation: standard_deviations})
+```
+
+The source reports a V2 mean of 13.0006180 and standard deviation of 0.8118265. V14 has standard deviation 314.9074743, while V9 has standard deviation 0.1244533. That scale difference motivates standardisation before PCA.
+
+## Within- and between-cultivar variance
+
+```biolang
+fn within_group_variance(data, variable) {
+    let g1 = data |> filter(|row| row.col1 == 1) |> col(variable)
+    let g2 = data |> filter(|row| row.col1 == 2) |> col(variable)
+    let g3 = data |> filter(|row| row.col1 == 3) |> col(variable)
+    ((len(g1) - 1) * variance(g1) + (len(g2) - 1) * variance(g2) + (len(g3) - 1) * variance(g3)) / (nrow(data) - 3)
+}
+
+fn between_group_variance(data, variable) {
+    let all_values = data |> col(variable)
+    let grand_mean = mean(all_values)
+    let g1 = data |> filter(|row| row.col1 == 1) |> col(variable)
+    let g2 = data |> filter(|row| row.col1 == 2) |> col(variable)
+    let g3 = data |> filter(|row| row.col1 == 3) |> col(variable)
+    (len(g1) * (mean(g1) - grand_mean) ** 2 + len(g2) * (mean(g2) - grand_mean) ** 2 + len(g3) * (mean(g3) - grand_mean) ** 2) / 2
+}
+
+let v2_within = within_group_variance(wine, "col2")
+let v2_between = between_group_variance(wine, "col2")
+let v2_separation = v2_between / v2_within
+let v8_separation = between_group_variance(wine, "col8") / within_group_variance(wine, "col8")
+{
+    V2_within_group_variance: v2_within,
+    V2_between_group_variance: v2_between,
+    V2_separation: v2_separation,
+    V8_separation: v8_separation
+}
+```
+
+The source obtains 0.2620525 within groups and 35.39742 between groups for V2, giving separation 135.0776. Of the individual measurements, V8 separates the cultivars best, with separation 233.9259.
+
+## Within- and between-cultivar covariance
+
+```biolang
+fn sample_covariance(x, y) {
+    let x_mean = mean(x)
+    let y_mean = mean(y)
+    sum(zip(x, y) |> map(|pair| (pair[0] - x_mean) * (pair[1] - y_mean))) / (len(x) - 1)
+}
+
+fn within_group_covariance(data, first, second) {
+    let g1 = data |> filter(|row| row.col1 == 1)
+    let g2 = data |> filter(|row| row.col1 == 2)
+    let g3 = data |> filter(|row| row.col1 == 3)
+    ((nrow(g1) - 1) * sample_covariance(g1 |> col(first), g1 |> col(second)) +
+     (nrow(g2) - 1) * sample_covariance(g2 |> col(first), g2 |> col(second)) +
+     (nrow(g3) - 1) * sample_covariance(g3 |> col(first), g3 |> col(second))) / (nrow(data) - 3)
+}
+
+fn between_group_covariance(data, first, second) {
+    let first_mean = mean(data |> col(first))
+    let second_mean = mean(data |> col(second))
+    let g1 = data |> filter(|row| row.col1 == 1)
+    let g2 = data |> filter(|row| row.col1 == 2)
+    let g3 = data |> filter(|row| row.col1 == 3)
+    (nrow(g1) * (mean(g1 |> col(first)) - first_mean) * (mean(g1 |> col(second)) - second_mean) +
+     nrow(g2) * (mean(g2 |> col(first)) - first_mean) * (mean(g2 |> col(second)) - second_mean) +
+     nrow(g3) * (mean(g3 |> col(first)) - first_mean) * (mean(g3 |> col(second)) - second_mean)) / 2
+}
+
+let v8_v11_within = within_group_covariance(wine, "col8", "col11")
+let v8_v11_between = between_group_covariance(wine, "col8", "col11")
+{within_group_covariance: v8_v11_within, between_group_covariance: v8_v11_between}
+```
+
+The positive within-cultivar covariance is 0.2866783, while the between-cultivar covariance is -60.41077—the same opposing signs discussed in the source.
+
+## Correlation and standardisation
+
+```biolang
+let v2_v3_correlation = cor(wine |> col("col2"), wine |> col("col3"))
+let v7_v8_correlation = cor(wine |> col("col7"), wine |> col("col8"))
+let standardised_v9 = wine |> col("col9") |> map(|value| (value - mean(wine |> col("col9"))) / stdev(wine |> col("col9")))
+let standardised_v14 = wine |> col("col14") |> map(|value| (value - mean(wine |> col("col14"))) / stdev(wine |> col("col14")))
+{
+    correlation_V2_V3: v2_v3_correlation,
+    strongest_source_pair_V7_V8: v7_v8_correlation,
+    standardised_V9_mean: mean(standardised_v9),
+    standardised_V9_sd: stdev(standardised_v9),
+    standardised_V14_mean: mean(standardised_v14),
+    standardised_V14_sd: stdev(standardised_v14)
+}
+```
+
+The source reports correlation 0.09439694 for V2/V3 and identifies V7/V8 as the strongest pair at 0.8645635. After standardisation, every measurement has mean approximately zero and sample standard deviation one.
+
+```biolang
+assert abs(mean(wine |> col("col2")) - 13.0006180) < 0.0000001, "source V2 mean"
+assert abs(stdev(wine |> col("col14")) - 314.9074743) < 0.0000001, "source V14 standard deviation"
+assert abs(v2_within - 0.2620525) < 0.0000001, "source within-group variance"
+assert abs(v2_between - 35.39742) < 0.00001, "source between-group variance"
+assert abs(v2_separation - 135.0776) < 0.0001, "source V2 separation"
+assert abs(v8_separation - 233.9258727) < 0.0001, "source best individual separation"
+assert abs(v8_v11_within - 0.2866783) < 0.0000001, "source within-group covariance"
+assert abs(v8_v11_between + 60.41077) < 0.00001, "source between-group covariance"
+assert abs(v2_v3_correlation - 0.09439694) < 0.00000001, "source V2/V3 correlation"
+assert abs(v7_v8_correlation - 0.8645635) < 0.0000001, "source strongest correlation"
+assert abs(stdev(standardised_v9) - 1) < 0.000000000001 && abs(stdev(standardised_v14) - 1) < 0.000000000001, "unit sample standard deviations"
+"Source summaries, covariance, correlation, and standardisation verified."
+```
+
+***
+
+[<- Previous: Exploring the wine data](#lesson-section=exploring-wine-data) | [Next: Principal component analysis ->](#lesson-section=principal-component-analysis)

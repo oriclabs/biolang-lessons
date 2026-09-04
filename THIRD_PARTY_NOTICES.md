@@ -17,6 +17,15 @@ adapted lesson content remains CC BY 3.0.
 of R for Bioinformatics* by Avril Coghlan under CC BY 3.0. Its adapted lesson
 content remains CC BY 3.0; the repository MIT licence does not override it.
 
+## A Little Book of R for Multivariate Analysis
+
+`lessons/biostatistics/little-book-r-multivariate` adapts the complete selected
+analysis page from Avril Coghlan's booklet under CC BY 3.0. All nine published
+analysis PNGs are byte-for-byte source copies. The exact 178-row UCI Wine data
+is distributed under CC BY 4.0 and retains the citation and separate terms in
+the lesson manifest and `ATTRIBUTION.md`. The adapted content, figures, and
+dataset are excluded from the repository MIT grant.
+
 ## Biological Data Science with R
 
 `lessons/biostatistics/bdsr-nhanes-eda`, `bdsr-nhanes-group-tests`,

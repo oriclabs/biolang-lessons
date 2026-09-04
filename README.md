@@ -62,6 +62,10 @@ for jumping directly to any notebook. `npm test` verifies the adjacent links.
 
 - `lessons/biostatistics/little-book-biomedical`: eight connected biomedical
   statistics lessons adapted from Avril Coghlan's CC BY 3.0 booklet.
+- `lessons/biostatistics/little-book-r-multivariate`: four connected notebooks
+  port the complete multivariate-analysis sequence over the exact UCI Wine
+  data, with all nine source figures, source-matching summaries and PCA, and a
+  transparent replay of the published LDA coefficients and downstream results.
 - `lessons/sequence-analysis/little-book-r-bioinformatics`: the first two DNA
   Sequence Statistics chapters from *A Little Book of R for Bioinformatics*.
   Together with `little-book-r-gene-finding`, this source now exposes three

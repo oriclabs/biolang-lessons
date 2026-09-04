@@ -49,7 +49,7 @@ licence, data provenance, exact-output availability, or engine capability.
 ## Full-catalogue expansion
 
 After the P1–P3 audit, the complete Big Book of R catalogue was screened for
-additional material that fits BioLang's biological scope. Five distinct,
+additional material that fits BioLang's biological scope. Six distinct,
 high-value sources passed the usefulness, licensing, real-data, and fidelity
 gates and are now active:
 
@@ -57,7 +57,8 @@ gates and are now active:
 | --- | --- | --- |
 | *Fisheries Catch Forecasting* | `fish-forecast-anchovy` | Exact real Hellenic landings table, same 1964–1987 log-linear model and forecast, and two canonical PNGs; public domain / Unlicense. |
 | *Beyond Multiple Linear Regression* | `beyondmlr-birdkeeping` | Exact 147-person case-control data, unadjusted odds ratio, and source model 4; CC BY-NC-SA 4.0. The exercise publishes no canonical answer plot, so none is substituted. |
-| *Applied Machine Learning for Tabular Data* | `aml4td-cell-tabularization` | Exact four-row biological feature table and two canonical cell images; CC BY-NC-SA 4.0. |
+| *Applied Machine Learning for Tabular Data* | `aml4td-cell-tabularization` (temporary bounded port) | Exact four-row biological feature table and two canonical cell images; CC BY-NC-SA 4.0. This subsection-only lesson is scheduled for replacement by honestly scoped book-part collections. |
+| *A Little Book of R for Multivariate Analysis* | `little-book-r-multivariate-analysis` | Complete selected analysis page over the exact 178-row UCI Wine chemistry data, with all nine canonical PNGs and source-matching summaries, PCA, discriminant scores, separation, and allocation results; book CC BY 3.0 and data CC BY 4.0. The LDA notebook transparently replays the published coefficients because BioLang has no native LDA fitter. |
 | *The Data Validation Cookbook* | `validate-cars-rules` | Exact `cars` observations, four rules, printed results, violating rows, and canonical plot; CC BY-NC 4.0. |
 | *Modern Statistics with R* | `mswr-bacteria-extrapolation` | Exact 241 bacterial OD measurements and observations 45–90 model window; CC BY-NC-SA 4.0. The selected source publishes code with figure evaluation disabled, so no redraw is included. |
 
@@ -65,6 +66,19 @@ All five are bounded lessons rather than claims to port their entire books.
 Their source revisions, data and figure hashes, exact included scope, and
 excluded scope are recorded in each lesson's manifest, validation record,
 attribution notice, and source map.
+
+## Deferred fidelity work
+
+- *Applied Machine Learning for Tabular Data*: retire the standalone
+  `aml4td-cell-tabularization` registry lesson and fold its exact source
+  material into a complete Introduction notebook. Structure later coverage as
+  navigable Foundations, Preparation, Optimization, and Classification
+  collections. Port only completed upstream material whose exact data,
+  calculations, supported model engine, and canonical figures can all be
+  preserved. Do not substitute data for simulation-based sections, and do not
+  create placeholders for the currently unwritten Regression,
+  Characterization, or Finalization parts. Audit the separate computing
+  supplement's licence before adapting its code.
 
 ## Navigation and integrity
 

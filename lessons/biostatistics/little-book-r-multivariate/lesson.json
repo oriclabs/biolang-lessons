@@ -1,0 +1,102 @@
+{
+  "schema": 2,
+  "id": "little-book-r-multivariate-analysis",
+  "title": "A Little Book of R for Multivariate Analysis",
+  "summary": "Four connected, source-faithful notebooks over the exact UCI Wine observations: multivariate plots, group summaries and correlations, principal component analysis, and linear discriminant analysis with all nine canonical figures.",
+  "runtime": "browser",
+  "estimatedMemoryMb": 24,
+  "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
+  "source": {
+    "title": "A Little Book of R for Multivariate Analysis by Avril Coghlan",
+    "url": "https://little-book-of-r-for-multivariate-analysis.readthedocs.io/en/latest/src/multivariateanalysis.html",
+    "repository": "https://github.com/avrilcoghlan/LittleBookofRMultivariateAnalysis",
+    "revision": "763f08e0944114e06cff72bc3406f725bbd86596",
+    "copyright": "Copyright 2010 Avril Coghlan",
+    "licence": "CC BY 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
+    "note": "Adapted for BioLang by OriClabs. The exact real UCI Wine dataset is used without synthetic replacement, and the nine figures from the selected source page are copied byte for byte. BioLang recomputes the source summaries and PCA. Because BioLang has no native LDA fitter, the LDA notebook starts from the two coefficient vectors printed by the source and independently reproduces its scores, group separation, allocation rule, and confusion matrix; it does not claim to refit MASS::lda()."
+  },
+  "datasets": [
+    {
+      "id": "uci-wine-raw",
+      "title": "UCI Wine raw data",
+      "path": "data/wine.data",
+      "url": "https://raw.githubusercontent.com/oriclabs/biolang-lessons/main/lessons/biostatistics/little-book-r-multivariate/data/wine.data",
+      "bytes": 10782,
+      "sha256": "6be6b1203f3d51df0b553a70e57b8a723cd405683958204f96d23d7cd6aea659",
+      "mediaType": "text/csv",
+      "source": "UCI Machine Learning Repository Wine dataset, DOI 10.24432/C5PC7J; exact headerless wine.data file used by the book.",
+      "citation": "Aeberhard S, Forina M. Wine [Dataset]. UCI Machine Learning Repository. 1992. https://doi.org/10.24432/C5PC7J",
+      "rights": "CC BY 4.0; excluded from the repository MIT grant. Attribution to the dataset creators and UCI is required."
+    }
+  ],
+  "lessons": [
+    {
+      "id": "exploring-wine-data",
+      "title": "Exploring Multivariate Wine Data",
+      "summary": "Read the exact 178-sample table and inspect the source's matrix scatterplot, labelled pair plot, and profile plot.",
+      "entry": "01-exploring-wine-data.bln",
+      "discoverability": {
+        "problems": ["inspect a multivariate chemical dataset", "compare measurements among biological groups"],
+        "methods": ["multivariate data import", "grouped exploratory data analysis"],
+        "plots": ["scatterplot matrix", "labelled scatter plot", "profile plot"],
+        "terms": ["wine cultivar", "chemical constituent", "multivariate observation", "measurement scale"],
+        "aliases": ["UCI Wine exploration", "wine chemistry data", "multivariate EDA"],
+        "functions": ["read_csv", "filter", "head", "nrow", "ncol", "table"]
+      }
+    },
+    {
+      "id": "multivariate-summaries",
+      "title": "Summaries, Correlations, and Standardisation",
+      "summary": "Reproduce group means, within- and between-group variation, covariance, correlations, and z-score standardisation.",
+      "entry": "02-multivariate-summaries.bln",
+      "discoverability": {
+        "problems": ["separate within-group and between-group variation", "find highly correlated multivariate measurements"],
+        "methods": ["within-group variance", "between-group variance", "within-group covariance", "between-group covariance", "Pearson correlation", "z-score standardisation"],
+        "plots": [],
+        "terms": ["separation", "covariance", "correlation coefficient", "sample standard deviation", "cultivar"],
+        "aliases": ["pooled within variance", "between class variance", "feature standardization"],
+        "functions": ["mean", "stdev", "variance", "cor", "zip", "map", "sum"]
+      }
+    },
+    {
+      "id": "principal-component-analysis",
+      "title": "Principal Component Analysis",
+      "summary": "Standardise thirteen measurements and match the source PCA variances, loadings, scores, scree plot, and cultivar score plot.",
+      "entry": "03-principal-component-analysis.bln",
+      "discoverability": {
+        "problems": ["reduce correlated biological measurements", "choose how many principal components to retain"],
+        "methods": ["principal component analysis", "Kaiser criterion", "cumulative variance threshold"],
+        "plots": ["scree plot", "principal component score plot"],
+        "terms": ["principal component", "loading", "score", "explained variance", "dimensionality reduction"],
+        "aliases": ["PCA", "component analysis", "ordination"],
+        "functions": ["pca", "select", "mutate", "mean", "stdev", "table"]
+      }
+    },
+    {
+      "id": "linear-discriminant-analysis",
+      "title": "Linear Discriminant Analysis",
+      "summary": "Replay the source's published LDA coefficients and reproduce its discriminant scores, separation, canonical figures, allocation rule, and training confusion matrix.",
+      "entry": "04-linear-discriminant-analysis.bln",
+      "discoverability": {
+        "problems": ["separate biological groups using multiple measurements", "classify wine cultivars from chemical measurements"],
+        "methods": ["linear discriminant analysis", "discriminant score calculation", "threshold allocation rule", "training confusion matrix"],
+        "plots": ["stacked discriminant histogram", "linear discriminant score plot"],
+        "terms": ["discriminant function", "LDA loading", "group separation", "misclassification rate", "resubstitution error"],
+        "aliases": ["LDA", "canonical discriminant analysis", "discriminant classification"],
+        "functions": ["read_csv", "mutate", "filter", "mean", "variance", "nrow", "table"]
+      }
+    }
+  ],
+  "validation": "validation.json",
+  "discoverability": {
+    "problems": ["inspect a multivariate chemical dataset", "compare measurements among biological groups", "separate within-group and between-group variation", "find highly correlated multivariate measurements", "reduce correlated biological measurements", "choose how many principal components to retain", "separate biological groups using multiple measurements", "classify wine cultivars from chemical measurements"],
+    "methods": ["multivariate data import", "grouped exploratory data analysis", "within-group variance", "between-group variance", "within-group covariance", "between-group covariance", "Pearson correlation", "z-score standardisation", "principal component analysis", "Kaiser criterion", "cumulative variance threshold", "linear discriminant analysis", "discriminant score calculation", "threshold allocation rule", "training confusion matrix"],
+    "plots": ["scatterplot matrix", "labelled scatter plot", "profile plot", "scree plot", "principal component score plot", "stacked discriminant histogram", "linear discriminant score plot"],
+    "terms": ["wine cultivar", "chemical constituent", "multivariate observation", "measurement scale", "separation", "covariance", "correlation coefficient", "sample standard deviation", "cultivar", "principal component", "loading", "score", "explained variance", "dimensionality reduction", "discriminant function", "LDA loading", "group separation", "misclassification rate", "resubstitution error"],
+    "aliases": ["UCI Wine exploration", "wine chemistry data", "multivariate EDA", "pooled within variance", "between class variance", "feature standardization", "PCA", "component analysis", "ordination", "LDA", "canonical discriminant analysis", "discriminant classification"],
+    "functions": ["read_csv", "filter", "head", "nrow", "ncol", "table", "mean", "stdev", "variance", "cor", "zip", "map", "sum", "pca", "select", "mutate"]
+  },
+  "tags": ["multivariate analysis", "PCA", "LDA", "wine chemistry", "classification", "CC BY"]
+}

@@ -1,0 +1,61 @@
+# Exploring multivariate wine data
+
+This collection ports the complete analysis sequence in [Using R for Multivariate Analysis](https://little-book-of-r-for-multivariate-analysis.readthedocs.io/en/latest/src/multivariateanalysis.html). The source uses the UCI Wine data: chemical measurements from 178 wines grown in one Italian region and derived from three cultivars. These are real observations, not simulated data.
+
+The source reads the comma-separated file without a header. BioLang does the same, so the cultivar remains `col1` and the thirteen chemical measurements remain `col2` through `col14`, corresponding to the source's `V1` through `V14`.
+
+```biolang
+let wine = read_csv("data/wine.data", {header: false})
+{
+    samples: nrow(wine),
+    columns: ncol(wine),
+    first_five_samples: wine |> head(5)
+}
+```
+
+```biolang
+let cultivar_1 = wine |> filter(|row| row.col1 == 1)
+let cultivar_2 = wine |> filter(|row| row.col1 == 2)
+let cultivar_3 = wine |> filter(|row| row.col1 == 3)
+table({
+    cultivar: [1, 2, 3],
+    samples: [nrow(cultivar_1), nrow(cultivar_2), nrow(cultivar_3)]
+})
+```
+
+The exact group sizes are 59, 71, and 48.
+
+## Matrix scatterplot
+
+The source first plots the first five chemical measurements as a scatterplot matrix. Diagonal panels contain histograms; off-diagonal panels contain pairwise scatterplots.
+
+![Canonical matrix scatterplot of V2 through V6](figures/source/image1.png)
+
+## One pair in detail
+
+It next plots V4 against V5, first as points and then with cultivar labels.
+
+![Canonical unlabelled V4 versus V5 scatterplot](figures/source/image2.png)
+
+![Canonical V4 versus V5 scatterplot labelled by cultivar](figures/source/image4.png)
+
+The labelled figure shows that cultivar 2 tends to have lower V4 values than cultivar 1.
+
+## Profile plot
+
+Finally, the source puts V2 through V6 on one profile plot. Their different scales are immediately visible, especially the much larger mean and standard deviation of V6.
+
+![Canonical profile plot of V2 through V6](figures/source/image5.png)
+
+```biolang
+assert nrow(wine) == 178, "exact UCI source rows"
+assert ncol(wine) == 14, "cultivar plus thirteen chemical measurements"
+assert nrow(cultivar_1) == 59 && nrow(cultivar_2) == 71 && nrow(cultivar_3) == 48, "exact cultivar counts"
+assert wine[0].col1 == 1 && abs(wine[0].col2 - 14.23) < 0.000000000001, "exact first source row"
+assert wine[177].col1 == 3 && abs(wine[177].col14 - 560) < 0.000000000001, "exact last source row"
+"Exact source data and four canonical figures verified."
+```
+
+***
+
+[Next: Summaries, correlations, and standardisation ->](#lesson-section=multivariate-summaries)
