@@ -46,32 +46,24 @@ The exact group sizes are 59, 71, and 48.
 
 ## Matrix scatterplot
 
-The source first plots the first five chemical measurements as a scatterplot matrix. BioLang constructs all 25 panels from `wine`: density curves on the diagonal and every ordered pairwise scatterplot off the diagonal.
+The source first plots the first five chemical measurements as a scatterplot matrix. BioLang constructs all 25 panels from `wine`: density curves on the diagonal and every ordered pairwise scatterplot off the diagonal. The source-style options deliberately add contiguous square boxes, black open points, green least-squares lines, red LOESS curves, and red dashed conditional-spread curves. BioLang's general matrix defaults remain unboxed.
 
 ```biolang
-fn matrix_panel(data, x_variable, y_variable) {
-    if x_variable == y_variable {
-        density_plot(data |> col(x_variable), {
-            title: x_variable, xlabel: "", ylabel: "",
-            width: 260, height: 220
-        })
-    } else {
-        plot(data |> select(x_variable, y_variable), {
-            type: "scatter", x: x_variable, y: y_variable,
-            xlabel: "", ylabel: "", width: 260, height: 220
-        })
+scatterplot_matrix(wine |> select("V2", "V3", "V4", "V5", "V6"), {
+    title: "",
+    boxed_panels: true,
+    panel_size: 170,
+    regression: true,
+    smooth: true,
+    spread: true,
+    span: 0.5,
+    ticks: {
+        V2: [11, 12, 13, 14, 15],
+        V3: [1, 2, 3, 4, 5, 6],
+        V4: [1.5, 2.0, 2.5, 3.0],
+        V5: [10, 15, 20, 25, 30],
+        V6: [80, 100, 120, 140, 160]
     }
-}
-
-let matrix_variables = ["V2", "V3", "V4", "V5", "V6"]
-let matrix_panels = matrix_variables |> flat_map(|y_variable|
-    matrix_variables |> map(|x_variable| matrix_panel(wine, x_variable, y_variable)))
-plot_grid(matrix_panels, {
-    columns: 5,
-    panel_labels: ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
-    title: "Scatterplot matrix: V2 through V6",
-    width: 1250, height: 1060, gap: 6,
-    panel_width: 230, panel_height: 185
 })
 ```
 

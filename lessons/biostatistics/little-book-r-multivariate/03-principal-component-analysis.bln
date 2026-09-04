@@ -51,14 +51,14 @@ The source reports component variances 4.7058503, 2.4969737, and 1.4460720 for P
 ## How many components?
 
 ```biolang
-let scree = table({
-    component: range(1, len(wine_pca.explained_variance) + 1),
-    variance: wine_pca.explained_variance
-})
-plot(scree, {
-    type: "line", x: "component", y: "variance",
-    title: "Scree plot", xlabel: "Principal component", ylabel: "Variance",
-    theme: "publication", width: 760, height: 500
+elbow_plot(wine_pca.explained_variance, {
+    title: "", x_label: "", y_label: "Variances",
+    x_breaks: [1, 3, 5, 7, 9, 11, 13],
+    x_labels: ["Comp.1", "Comp.3", "Comp.5", "Comp.7", "Comp.9", "Comp.11", "Comp.13"],
+    y_breaks: [1, 2, 3, 4],
+    point_style: "open", point_radius: 3.5,
+    color: "#000000", line_width: 1,
+    theme: "biolang", width: 630, height: 500
 })
 ```
 
@@ -80,7 +80,7 @@ table({
 
 For PC1, the strongest absolute loadings include V8, V7, V13, V10, V12, and V14 on one side, and V9, V3, and V5 on the other. PC2 is driven especially by V11 and V2 in contrast with V12. These match the source loadings to its printed precision. As with every eigendecomposition, an entire component may be multiplied by -1 without changing the result.
 
-The sign of a principal component is mathematically arbitrary. The two signs below are selected from the cultivar means so the generated BioLang plot has the same orientation described in the source: cultivar 1 lies below cultivar 3 on PC1, and cultivar 2 lies above the other cultivars on PC2.
+The sign of a principal component is mathematically arbitrary. The two signs below are selected from the cultivar means so the generated BioLang plot has the same orientation as the source: cultivar 1 lies left of cultivar 3 on PC1, and cultivar 2 lies below the other cultivars on PC2.
 
 ```biolang
 let pca_scores = table({
@@ -92,20 +92,25 @@ let pc1_cultivar_1 = mean(pca_scores |> filter(|row| row.cultivar == 1) |> col("
 let pc1_cultivar_3 = mean(pca_scores |> filter(|row| row.cultivar == 3) |> col("PC1"))
 let pc1_direction = if pc1_cultivar_1 < pc1_cultivar_3 { 1 } else { -1 }
 let pc2_cultivar_2 = mean(pca_scores |> filter(|row| row.cultivar == 2) |> col("PC2"))
-let pc2_direction = if pc2_cultivar_2 > mean(pca_scores |> col("PC2")) { 1 } else { -1 }
+let pc2_direction = if pc2_cultivar_2 < mean(pca_scores |> col("PC2")) { 1 } else { -1 }
 pca_scores = pca_scores
     |> mutate("source_PC1", |row| row.PC1 * pc1_direction)
     |> mutate("source_PC2", |row| row.PC2 * pc2_direction)
 
 stats_relationship_plot(pca_scores |> col("source_PC1"), pca_scores |> col("source_PC2"), {
     group: pca_scores |> col("cultivar"), group_order: ["1", "2", "3"],
-    fit: false, note: false, legend_title: "Cultivar",
-    title: "First two principal components by cultivar",
-    x_label: "PC1", y_label: "PC2", width: 780, height: 540
+    labels: pca_scores |> col("cultivar"),
+    fit: false, note: false, legend: false,
+    point_style: "open", point_color: "#000000",
+    label_color: "#FF0000", label_size: 9.8, label_offset: 5,
+    title: "", theme: "biolang",
+    x_breaks: [-4, -2, 0, 2, 4], y_breaks: [-4, -2, 0, 2],
+    x_label: "wine.pca$x[,1]", y_label: "wine.pca$x[,2]",
+    width: 630, height: 500
 })
 ```
 
-The canonical plot uses the source orientation: cultivar 1 is low on PC1, cultivar 3 is high on PC1, and cultivar 2 is high on PC2.
+The generated plot now has the source orientation and annotations: cultivar 1 is left on PC1, cultivar 3 is right, and cultivar 2 is below on PC2; every observation is an open black point with its red cultivar number immediately to the right.
 
 ```biolang
 assert abs(wine_pca.explained_variance[0] - 4.7058503) < 0.0000001, "source PC1 variance"
