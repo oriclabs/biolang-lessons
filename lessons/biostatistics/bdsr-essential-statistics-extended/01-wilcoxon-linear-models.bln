@@ -10,6 +10,12 @@ let adults = nh |> filter(|row| row.Age >= 18)
 
 ## 8.3.2 Wilcoxon test
 
+> **Understanding the Wilcoxon rank-sum test**
+>
+> **Use it when:** two independent groups have an ordinal or strongly non-normal outcome and an ordering comparison is meaningful.
+>
+> **How to read it:** the test works from ranks, so it asks whether one group tends to contain larger values. It is not automatically a test of medians unless the distribution shapes are suitably similar.
+
 The source first shows that `AlcoholYear` is strongly non-normal. Its `geom_histogram()` uses the default 30 bins; BioLang generates the same histogram from the same adult rows, with the source labels and ggplot panel.
 
 ```biolang
@@ -36,6 +42,12 @@ alcohol_rank_sum
 The rendered chapter prints (W=1067954) and (p=0.0001659). With tied ranks, current R and BioLang both retain the half rank and calculate (W=1067954.5); the p-value rounds to the published value.
 
 ## 8.3.3 Linear-model equivalence
+
+> **Understanding linear models**
+>
+> **Use them when:** the average numeric outcome can be described as an intercept plus one or more predictor contributions.
+>
+> **How to read them:** each coefficient is a conditional average change under the fitted model. Inspect residual patterns, uncertainty, influential observations, and the observed predictor range before interpreting coefficients.
 
 The source compares adult BMI by relationship status three ways. The equal-variance t-test, two-group ANOVA, and 0/1 indicator regression have the same p-value; the ANOVA F statistic is the squared t statistic.
 

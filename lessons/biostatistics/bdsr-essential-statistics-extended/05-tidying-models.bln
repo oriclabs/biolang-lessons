@@ -2,6 +2,12 @@
 
 This notebook directly ports the `tidy()`, `augment()`, and `glance()` sequence in section 8.6 of [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). BioLang's diagnostic record already exposes these three views without parsing printed console text.
 
+> **Understanding model diagnostics**
+>
+> **Use them when:** a fitted model must be checked rather than accepted because it returned coefficients.
+>
+> **How to read them:** residuals should look like structureless errors around zero. Curvature, funnels, clusters, or isolated influential points indicate that the model, scale, variance, or grouping may need reconsideration.
+
 ```biolang
 let nh = read_csv("nhanes.csv")
 let adults = nh |> filter(|row| row.Age >= 18)
@@ -82,6 +88,22 @@ assert abs(full_model.r_squared - 0.6968929855756988) < 0.000000001, "source R s
 assert len(male_model_points) == 1730, "source male complete cases"
 "Exact tidy outputs and runtime residual figure passed."
 ```
+
+## 8.7 Additional topics and recommended reading
+
+The chapter closes with three study-design cautions. They do not introduce another computed result, so this section uses no invented demonstration data.
+
+### 8.7.1 Batch effects
+
+Batch effects are technical variation introduced by reagent lots, technicians, flow cells, processing dates, or similar operational groups. If batch is confounded with the biological condition, a fitted model cannot reliably distinguish the two effects. The source recommends Scherer's discussion of microarray batch effects and Leek et al., [“Tackling the widespread and critical impact of batch effects in high-throughput data”](https://pmc.ncbi.nlm.nih.gov/articles/PMC3880143/).
+
+### 8.7.2 What is my n?
+
+The number of rows or assay measurements is not necessarily the sample size. The relevant n is usually the number of independently sampled or independently assigned biological units at the level addressed by the scientific question. The source points to Vaux, Fidler, and Cumming, [“Replicates and repeats—what is the difference and is it significant?”](https://pmc.ncbi.nlm.nih.gov/articles/PMC3321166/).
+
+### 8.7.3 Technical versus biological replicates
+
+Technical replicates repeat a measurement on the same material and help quantify assay precision. Biological replicates are distinct experimental units and support inference about biological variation. Repeating an assay does not create additional independent biological samples.
 
 ***
 

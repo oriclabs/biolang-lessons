@@ -1,0 +1,164 @@
+fn survival_at(times, events, at) {
+    let curve = kaplan_meier(times, events)
+    let available = range(0, len(curve.times)) |> filter(|index| curve.times[index] <= at)
+    if len(available) == 0 { return 1.0 }
+    curve.survival[last(available)]
+}
+
+fn median_survival(times, events) {
+    let curve = kaplan_meier(times, events)
+    let reached = range(0, len(curve.times)) |> filter(|index| curve.survival[index] <= 0.5)
+    if len(reached) == 0 { return nil }
+    curve.times[first(reached)]
+}
+
+fn coefficient_named(model, name) {
+    model.coefficients |> filter(|row| row.name == name) |> first()
+}
+
+let lung = read_csv("lung.csv")
+let male = lung |> filter(|row| row.sex == "Male")
+let female = lung |> filter(|row| row.sex == "Female")
+let lung_logrank = log_rank_test(
+    male |> col("time"), male |> col("event"),
+    female |> col("time"), female |> col("event")
+)
+let lung_cox = stats_cox_diagnostics(
+    lung |> col("time"), lung |> col("event"),
+    table({sex: lung |> col("sex")}),
+    {categorical_columns: ["sex"], ties: "efron", include_values: false}
+)
+let lung_adjusted = stats_cox_diagnostics(
+    lung |> col("time"), lung |> col("event"),
+    table({
+        sex: lung |> col("sex"), age: lung |> col("age"),
+        ph_ecog: lung |> col("ph_ecog"), ph_karno: lung |> col("ph_karno"),
+        pat_karno: lung |> col("pat_karno"), meal_cal: lung |> col("meal_cal"),
+        wt_loss: lung |> col("wt_loss")
+    }),
+    {categorical_columns: ["sex"], ties: "efron", include_values: false}
+)
+let lung_age_mean = mean(lung |> col("age"))
+let mean_groups = lung |> col("age") |> map(|age| if age > lung_age_mean { "above" } else { "below" })
+let age_70_groups = lung |> col("age") |> map(|age| if age > 70 { "above" } else { "below" })
+
+let colon = read_csv("colon.csv")
+let colon_female = colon |> filter(|row| row.sex == "Female")
+let colon_male = colon |> filter(|row| row.sex == "Male")
+let colon_model = concat(
+    concat(
+        colon |> filter(|row| row.rx == "Obs"),
+        colon |> filter(|row| row.rx == "Lev")
+    ),
+    colon |> filter(|row| row.rx == "Lev+5FU")
+)
+let colon_sex_numeric = colon_model |> col("sex") |>
+    map(|value| if value == "Male" { 1 } else { 0 })
+let colon_cox = stats_cox_diagnostics(
+    colon_model |> col("time"), colon_model |> col("event"),
+    table({rx: colon_model |> col("rx")}),
+    {categorical_columns: ["rx"], ties: "efron", include_values: false}
+)
+let colon_adjusted = stats_cox_diagnostics(
+    colon_model |> col("time"), colon_model |> col("event"),
+    table({
+        rx: colon_model |> col("rx"), age: colon_model |> col("age"),
+        sex: colon_sex_numeric, nodes: colon_model |> col("nodes")
+    }),
+    {categorical_columns: ["rx"], ties: "efron", include_values: false}
+)
+let colon_differ = colon |> filter(|row| row.differentiation != nil)
+let colon_sex_logrank = log_rank_test(colon |> col("time"), colon |> col("event"), colon |> col("sex"))
+let colon_differ_logrank = log_rank_test(colon_differ |> col("time"), colon_differ |> col("event"), colon_differ |> col("differentiation"))
+let colon_node4_logrank = log_rank_test(colon |> col("time"), colon |> col("event"), colon |> col("node4"))
+let colon_rx_logrank = log_rank_test(colon_model |> col("time"), colon_model |> col("event"), colon_model |> col("rx"))
+
+let tcga_all = read_csv("tcga-clinical.csv")
+let tcga = tcga_all |> filter(|row| row.time >= 0) |> arrange("disease")
+let tcga_logrank = log_rank_test(
+    tcga |> col("time"), tcga |> col("event"), tcga |> col("disease")
+)
+let tcga_cox = stats_cox_diagnostics(
+    tcga |> col("time"), tcga |> col("event"),
+    table({disease: tcga |> col("disease")}),
+    {categorical_columns: ["disease"], ties: "efron", include_values: false}
+)
+let brca = tcga |> filter(|row| row.disease == "brca")
+let gbm = tcga |> filter(|row| row.disease == "gbm")
+let ov = tcga |> filter(|row| row.disease == "ov")
+
+let expression = read_csv("tcga-expression.csv")
+let brca_expression = expression |> filter(|row| row.dataset == "BRCA.mRNA")
+let ov_expression = expression |> filter(|row| row.dataset == "OV.mRNA")
+let ucec_expression = expression |> filter(|row| row.dataset == "UCEC.mRNA")
+
+let kidney_source = read_csv("tcga-kidney.csv")
+let kidney = kidney_source |> filter(|row| row.time >= 0)
+let kidney_logrank = log_rank_test(kidney |> col("time"), kidney |> col("event"), kidney |> col("disease"))
+let kidney_cox = stats_cox_diagnostics(
+    kidney |> col("time"), kidney |> col("event"),
+    table({disease: kidney |> col("disease"), sex: kidney |> col("sex")}),
+    {categorical_columns: ["disease", "sex"], ties: "efron", include_values: false}
+)
+let kich = kidney |> filter(|row| row.disease == "kich")
+let kirc = kidney |> filter(|row| row.disease == "kirc")
+let kirp = kidney |> filter(|row| row.disease == "kirp")
+
+write_json({
+    lung: {
+        dimensions: [nrow(lung), ncol(lung)],
+        events: lung |> col("event") |> filter(|value| value == 1) |> len(),
+        median: median_survival(lung |> col("time"), lung |> col("event")),
+        male_survival_100: survival_at(male |> col("time"), male |> col("event"), 100),
+        male_survival_500: survival_at(male |> col("time"), male |> col("event"), 500),
+        female_survival_100: survival_at(female |> col("time"), female |> col("event"), 100),
+        female_survival_500: survival_at(female |> col("time"), female |> col("event"), 500),
+        logrank: lung_logrank,
+        cox_sex: coefficient_named(lung_cox, "sex[Female]"),
+        adjusted: lung_adjusted.coefficients,
+        adjusted_rows: lung_adjusted.complete_rows,
+        age_mean: lung_age_mean,
+        age_mean_logrank: log_rank_test(lung |> col("time"), lung |> col("event"), mean_groups),
+        age_70_logrank: log_rank_test(lung |> col("time"), lung |> col("event"), age_70_groups)
+    },
+    colon: {
+        dimensions: [nrow(colon), ncol(colon)],
+        female_survival_2000: survival_at(colon_female |> col("time"), colon_female |> col("event"), 2000),
+        male_survival_2000: survival_at(colon_male |> col("time"), colon_male |> col("event"), 2000),
+        logrank_sex: colon_sex_logrank,
+        logrank_differentiation: colon_differ_logrank,
+        logrank_node4: colon_node4_logrank,
+        logrank_treatment: colon_rx_logrank,
+        cox_rx: colon_cox.coefficients,
+        cox_adjusted: colon_adjusted.coefficients,
+        adjusted_rows: colon_adjusted.complete_rows
+    },
+    tcga: {
+        source_rows: nrow(tcga_all), analysis_rows: nrow(tcga),
+        events: tcga |> col("event") |> filter(|value| value == 1) |> len(),
+        logrank: tcga_logrank,
+        cox: tcga_cox.coefficients,
+        brca_survival_1825: survival_at(brca |> col("time"), brca |> col("event"), 1825),
+        gbm_survival_1825: survival_at(gbm |> col("time"), gbm |> col("event"), 1825),
+        ov_survival_1825: survival_at(ov |> col("time"), ov |> col("event"), 1825)
+    },
+    expression: {
+        dimensions: [nrow(expression), ncol(expression)],
+        counts: [nrow(brca_expression), nrow(ov_expression), nrow(ucec_expression)],
+        pax8_medians: [median(brca_expression |> col("PAX8")), median(ov_expression |> col("PAX8")), median(ucec_expression |> col("PAX8"))],
+        gata3_medians: [median(brca_expression |> col("GATA3")), median(ov_expression |> col("GATA3")), median(ucec_expression |> col("GATA3"))],
+        esr1_medians: [median(brca_expression |> col("ESR1")), median(ov_expression |> col("ESR1")), median(ucec_expression |> col("ESR1"))]
+    },
+    kidney: {
+        dimensions: [nrow(kidney_source), ncol(kidney_source)],
+        analysis_rows: nrow(kidney),
+        events: kidney |> col("event") |> filter(|value| value == 1) |> len(),
+        logrank: kidney_logrank,
+        cox: kidney_cox.coefficients,
+        survival_1825: [
+            survival_at(kich |> col("time"), kich |> col("event"), 1825),
+            survival_at(kirc |> col("time"), kirc |> col("event"), 1825),
+            survival_at(kirp |> col("time"), kirp |> col("event"), 1825)
+        ]
+    }
+}, "validation/results/biolang.json")

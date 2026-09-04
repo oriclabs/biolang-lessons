@@ -9,6 +9,12 @@ let adults = nh |> filter(|row| row.Age >= 18)
 
 ## 8.4.1 Contingency tables
 
+> **Understanding categorical association tests**
+>
+> **Use them when:** both variables are categories and each independent observation contributes to one table cell.
+>
+> **How to read them:** chi-square compares observed with independence-expected counts; Fisher's exact test is useful for sparse 2x2 tables. Pair the p-value with proportions or an effect estimate because evidence strength is not effect size.
+
 The gender-by-diabetes table uses the source's row and column order. The second table adds the same marginal totals shown by `addmargins()`.
 
 ```biolang
@@ -109,6 +115,12 @@ mosaic_plot(race_insured, {
 ```
 
 ## 8.4.2 Logistic regression
+
+> **Understanding logistic regression**
+>
+> **Use it when:** the outcome has two categories and you need prediction or adjusted associations from several predictors.
+>
+> **How to read it:** coefficients are changes in log odds; exponentiating gives odds ratios conditional on the other model terms. Check calibration, separation, functional form, and whether an odds ratio answers the practical question.
 
 The source explicitly releveled race so White is the reference. BioLang uses a stable sort key to put the White level first, then preserves the source factor order for the remaining levels. Sorting rows does not alter the likelihood; it only pins the treatment-contrast baseline.
 

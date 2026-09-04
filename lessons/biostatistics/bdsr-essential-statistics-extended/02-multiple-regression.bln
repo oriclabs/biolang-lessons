@@ -2,6 +2,12 @@
 
 This notebook directly ports the three nested testosterone models in section 8.3.6 of [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Sections 8.3.4 and 8.3.5 remain available as the separate source-faithful group-comparison and regression lessons.
 
+> **Understanding multiple regression**
+>
+> **Use it when:** you need to estimate one predictor's association with a numeric outcome while accounting for other measured predictors.
+>
+> **How to read it:** each coefficient is conditional on the other included terms. A coefficient changing after adjustment can reveal confounding, but adjustment alone does not establish causation.
+
 ```biolang
 let nh = read_csv("nhanes.csv")
 let adults = nh |> filter(|row| row.Age >= 18)

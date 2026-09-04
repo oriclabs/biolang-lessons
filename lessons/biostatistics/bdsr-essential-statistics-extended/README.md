@@ -1,4 +1,4 @@
-# BDSR Essential Statistics 8.3.2-8.6
+# BDSR Essential Statistics 8.3.2-8.7
 
 This five-notebook collection restores the source material that disappeared
 when the earlier broad BDSR companion was archived. It keeps the source-faithful

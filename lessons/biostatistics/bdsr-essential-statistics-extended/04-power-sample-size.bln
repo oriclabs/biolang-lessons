@@ -2,6 +2,12 @@
 
 This notebook directly ports every displayed calculation and worked exercise in section 8.5 of [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html).
 
+> **Understanding power calculations**
+>
+> **Use them when:** planning a study around a pre-specified meaningful effect, alpha, target power, variability, allocation, and analysis method.
+>
+> **How to read them:** larger samples detect smaller effects more reliably, but the result is only as credible as its assumptions. Recalculate across plausible inputs rather than presenting one optimistic number.
+
 ## 8.5.1 T-test power/N
 
 The source uses R's default `strict=FALSE` convention for a two-sided `power.t.test()`: under a specified positive effect, rejection in the opposite tail is not counted as power. BioLang makes that convention explicit.

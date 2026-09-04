@@ -2,6 +2,12 @@
 
 This one-to-one lesson ports the simple linear-regression example from [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Select **Prepare all** to obtain the exact source-hosted NHANES files.
 
+> **Understanding regression lines**
+>
+> **Use them when:** you want the average change in one numeric variable associated with a change in another.
+>
+> **How to read them:** slope gives change per x-unit, the ribbon gives uncertainty in the mean line, and scatter around it shows unexplained variation. Do not extrapolate beyond the observed x range or translate association into causation without a design argument.
+
 ```biolang
 let nh = read_csv("nhanes.csv")
 let adults = nh |> filter(|row| row.Age >= 18)

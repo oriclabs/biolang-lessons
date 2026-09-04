@@ -1,18 +1,37 @@
-# Attribution and licence
+# Attribution and licence boundaries
 
-This lesson ports a bounded portion of Stephen D. Turner's *Biological Data Science with R*, Chapter 9, sections 9.2.2–9.2.3:
+This lesson is a non-commercial BioLang adaptation of Stephen D. Turner's
+*Biological Data Science with R*, chapter 9, “Survival analysis”:
 
-- Published chapter: https://bdsr.stephenturner.us/survival.html
-- Source repository: https://github.com/stephenturner/bdsr
-- Pinned revision: `f16caf3d3df4ac27297b87f50c37c7c024471208`
-- Copyright: © 2019 Stephen D. Turner, Ph.D.
-- Licence: Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0), https://creativecommons.org/licenses/by-nc/4.0/
+- rendered chapter: <https://bdsr.stephenturner.us/survival.html>
+- source repository: <https://github.com/stephenturner/bdsr>
+- upstream copyright: © 2019 Stephen D. Turner, Ph.D.
+- upstream licence: [CC BY-NC 4.0](https://github.com/stephenturner/bdsr/blob/main/LICENSE)
 
-The three figures are generated at runtime by BioLang from the exact dataset.
-Their curve geometry, censoring treatment, confidence intervals, axes, labels,
-palettes, p-value, and risk table reproduce the selected source calls; no
-published source image is included.
+The lesson is a non-commercial adaptation under CC BY-NC 4.0. It follows the
+source sequence through section 9.3.2 and preserves its exercises, datasets,
+analyses, and figure specifications in BioLang. The SVG figures are generated
+at runtime from the data; published source images are not copied. This work is
+not an official BDSR publication and does not imply endorsement.
 
-`data/lung.csv` serializes the `cancer`/`lung` data object distributed by the R `survival` package. The package is licensed LGPL (>= 2). The data are credited by its documentation to Terry Therneau and to Loprinzi CL et al., *Journal of Clinical Oncology* 1994;12(3):601–607. The CSV retains all 228 observations and all ten source variables, with only the CSV row-name column added by the Rdatasets serialization.
+## Dataset boundary
 
-This adaptation is non-commercial, identifies its selected scope and transformations, and does not imply endorsement by the source authors.
+The five CSV files are excluded from the repository's MIT licence:
+
+- `lung.csv` and `colon.csv` are narrow, mechanically generated extracts from
+  datasets distributed with R package `survival` 3.8.3, licensed LGPL (>= 2).
+  The package documentation retains the original study citations.
+- `tcga-clinical.csv` and `tcga-kidney.csv` are narrow extracts from Bioconductor package
+  `RTCGA.clinical` 20151101.40.0.
+- `tcga-expression.csv` is a narrow extract from Bioconductor package
+  `RTCGA.mRNA` 1.38.0.
+- RTCGA data packages are distributed under GPL-2. The extracts remain under
+  those upstream terms and are not linked into or shipped with the MIT BioLang
+  executable. Studio downloads lesson data explicitly and verifies checksums.
+- TCGA remains the originating public research programme; RTCGA supplied the
+  fixed 1 November 2015 teaching snapshot used by the source chapter.
+
+The reproducible extraction and validation script is
+`validation/reference.R`. Running it requires the separately installed R
+packages; those packages are validation oracles and are not BioLang runtime
+dependencies.

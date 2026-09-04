@@ -1,40 +1,158 @@
-fn km_median(curve) {
-    let reached = range(0, len(curve.survival)) |> filter(|index| curve.survival[index] <= 0.5)
-    curve.times[first(reached)]
-}
-
-fn survival_at(curve, at) {
+# Run from the lesson directory after all four checksum-verified CSV files are present.
+fn survival_at(times, events, at) {
+    let curve = kaplan_meier(times, events)
     let available = range(0, len(curve.times)) |> filter(|index| curve.times[index] <= at)
     if len(available) == 0 { return 1.0 }
     curve.survival[last(available)]
 }
 
-fn test_bdsr_lung_reference_parity() {
-    let source = read_csv("../data/lung.csv")
-    let lung = table({
-        time: source |> col("time"),
-        event: source |> col("status") |> map(|value| if value == 2 { 1 } else { 0 }),
-        sex: source |> col("sex")
-    })
-    let male = lung |> filter(|row| row.sex == 1)
-    let female = lung |> filter(|row| row.sex == 2)
-    let overall_curve = kaplan_meier(lung |> col("time"), lung |> col("event"))
-    let male_curve = kaplan_meier(male |> col("time"), male |> col("event"))
-    let female_curve = kaplan_meier(female |> col("time"), female |> col("event"))
-    let sex_test = log_rank_test(
-        male |> col("time"), male |> col("event"),
-        female |> col("time"), female |> col("event")
-    )
-
-    assert nrow(source) == 228, "exact source rows"
-    assert ncol(source) == 11, "row names plus ten exact source variables"
-    assert lung |> col("event") |> filter(|value| value == 1) |> len() == 165, "exact event count"
-    assert nrow(male) == 138 && nrow(female) == 90, "exact strata sizes"
-    assert km_median(overall_curve) == 310, "overall median"
-    assert km_median(male_curve) == 270, "male median"
-    assert km_median(female_curve) == 426, "female median"
-    assert abs(survival_at(male_curve, 100) - 0.8260869565217395) < 1e-12, "male day-100 survival"
-    assert abs(survival_at(female_curve, 500) - 0.41104613510668786) < 1e-12, "female day-500 survival"
-    assert abs(sex_test.chi2 - 10.326741954885632) < 1e-10, "log-rank statistic"
+fn coefficient_named(model, name) {
+    model.coefficients |> filter(|row| row.name == name) |> first()
 }
 
+fn relative_error(observed, expected) {
+    abs(observed / expected - 1.0)
+}
+
+fn test_survival_reference_parity() {
+let lung = read_csv("lung.csv")
+let male = lung |> filter(|row| row.sex == "Male")
+let female = lung |> filter(|row| row.sex == "Female")
+let lung_logrank = log_rank_test(
+    male |> col("time"), male |> col("event"),
+    female |> col("time"), female |> col("event")
+)
+let lung_cox = stats_cox_diagnostics(
+    lung |> col("time"), lung |> col("event"),
+    table({sex: lung |> col("sex")}),
+    {categorical_columns: ["sex"], ties: "efron", include_values: false}
+)
+
+assert nrow(lung) == 228, "lung extract must retain all 228 observations"
+assert lung |> col("event") |> filter(|value| value == 1) |> len() == 165, "lung event count must match survival 3.8-3"
+assert abs(survival_at(male |> col("time"), male |> col("event"), 100) - 0.8260869565217395) < 1e-12, "male day-100 Kaplan-Meier estimate must match R"
+assert abs(survival_at(female |> col("time"), female |> col("event"), 500) - 0.41104613510668786) < 1e-12, "female day-500 Kaplan-Meier estimate must match R"
+assert abs(lung_logrank.chi2 - 10.326741954885632) < 1e-10, "lung sex log-rank statistic must match R survdiff"
+assert abs(lung_logrank.p_value - 0.0013111645203554882) < 1e-12, "lung sex log-rank p-value must match R survdiff"
+assert relative_error(coefficient_named(lung_cox, "sex[Female]").hazard_ratio, 0.5880028185635885) < 1e-8, "lung Efron hazard ratio must match R coxph"
+
+let colon = read_csv("colon.csv")
+let colon_female = colon |> filter(|row| row.sex == "Female")
+let colon_male = colon |> filter(|row| row.sex == "Male")
+let colon_model = concat(
+    concat(
+        colon |> filter(|row| row.rx == "Obs"),
+        colon |> filter(|row| row.rx == "Lev")
+    ),
+    colon |> filter(|row| row.rx == "Lev+5FU")
+)
+let colon_sex_numeric = colon_model |> col("sex") |>
+    map(|value| if value == "Male" { 1 } else { 0 })
+let colon_cox = stats_cox_diagnostics(
+    colon_model |> col("time"), colon_model |> col("event"),
+    table({rx: colon_model |> col("rx")}),
+    {categorical_columns: ["rx"], ties: "efron", include_values: false}
+)
+let colon_adjusted = stats_cox_diagnostics(
+    colon_model |> col("time"), colon_model |> col("event"),
+    table({
+        rx: colon_model |> col("rx"), age: colon_model |> col("age"),
+        sex: colon_sex_numeric, nodes: colon_model |> col("nodes")
+    }),
+    {categorical_columns: ["rx"], ties: "efron", include_values: false}
+)
+let colon_sex_logrank = log_rank_test(
+    colon |> col("time"), colon |> col("event"), colon |> col("sex")
+)
+let colon_differ = colon |> filter(|row| row.differentiation != nil)
+let colon_differ_logrank = log_rank_test(
+    colon_differ |> col("time"), colon_differ |> col("event"),
+    colon_differ |> col("differentiation")
+)
+let colon_node4_logrank = log_rank_test(
+    colon |> col("time"), colon |> col("event"), colon |> col("node4")
+)
+let colon_rx_logrank = log_rank_test(
+    colon_model |> col("time"), colon_model |> col("event"), colon_model |> col("rx")
+)
+
+assert nrow(colon) == 929, "colon extract must contain one death-endpoint row per person"
+assert abs(survival_at(colon_female |> col("time"), colon_female |> col("event"), 2000) - 0.5472749979816455) < 1e-12, "female colon survival at day 2000 must match R"
+assert abs(survival_at(colon_male |> col("time"), colon_male |> col("event"), 2000) - 0.5453415538493784) < 1e-12, "male colon survival at day 2000 must match R"
+assert abs(colon_sex_logrank.p_value - 0.8871178099759722) < 1e-12, "colon sex log-rank p-value must match R"
+assert abs(colon_differ_logrank.p_value - 0.00018511242393477544) < 1e-12, "colon differentiation log-rank p-value must match R"
+assert abs(colon_node4_logrank.chi2 - 104.91564294504434) < 1e-9, "colon four-node log-rank statistic must match R"
+assert abs(colon_rx_logrank.p_value - 0.002904347997586098) < 1e-12, "colon treatment log-rank p-value must match R"
+assert relative_error(coefficient_named(colon_cox, "rx[Lev]").hazard_ratio, 0.9737141845813913) < 1e-8, "Lev hazard ratio must match R with Obs as reference"
+assert relative_error(coefficient_named(colon_cox, "rx[Lev+5FU]").hazard_ratio, 0.689553994104623) < 1e-8, "Lev+5FU hazard ratio must match R with Obs as reference"
+assert colon_adjusted.complete_rows == 911, "adjusted colon Cox model must use the same 911 complete rows as R"
+assert relative_error(coefficient_named(colon_adjusted, "rx[Lev+5FU]").hazard_ratio, 0.6686282172658642) < 1e-8, "adjusted Lev+5FU hazard ratio must match R"
+
+let tcga_all = read_csv("tcga-clinical.csv")
+let tcga = tcga_all |> filter(|row| row.time >= 0) |> arrange("disease")
+let tcga_logrank = log_rank_test(
+    tcga |> col("time"), tcga |> col("event"), tcga |> col("disease")
+)
+let tcga_cox = stats_cox_diagnostics(
+    tcga |> col("time"), tcga |> col("event"),
+    table({disease: tcga |> col("disease")}),
+    {categorical_columns: ["disease"], ties: "efron", include_values: false}
+)
+let brca = tcga |> filter(|row| row.disease == "brca")
+let gbm = tcga |> filter(|row| row.disease == "gbm")
+let ov = tcga |> filter(|row| row.disease == "ov")
+
+assert nrow(tcga_all) == 2269 && nrow(tcga) == 2267, "TCGA source and explicit non-negative-time analysis counts must remain pinned"
+assert abs(tcga_logrank.chi2 - 1090.0481317409378) < 1e-9, "three-cohort log-rank statistic must match R survdiff"
+assert abs(tcga_logrank.p_value / 1.990928612059211e-237 - 1.0) < 1e-10, "three-cohort log-rank p-value must match R"
+assert abs(survival_at(brca |> col("time"), brca |> col("event"), 1825) - 0.7990741352195213) < 1e-12, "BRCA five-year survival must match R"
+assert abs(survival_at(gbm |> col("time"), gbm |> col("event"), 1825) - 0.05337539968082272) < 1e-12, "GBM five-year survival must match R"
+assert abs(survival_at(ov |> col("time"), ov |> col("event"), 1825) - 0.30995767528179935) < 1e-12, "OV five-year survival must match R"
+assert relative_error(coefficient_named(tcga_cox, "disease[gbm]").hazard_ratio, 17.9476066031239) < 1e-8, "GBM Efron hazard ratio must match R"
+assert relative_error(coefficient_named(tcga_cox, "disease[ov]").hazard_ratio, 4.697281642032859) < 1e-8, "OV Efron hazard ratio must match R"
+
+let kidney_source = read_csv("tcga-kidney.csv")
+let kidney = kidney_source |> filter(|row| row.time >= 0)
+let kidney_logrank = log_rank_test(
+    kidney |> col("time"), kidney |> col("event"), kidney |> col("disease")
+)
+let kidney_cox = stats_cox_diagnostics(
+    kidney |> col("time"), kidney |> col("event"),
+    table({disease: kidney |> col("disease"), sex: kidney |> col("sex")}),
+    {categorical_columns: ["disease", "sex"], ties: "efron", include_values: false}
+)
+let kich = kidney |> filter(|row| row.disease == "kich")
+let kirc = kidney |> filter(|row| row.disease == "kirc")
+let kirp = kidney |> filter(|row| row.disease == "kirp")
+
+assert nrow(kidney_source) == 937 && nrow(kidney) == 935, "pan-kidney source and non-negative analysis counts must remain pinned"
+assert kidney |> col("event") |> filter(|value| value == 1) |> len() == 203, "pan-kidney event count must match R"
+assert abs(kidney_logrank.chi2 - 32.54532815878652) < 1e-9, "pan-kidney log-rank statistic must match R"
+assert relative_error(coefficient_named(kidney_cox, "disease[kirc]").hazard_ratio, 4.917913356140297) < 1e-8, "KIRC hazard ratio must match R"
+assert relative_error(coefficient_named(kidney_cox, "disease[kirp]").hazard_ratio, 2.707979657441196) < 1e-8, "KIRP hazard ratio must match R"
+assert relative_error(coefficient_named(kidney_cox, "sex[male]").hazard_ratio, 0.9391098023198319) < 1e-8, "kidney male hazard ratio must match R"
+assert abs(survival_at(kich |> col("time"), kich |> col("event"), 1825) - 0.8714324105942882) < 1e-12, "KICH five-year survival must match R"
+assert abs(survival_at(kirc |> col("time"), kirc |> col("event"), 1825) - 0.6058067523966336) < 1e-12, "KIRC five-year survival must match R"
+assert abs(survival_at(kirp |> col("time"), kirp |> col("event"), 1825) - 0.7270548114891346) < 1e-12, "KIRP five-year survival must match R"
+
+let expression = read_csv("tcga-expression.csv")
+let brca_expression = expression |> filter(|row| row.dataset == "BRCA.mRNA")
+let ov_expression = expression |> filter(|row| row.dataset == "OV.mRNA")
+let ucec_expression = expression |> filter(|row| row.dataset == "UCEC.mRNA")
+
+assert nrow(expression) == 1205 && ncol(expression) == 5, "expression extract dimensions must match RTCGA.mRNA"
+assert [nrow(brca_expression), nrow(ov_expression), nrow(ucec_expression)] == [590, 561, 54], "expression cohort sizes must match the R reference"
+assert abs(median(brca_expression |> col("PAX8")) + 0.2615833333333335) < 1e-12, "BRCA PAX8 median must match R"
+assert abs(median(ov_expression |> col("GATA3")) + 4.25) < 1e-12, "OV GATA3 median must match R"
+assert abs(median(ucec_expression |> col("ESR1")) - 2.772208333333335) < 1e-12, "UCEC ESR1 median must match R"
+
+{
+    lung_logrank: lung_logrank,
+    lung_sex_cox: coefficient_named(lung_cox, "sex[Female]"),
+    colon_treatment_cox: colon_cox.coefficients,
+    tcga_logrank: tcga_logrank,
+    tcga_cox: tcga_cox.coefficients,
+    kidney_logrank: kidney_logrank,
+    kidney_cox: kidney_cox.coefficients
+}
+}

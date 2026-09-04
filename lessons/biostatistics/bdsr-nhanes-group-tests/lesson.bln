@@ -4,6 +4,12 @@ This is a one-to-one port of the Welch-test and smoking-status ANOVA examples in
 
 ## Adult age by gender
 
+> **Understanding two-sample t-tests**
+>
+> **Use them when:** a numeric outcome is compared between two independent groups and a difference in means is the scientific target.
+>
+> **How to read them:** the estimate is the observed mean difference; its confidence interval gives compatible effect sizes; the p-value measures conflict with a zero-difference model. Welch's version is safer when group variances or sizes differ.
+
 ```biolang
 let nh = read_csv("nhanes.csv")
 let adults = nh |> filter(|row| row.Age >= 18)
@@ -16,7 +22,30 @@ age_test
 
 The source reports (t=1.9122), 3697.2 degrees of freedom, and (p=0.05593). The exact source table gives the same values in BioLang.
 
+The source then repeats the Welch test for BMI by diabetes and annual alcohol use by relationship status.
+
+```biolang
+let bmi_diabetes = adults |> drop_null("BMI") |> drop_null("Diabetes")
+let bmi_diabetic = bmi_diabetes |> filter(|row| row.Diabetes == "Yes") |> col("BMI")
+let bmi_not_diabetic = bmi_diabetes |> filter(|row| row.Diabetes == "No") |> col("BMI")
+let bmi_diabetes_test = ttest(bmi_diabetic, bmi_not_diabetic, {variance: "welch"})
+
+let alcohol_relationship = adults |> drop_null("AlcoholYear") |> drop_null("RelationshipStatus")
+let alcohol_committed = alcohol_relationship |> filter(|row| row.RelationshipStatus == "Committed") |> col("AlcoholYear")
+let alcohol_single = alcohol_relationship |> filter(|row| row.RelationshipStatus == "Single") |> col("AlcoholYear")
+let alcohol_relationship_test = ttest(alcohol_committed, alcohol_single, {variance: "welch"})
+{bmi_by_diabetes: bmi_diabetes_test, alcohol_by_relationship: alcohol_relationship_test}
+```
+
+These are unpaired tests because each group contains different people. Repeated measurements of the same biological unit require a paired or repeated-measures analysis.
+
 ## Adult BMI by smoking status
+
+> **Understanding ANOVA**
+>
+> **Use it when:** a numeric outcome is compared across three or more independent groups and the first question is whether any group mean differs.
+>
+> **How to read it:** the omnibus p-value does not identify which groups differ. Planned contrasts or multiplicity-adjusted comparisons answer that second question; group plots show whether means are an adequate summary.
 
 ```biolang
 let smoking_complete = adults |> drop_null("BMI") |> drop_null("SmokingStatus")
@@ -51,6 +80,10 @@ stats_group_plot(
 assert abs(age_test.statistic - 1.9122057082650388) < 0.0000000001, "source Welch statistic"
 assert abs(age_test.df - 3697.193960355615) < 0.000000001, "source Welch degrees of freedom"
 assert abs(age_test.p_value - 0.05592701698725805) < 0.0000000001, "source Welch p-value"
+assert abs(bmi_diabetes_test.statistic - 11.378763701831915) < 0.000000001, "source BMI-diabetes Welch statistic"
+assert abs(bmi_diabetes_test.df - 407.31351752997017) < 0.000000001, "source BMI-diabetes Welch degrees of freedom"
+assert abs(alcohol_relationship_test.statistic - 5.431544809059942) < 0.000000001, "source alcohol-relationship Welch statistic"
+assert abs(alcohol_relationship_test.df - 2674.819741559321) < 0.000000001, "source alcohol-relationship Welch degrees of freedom"
 assert abs(smoking_anova.f_statistic - 16.98847476354365) < 0.000000001, "source ANOVA statistic"
 assert smoking_anova.df_between == 2, "source numerator degrees of freedom"
 assert smoking_anova.df_within == 3553, "source denominator degrees of freedom"

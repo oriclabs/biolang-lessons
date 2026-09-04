@@ -15,6 +15,7 @@
 | Power calculations | 8.5.1-8.5.2 and exercises 10-12 | Every displayed input is translated directly; t-test power uses the source's default `strict=FALSE` tail convention. |
 | Tidy coefficient and model tables | 8.6 | BioLang diagnostic records are presented in source formula order as the `tidy()` and `glance()` counterparts. |
 | Male residual plot | 8.6, `augment(fit)` plot | BioLang plots exact fitted values/residuals for source-model males, with source colour, size, axes, legends, and ggplot panel. |
+| Study-design guidance | 8.7 | Batch effects, defining biological n, and technical versus biological replicates are retained with the source readings; no synthetic demonstration data are introduced. |
 
 The source's decorative `broom.jpg` image is not an analytical output and is
 not copied. No replacement decorative image is introduced.

@@ -2,7 +2,13 @@
 
 This is a bounded one-to-one port of the descriptive-statistics and exploratory-data-analysis sequence in [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html). Select **Prepare all** first: Studio downloads the two exact source-hosted files and verifies their sizes and SHA-256 checksums.
 
-## Import the published teaching extract
+## 8.1 Our data: NHANES
+
+### 8.1.1 About NHANES
+
+NHANES combines interviews, examinations, and laboratory measurements. The chapter uses a 5,000-person resampled teaching extract; reproduce the chapter with this table, but use the original survey design and weights for population inference.
+
+### 8.1.2 Import and inspect
 
 ```biolang
 let nh = read_csv("nhanes.csv")
@@ -12,7 +18,15 @@ let dictionary = read_csv("nhanes_dd.csv")
 
 The source uses the 5,000-person, 32-variable resampled NHANES teaching table. It is appropriate for reproducing the lesson, but it is not a replacement for survey-weighted analysis of the original NHANES sample.
 
-## Reproduce the source exercises
+## 8.2 Descriptive statistics
+
+> **Understanding descriptive statistics**
+>
+> **Use them when:** you need to describe the observations you actually have before making claims beyond them.
+>
+> **How to read them:** centre answers where typical values lie, spread answers how different they are, and shape shows asymmetry, tails, gaps, or multiple groups. No single summary replaces the others.
+
+### Reproduce the source exercises
 
 ```biolang
 let pulse = nh |> drop_null("Pulse") |> col("Pulse")
@@ -30,7 +44,33 @@ let income = nh |> drop_null("Income") |> col("Income")
 
 These are the same calculations and the same source table used by the chapter exercises.
 
-## Histograms
+### 8.2.1 Missing data
+
+> **Understanding missing values**
+>
+> **Use this check when:** any variable may be absent, unrecorded, inapplicable, or lost.
+>
+> **How to read it:** report both the full row count and the number contributing to each result. Missingness can bias a result when the reason a value is absent is related to the quantity being studied.
+
+```biolang
+let income_summary = summary(nh |> col("Income"))
+{
+    total_rows: nrow(nh),
+    observed_income: income_summary.count,
+    missing_income: nrow(nh) - income_summary.count,
+    mean_observed_income: mean(income)
+}
+```
+
+### 8.2.2 Exploratory data analysis
+
+> **Understanding exploratory data analysis**
+>
+> **Use it when:** you need to see distributions, groups, unusual values, and relationships before selecting a formal model.
+>
+> **How to read it:** plots suggest what to investigate and reveal assumptions that numbers can hide. They do not supply a p-value and should not be mined until a preferred story appears.
+
+#### Histograms
 
 The source draws four `geom_histogram()` panels. BioLang regenerates each one from the exact NHANES rows with the same bin counts, grey fill, ggplot panel, and axis labels.
 
@@ -72,7 +112,7 @@ histogram(age, {
 })
 ```
 
-## Height and weight
+#### Scatterplots: height and weight
 
 The source first plots all available observations and colours points by gender. BioLang uses the same complete rows and ggplot hue ordering.
 

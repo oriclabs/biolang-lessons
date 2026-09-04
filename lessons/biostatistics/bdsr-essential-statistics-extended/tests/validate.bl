@@ -42,4 +42,4 @@ let gwas_n = power_prop_test(0.05, 0.055, {power: 0.8, alpha: 5e-8})
 assert abs(gene_power.power - 0.2709095) < 0.0000001, "R-default gene power"
 assert abs(gwas_n.n_raw - 157589.5) < 0.1, "GWAS sample size"
 
-"BDSR 8.3.2-8.6 source validation passed."
+"BDSR 8.3.2-8.7 source validation passed."

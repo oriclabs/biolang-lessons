@@ -25,7 +25,7 @@ lesson was added merely to increase counts.
 
 | Source | Decision | Active coverage or reason |
 | --- | --- | --- |
-| *Biological Data Science with R* | Keep three NHANES lessons; add one survival lesson | The bounded lessons use the exact NHANES or `survival::lung` observations, match the source calculations, and now generate all twelve selected figures in BioLang with source-matched geometry and presentation. Five old broad redraw-based drafts remain archived. |
+| *Biological Data Science with R* | Keep the five active lessons and restore complete Chapter 9 | Chapter 8 is represented through 8.7 across the NHANES lessons, including all three Welch questions and restored Understanding panels. Chapter 9 now again includes sections 9.1-9.3.2 and Exercises 1-13 over exact lung, colon, and RTCGA data. Predictive, RNA-seq, and ggtree drafts remain withheld where their computation or data do not meet the one-to-one/no-synthetic rule. |
 | *Data Integration, Manipulation and Visualization of Phylogenetic Trees* | Temporarily withdraw | Both lessons use official objects, but their Chapter 7 analytical figures remain copied assets. Restore them only when BioLang reproduces the shared tree/metadata geometry one-to-one. |
 | *Statistics in Natural Resources* | Keep red-pine OLS; temporarily withdraw fishing dispersion | Fishing dispersion uses real data but still embeds a copied histogram. Red-pine OLS remains active. The falcon source is simulated; the broader fishing GLM is held because the current engine does not reproduce the source fit. |
 
@@ -91,8 +91,9 @@ attribution notice, and source map.
 
 ## Runtime-figure audit
 
-Rechecked 2026-09-04 after restoring the BDSR runtime figures. The five active
-BDSR lessons and the multivariate-analysis collection generate their analytical
+Rechecked 2026-09-04 after restoring the complete BDSR survival chapter and
+Chapter 8 Understanding sections. The five active BDSR lessons and the
+multivariate-analysis collection generate their analytical
 figures in BioLang from exact source data. The audit also found older active
 entries whose analytical output is still a copied published image rather than a
 BioLang render: `msmb-discrete-models`, `data-carpentry-daily-counts`,

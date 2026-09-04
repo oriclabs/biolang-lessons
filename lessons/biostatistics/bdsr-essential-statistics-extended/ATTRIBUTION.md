@@ -1,6 +1,6 @@
 # Attribution
 
-This collection adapts sections 8.3.2 through 8.6 of Stephen D. Turner's
+This collection adapts sections 8.3.2 through 8.7 of Stephen D. Turner's
 [*Biological Data Science with R*, Essential statistics](https://bdsr.stephenturner.us/stats.html)
 at source revision `f16caf3d3df4ac27297b87f50c37c7c024471208`.
 
