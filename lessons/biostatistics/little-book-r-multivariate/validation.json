@@ -4,6 +4,7 @@
   "checked": "2026-09-04",
   "sourceRevision": "763f08e0944114e06cff72bc3406f725bbd86596",
   "status": "verified",
+  "runtimes": {"native": "four notebooks and consolidated assertions passed", "browserWasm": "four Studio sections ran completely after positional V1-V14 normalization"},
   "dataset": {"file": "data/wine.data", "bytes": 10782, "sha256": "6be6b1203f3d51df0b553a70e57b8a723cd405683958204f96d23d7cd6aea659", "rows": 178, "columns": 14, "groupSizes": [59, 71, 48], "status": "byte-for-byte UCI source data"},
   "metrics": [
     {"name": "V2 mean", "reference": 13.0006180, "biolang": 13.00061797752809, "status": "exact to published precision"},

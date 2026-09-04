@@ -1,68 +1,87 @@
+fn read_source_wine(path) {
+    let data = read_csv(path, {header: false})
+    let names = colnames(data)
+    data = rename(data, names[0], "V1")
+    data = rename(data, names[1], "V2")
+    data = rename(data, names[2], "V3")
+    data = rename(data, names[3], "V4")
+    data = rename(data, names[4], "V5")
+    data = rename(data, names[5], "V6")
+    data = rename(data, names[6], "V7")
+    data = rename(data, names[7], "V8")
+    data = rename(data, names[8], "V9")
+    data = rename(data, names[9], "V10")
+    data = rename(data, names[10], "V11")
+    data = rename(data, names[11], "V12")
+    data = rename(data, names[12], "V13")
+    rename(data, names[13], "V14")
+}
+
 fn within_group_variance(data, variable) {
-    let g1 = data |> filter(|row| row.col1 == 1) |> col(variable)
-    let g2 = data |> filter(|row| row.col1 == 2) |> col(variable)
-    let g3 = data |> filter(|row| row.col1 == 3) |> col(variable)
+    let g1 = data |> filter(|row| row.V1 == 1) |> col(variable)
+    let g2 = data |> filter(|row| row.V1 == 2) |> col(variable)
+    let g3 = data |> filter(|row| row.V1 == 3) |> col(variable)
     ((len(g1) - 1) * variance(g1) + (len(g2) - 1) * variance(g2) + (len(g3) - 1) * variance(g3)) / (nrow(data) - 3)
 }
 fn between_group_variance(data, variable) {
     let values = data |> col(variable)
     let grand_mean = mean(values)
-    let g1 = data |> filter(|row| row.col1 == 1) |> col(variable)
-    let g2 = data |> filter(|row| row.col1 == 2) |> col(variable)
-    let g3 = data |> filter(|row| row.col1 == 3) |> col(variable)
+    let g1 = data |> filter(|row| row.V1 == 1) |> col(variable)
+    let g2 = data |> filter(|row| row.V1 == 2) |> col(variable)
+    let g3 = data |> filter(|row| row.V1 == 3) |> col(variable)
     (len(g1) * (mean(g1) - grand_mean) ** 2 + len(g2) * (mean(g2) - grand_mean) ** 2 + len(g3) * (mean(g3) - grand_mean) ** 2) / 2
 }
 
 fn standardized_measurements(wine) {
-    let data = wine |> select("col2", "col3", "col4", "col5", "col6", "col7", "col8", "col9", "col10", "col11", "col12", "col13", "col14")
-    data = data |> mutate("col2", |row| (row.col2 - mean(wine |> col("col2"))) / stdev(wine |> col("col2")))
-    data = data |> mutate("col3", |row| (row.col3 - mean(wine |> col("col3"))) / stdev(wine |> col("col3")))
-    data = data |> mutate("col4", |row| (row.col4 - mean(wine |> col("col4"))) / stdev(wine |> col("col4")))
-    data = data |> mutate("col5", |row| (row.col5 - mean(wine |> col("col5"))) / stdev(wine |> col("col5")))
-    data = data |> mutate("col6", |row| (row.col6 - mean(wine |> col("col6"))) / stdev(wine |> col("col6")))
-    data = data |> mutate("col7", |row| (row.col7 - mean(wine |> col("col7"))) / stdev(wine |> col("col7")))
-    data = data |> mutate("col8", |row| (row.col8 - mean(wine |> col("col8"))) / stdev(wine |> col("col8")))
-    data = data |> mutate("col9", |row| (row.col9 - mean(wine |> col("col9"))) / stdev(wine |> col("col9")))
-    data = data |> mutate("col10", |row| (row.col10 - mean(wine |> col("col10"))) / stdev(wine |> col("col10")))
-    data = data |> mutate("col11", |row| (row.col11 - mean(wine |> col("col11"))) / stdev(wine |> col("col11")))
-    data = data |> mutate("col12", |row| (row.col12 - mean(wine |> col("col12"))) / stdev(wine |> col("col12")))
-    data = data |> mutate("col13", |row| (row.col13 - mean(wine |> col("col13"))) / stdev(wine |> col("col13")))
-    data |> mutate("col14", |row| (row.col14 - mean(wine |> col("col14"))) / stdev(wine |> col("col14")))
+    let data = wine |> select("V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14")
+    data = data |> mutate("V2", |row| (row.V2 - mean(wine |> col("V2"))) / stdev(wine |> col("V2")))
+    data = data |> mutate("V3", |row| (row.V3 - mean(wine |> col("V3"))) / stdev(wine |> col("V3")))
+    data = data |> mutate("V4", |row| (row.V4 - mean(wine |> col("V4"))) / stdev(wine |> col("V4")))
+    data = data |> mutate("V5", |row| (row.V5 - mean(wine |> col("V5"))) / stdev(wine |> col("V5")))
+    data = data |> mutate("V6", |row| (row.V6 - mean(wine |> col("V6"))) / stdev(wine |> col("V6")))
+    data = data |> mutate("V7", |row| (row.V7 - mean(wine |> col("V7"))) / stdev(wine |> col("V7")))
+    data = data |> mutate("V8", |row| (row.V8 - mean(wine |> col("V8"))) / stdev(wine |> col("V8")))
+    data = data |> mutate("V9", |row| (row.V9 - mean(wine |> col("V9"))) / stdev(wine |> col("V9")))
+    data = data |> mutate("V10", |row| (row.V10 - mean(wine |> col("V10"))) / stdev(wine |> col("V10")))
+    data = data |> mutate("V11", |row| (row.V11 - mean(wine |> col("V11"))) / stdev(wine |> col("V11")))
+    data = data |> mutate("V12", |row| (row.V12 - mean(wine |> col("V12"))) / stdev(wine |> col("V12")))
+    data = data |> mutate("V13", |row| (row.V13 - mean(wine |> col("V13"))) / stdev(wine |> col("V13")))
+    data |> mutate("V14", |row| (row.V14 - mean(wine |> col("V14"))) / stdev(wine |> col("V14")))
 }
 
 fn source_lda_scores(wine) {
     let scored = wine |> mutate("ld1_raw", |row|
-        -0.403399781 * row.col2 + 0.165254596 * row.col3 - 0.369075256 * row.col4 +
-        0.154797889 * row.col5 - 0.002163496 * row.col6 + 0.618052068 * row.col7 -
-        1.661191235 * row.col8 - 1.495818440 * row.col9 + 0.134092628 * row.col10 +
-        0.355055710 * row.col11 - 0.818036073 * row.col12 - 1.157559376 * row.col13 -
-        0.002691206 * row.col14)
+        -0.403399781 * row.V2 + 0.165254596 * row.V3 - 0.369075256 * row.V4 +
+        0.154797889 * row.V5 - 0.002163496 * row.V6 + 0.618052068 * row.V7 -
+        1.661191235 * row.V8 - 1.495818440 * row.V9 + 0.134092628 * row.V10 +
+        0.355055710 * row.V11 - 0.818036073 * row.V12 - 1.157559376 * row.V13 -
+        0.002691206 * row.V14)
     let ld1_center = mean(scored |> col("ld1_raw"))
     scored = scored |> mutate("LD1", |row| row.ld1_raw - ld1_center)
     scored = scored |> mutate("ld2_raw", |row|
-        0.8717930699 * row.col2 + 0.3053797325 * row.col3 + 2.3458497486 * row.col4 -
-        0.1463807654 * row.col5 - 0.0004627565 * row.col6 - 0.0322128171 * row.col7 -
-        0.4919980543 * row.col8 - 1.6309537953 * row.col9 - 0.3070875776 * row.col10 +
-        0.2532306865 * row.col11 - 1.5156344987 * row.col12 + 0.0511839665 * row.col13 +
-        0.0028529846 * row.col14)
+        0.8717930699 * row.V2 + 0.3053797325 * row.V3 + 2.3458497486 * row.V4 -
+        0.1463807654 * row.V5 - 0.0004627565 * row.V6 - 0.0322128171 * row.V7 -
+        0.4919980543 * row.V8 - 1.6309537953 * row.V9 - 0.3070875776 * row.V10 +
+        0.2532306865 * row.V11 - 1.5156344987 * row.V12 + 0.0511839665 * row.V13 +
+        0.0028529846 * row.V14)
     let ld2_center = mean(scored |> col("ld2_raw"))
     scored |> mutate("LD2", |row| row.ld2_raw - ld2_center)
 }
 
 fn test_little_book_r_multivariate() {
-    let wine = read_csv("../data/wine.data", {header: false})
+    let wine = read_source_wine("../data/wine.data")
     assert nrow(wine) == 178 && ncol(wine) == 14
-    assert nrow(wine |> filter(|row| row.col1 == 1)) == 59
-    assert nrow(wine |> filter(|row| row.col1 == 2)) == 71
-    assert nrow(wine |> filter(|row| row.col1 == 3)) == 48
-    assert abs(mean(wine |> col("col2")) - 13.0006180) < 0.0000001
-    assert abs(stdev(wine |> col("col14")) - 314.9074743) < 0.0000001
-    assert abs(within_group_variance(wine, "col2") - 0.2620525) < 0.0000001
-    assert abs(between_group_variance(wine, "col2") - 35.39742) < 0.00001
-    assert abs(between_group_variance(wine, "col2") / within_group_variance(wine, "col2") - 135.0776) < 0.0001
-    assert abs(between_group_variance(wine, "col8") / within_group_variance(wine, "col8") - 233.9258727) < 0.0001
-    assert abs(cor(wine |> col("col2"), wine |> col("col3")) - 0.09439694) < 0.00000001
-    assert abs(cor(wine |> col("col7"), wine |> col("col8")) - 0.8645635) < 0.0000001
+    assert nrow(wine |> filter(|row| row.V1 == 1)) == 59
+    assert nrow(wine |> filter(|row| row.V1 == 2)) == 71
+    assert nrow(wine |> filter(|row| row.V1 == 3)) == 48
+    assert abs(mean(wine |> col("V2")) - 13.0006180) < 0.0000001
+    assert abs(stdev(wine |> col("V14")) - 314.9074743) < 0.0000001
+    assert abs(within_group_variance(wine, "V2") - 0.2620525) < 0.0000001
+    assert abs(between_group_variance(wine, "V2") - 35.39742) < 0.00001
+    assert abs(between_group_variance(wine, "V2") / within_group_variance(wine, "V2") - 135.0776) < 0.0001
+    assert abs(between_group_variance(wine, "V8") / within_group_variance(wine, "V8") - 233.9258727) < 0.0001
+    assert abs(cor(wine |> col("V2"), wine |> col("V3")) - 0.09439694) < 0.00000001
+    assert abs(cor(wine |> col("V7"), wine |> col("V8")) - 0.8645635) < 0.0000001
 
     let pca_result = pca(standardized_measurements(wine), 13)
     assert abs(pca_result.explained_variance[0] - 4.7058503) < 0.0000001
@@ -73,21 +92,21 @@ fn test_little_book_r_multivariate() {
     assert abs(abs(pca_result.scores[0][0]) - 3.30742097) < 0.0000001
 
     let scored = source_lda_scores(wine)
-    let ld1_means = [1, 2, 3] |> map(|group| mean(scored |> filter(|row| row.col1 == group) |> col("LD1")))
-    let ld2_means = [1, 2, 3] |> map(|group| mean(scored |> filter(|row| row.col1 == group) |> col("LD2")))
+    let ld1_means = [1, 2, 3] |> map(|group| mean(scored |> filter(|row| row.V1 == group) |> col("LD1")))
+    let ld2_means = [1, 2, 3] |> map(|group| mean(scored |> filter(|row| row.V1 == group) |> col("LD2")))
     assert abs(ld1_means[0] + 3.42248851) < 0.000001 && abs(ld1_means[1] + 0.07972623) < 0.000001 && abs(ld1_means[2] - 4.32473717) < 0.000001
     assert abs(ld2_means[0] - 1.691674) < 0.000001 && abs(ld2_means[1] + 2.472656) < 0.000001 && abs(ld2_means[2] - 1.578120) < 0.000001
     assert abs(between_group_variance(scored, "LD1") / within_group_variance(scored, "LD1") - 794.6522) < 0.001
     assert abs(between_group_variance(scored, "LD2") / within_group_variance(scored, "LD2") - 361.2410) < 0.001
 
     let classified = scored |> mutate("predicted", |row| if row.LD1 <= -1.751107 { 1 } else { if row.LD1 <= 2.122505 { 2 } else { 3 } })
-    assert nrow(classified |> filter(|row| row.col1 == 1 && row.predicted == 1)) == 56
-    assert nrow(classified |> filter(|row| row.col1 == 1 && row.predicted == 2)) == 3
-    assert nrow(classified |> filter(|row| row.col1 == 1 && row.predicted == 3)) == 0
-    assert nrow(classified |> filter(|row| row.col1 == 2 && row.predicted == 1)) == 5
-    assert nrow(classified |> filter(|row| row.col1 == 2 && row.predicted == 2)) == 65
-    assert nrow(classified |> filter(|row| row.col1 == 2 && row.predicted == 3)) == 1
-    assert nrow(classified |> filter(|row| row.col1 == 3 && row.predicted == 1)) == 0
-    assert nrow(classified |> filter(|row| row.col1 == 3 && row.predicted == 2)) == 0
-    assert nrow(classified |> filter(|row| row.col1 == 3 && row.predicted == 3)) == 48
+    assert nrow(classified |> filter(|row| row.V1 == 1 && row.predicted == 1)) == 56
+    assert nrow(classified |> filter(|row| row.V1 == 1 && row.predicted == 2)) == 3
+    assert nrow(classified |> filter(|row| row.V1 == 1 && row.predicted == 3)) == 0
+    assert nrow(classified |> filter(|row| row.V1 == 2 && row.predicted == 1)) == 5
+    assert nrow(classified |> filter(|row| row.V1 == 2 && row.predicted == 2)) == 65
+    assert nrow(classified |> filter(|row| row.V1 == 2 && row.predicted == 3)) == 1
+    assert nrow(classified |> filter(|row| row.V1 == 3 && row.predicted == 1)) == 0
+    assert nrow(classified |> filter(|row| row.V1 == 3 && row.predicted == 2)) == 0
+    assert nrow(classified |> filter(|row| row.V1 == 3 && row.predicted == 3)) == 48
 }

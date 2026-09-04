@@ -2,10 +2,29 @@
 
 This collection ports the complete analysis sequence in [Using R for Multivariate Analysis](https://little-book-of-r-for-multivariate-analysis.readthedocs.io/en/latest/src/multivariateanalysis.html). The source uses the UCI Wine data: chemical measurements from 178 wines grown in one Italian region and derived from three cultivars. These are real observations, not simulated data.
 
-The source reads the comma-separated file without a header. BioLang does the same, so the cultivar remains `col1` and the thirteen chemical measurements remain `col2` through `col14`, corresponding to the source's `V1` through `V14`.
+The source reads the comma-separated file without a header. BioLang does the same, then renames the fourteen columns by position to the source's stable `V1` through `V14` names. This preserves every source byte and avoids runtime-specific names for headerless columns.
 
 ```biolang
-let wine = read_csv("data/wine.data", {header: false})
+fn read_source_wine(path) {
+    let data = read_csv(path, {header: false})
+    let names = colnames(data)
+    data = rename(data, names[0], "V1")
+    data = rename(data, names[1], "V2")
+    data = rename(data, names[2], "V3")
+    data = rename(data, names[3], "V4")
+    data = rename(data, names[4], "V5")
+    data = rename(data, names[5], "V6")
+    data = rename(data, names[6], "V7")
+    data = rename(data, names[7], "V8")
+    data = rename(data, names[8], "V9")
+    data = rename(data, names[9], "V10")
+    data = rename(data, names[10], "V11")
+    data = rename(data, names[11], "V12")
+    data = rename(data, names[12], "V13")
+    rename(data, names[13], "V14")
+}
+
+let wine = read_source_wine("data/wine.data")
 {
     samples: nrow(wine),
     columns: ncol(wine),
@@ -14,9 +33,9 @@ let wine = read_csv("data/wine.data", {header: false})
 ```
 
 ```biolang
-let cultivar_1 = wine |> filter(|row| row.col1 == 1)
-let cultivar_2 = wine |> filter(|row| row.col1 == 2)
-let cultivar_3 = wine |> filter(|row| row.col1 == 3)
+let cultivar_1 = wine |> filter(|row| row.V1 == 1)
+let cultivar_2 = wine |> filter(|row| row.V1 == 2)
+let cultivar_3 = wine |> filter(|row| row.V1 == 3)
 table({
     cultivar: [1, 2, 3],
     samples: [nrow(cultivar_1), nrow(cultivar_2), nrow(cultivar_3)]
@@ -51,8 +70,8 @@ Finally, the source puts V2 through V6 on one profile plot. Their different scal
 assert nrow(wine) == 178, "exact UCI source rows"
 assert ncol(wine) == 14, "cultivar plus thirteen chemical measurements"
 assert nrow(cultivar_1) == 59 && nrow(cultivar_2) == 71 && nrow(cultivar_3) == 48, "exact cultivar counts"
-assert wine[0].col1 == 1 && abs(wine[0].col2 - 14.23) < 0.000000000001, "exact first source row"
-assert wine[177].col1 == 3 && abs(wine[177].col14 - 560) < 0.000000000001, "exact last source row"
+assert wine[0].V1 == 1 && abs(wine[0].V2 - 14.23) < 0.000000000001, "exact first source row"
+assert wine[177].V1 == 3 && abs(wine[177].V14 - 560) < 0.000000000001, "exact last source row"
 "Exact source data and four canonical figures verified."
 ```
 

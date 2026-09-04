@@ -6,7 +6,7 @@ Selected source page: `src/multivariateanalysis.rst`, rendered at https://little
 
 | Source section | BioLang notebook | Fidelity |
 | --- | --- | --- |
-| Reading Multivariate Analysis Data into R | `01-exploring-wine-data.bln` | Exact headerless UCI `wine.data`; 178 rows and all 14 columns retained |
+| Reading Multivariate Analysis Data into R | `01-exploring-wine-data.bln` | Exact headerless UCI `wine.data`; 178 rows and all 14 columns retained; runtime-generated headerless names are immediately mapped by position to source names V1-V14 |
 | Plotting Multivariate Data | `01-exploring-wine-data.bln` | All four published figures copied byte for byte as `image1.png`, `image2.png`, `image4.png`, and `image5.png` |
 | Calculating Summary Statistics for Multivariate Data | `02-multivariate-summaries.bln` | Same means, sample standard deviations, group sizes, within/between variance, and separation calculations |
 | Between/within-group covariance | `02-multivariate-summaries.bln` | Same pooled formulas and exact V8/V11 source results |
@@ -29,3 +29,5 @@ Selected source page: `src/multivariateanalysis.rst`, rendered at https://little
 | `_static/image10.png` | `figures/source/image10.png` | LD1/LD2 score plot |
 
 The generic R installation material and its `image3.png` screenshot are not part of the selected multivariate-analysis page. No source analysis section, dataset row, or published figure from the selected page is replaced by synthetic content.
+
+The positional V1-V14 renaming was exercised in both native BioLang and Studio Browser WASM. It changes only table metadata: the checksum-pinned source file and every observation remain unchanged.

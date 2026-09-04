@@ -43,7 +43,7 @@
         "plots": ["scatterplot matrix", "labelled scatter plot", "profile plot"],
         "terms": ["wine cultivar", "chemical constituent", "multivariate observation", "measurement scale"],
         "aliases": ["UCI Wine exploration", "wine chemistry data", "multivariate EDA"],
-        "functions": ["read_csv", "filter", "head", "nrow", "ncol", "table"]
+        "functions": ["read_csv", "colnames", "rename", "filter", "head", "nrow", "ncol", "table"]
       }
     },
     {
@@ -57,7 +57,7 @@
         "plots": [],
         "terms": ["separation", "covariance", "correlation coefficient", "sample standard deviation", "cultivar"],
         "aliases": ["pooled within variance", "between class variance", "feature standardization"],
-        "functions": ["mean", "stdev", "variance", "cor", "zip", "map", "sum"]
+        "functions": ["read_csv", "colnames", "rename", "mean", "stdev", "variance", "cor", "zip", "map", "sum"]
       }
     },
     {
@@ -71,7 +71,7 @@
         "plots": ["scree plot", "principal component score plot"],
         "terms": ["principal component", "loading", "score", "explained variance", "dimensionality reduction"],
         "aliases": ["PCA", "component analysis", "ordination"],
-        "functions": ["pca", "select", "mutate", "mean", "stdev", "table"]
+        "functions": ["read_csv", "colnames", "rename", "pca", "select", "mutate", "mean", "stdev", "table"]
       }
     },
     {
@@ -85,7 +85,7 @@
         "plots": ["stacked discriminant histogram", "linear discriminant score plot"],
         "terms": ["discriminant function", "LDA loading", "group separation", "misclassification rate", "resubstitution error"],
         "aliases": ["LDA", "canonical discriminant analysis", "discriminant classification"],
-        "functions": ["read_csv", "mutate", "filter", "mean", "variance", "nrow", "table"]
+        "functions": ["read_csv", "colnames", "rename", "mutate", "filter", "mean", "variance", "nrow", "table"]
       }
     }
   ],
@@ -96,7 +96,7 @@
     "plots": ["scatterplot matrix", "labelled scatter plot", "profile plot", "scree plot", "principal component score plot", "stacked discriminant histogram", "linear discriminant score plot"],
     "terms": ["wine cultivar", "chemical constituent", "multivariate observation", "measurement scale", "separation", "covariance", "correlation coefficient", "sample standard deviation", "cultivar", "principal component", "loading", "score", "explained variance", "dimensionality reduction", "discriminant function", "LDA loading", "group separation", "misclassification rate", "resubstitution error"],
     "aliases": ["UCI Wine exploration", "wine chemistry data", "multivariate EDA", "pooled within variance", "between class variance", "feature standardization", "PCA", "component analysis", "ordination", "LDA", "canonical discriminant analysis", "discriminant classification"],
-    "functions": ["read_csv", "filter", "head", "nrow", "ncol", "table", "mean", "stdev", "variance", "cor", "zip", "map", "sum", "pca", "select", "mutate"]
+    "functions": ["read_csv", "colnames", "rename", "filter", "head", "nrow", "ncol", "table", "mean", "stdev", "variance", "cor", "zip", "map", "sum", "pca", "select", "mutate"]
   },
   "tags": ["multivariate analysis", "PCA", "LDA", "wine chemistry", "classification", "CC BY"]
 }
