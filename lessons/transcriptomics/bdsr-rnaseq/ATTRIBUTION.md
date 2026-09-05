@@ -4,11 +4,11 @@ This lesson is an independent BioLang companion to Stephen D. Turner's
 *Biological Data Science with R*, chapter 12:
 https://bdsr.stephenturner.us/rnaseq.html
 
-The upstream BDSR repository is licensed CC BY-NC 4.0. This repository does not
-copy upstream prose, R code, tables, or figure files. It follows the public
-chapter and exercise order, cites the source, independently explains the
-methods, and redraws figures with BioLang. The BioLang-authored lesson files are
-MIT licensed; the data artifacts listed below are excluded from that MIT grant.
+The upstream BDSR repository is licensed CC BY-NC 4.0. This non-commercial
+adaptation follows the public chapter and exercise order, cites the source,
+independently explains the methods, and redraws analytical figures with BioLang.
+The lesson is distributed under CC BY-NC 4.0. The data artifacts listed below
+retain their separate terms.
 
 ## Data and software provenance
 

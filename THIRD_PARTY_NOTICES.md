@@ -45,11 +45,14 @@ the LGPL (>= 2) R `survival` package and fixed RTCGA clinical/expression
 extracts under their recorded upstream terms. Citations and licence boundaries
 are recorded in the lesson's `ATTRIBUTION.md` and manifest.
 
-Earlier drafts are retained in `archive/p2-non-fidelity-bdsr` for audit. The
-complete survival material has been restored to the active lesson after exact
-numeric and runtime-figure validation. Predictive, RNA-seq, and ggtree drafts
-remain unregistered because they still use substituted algorithms, precomputed
-analysis results, or random data that fail the current fidelity policy.
+Verified historical Chapter 8 and Chapter 9 packages are retained under
+`archive/superseded-bdsr`; their corrected active lessons and the Chapter 12
+RNA-seq lesson are published after exact numeric and runtime-figure validation.
+The RNA-seq lesson uses independently regenerated historical DESeq2 1.44.0
+numeric oracle artifacts and generates its
+analytical plots with BioLang. Predictive remains unregistered because its
+models are substitutions; ggtree remains unregistered because the source
+teaching tree and bonus data are explicitly made-up/random.
 
 ## Data Integration, Manipulation and Visualization of Phylogenetic Trees
 

@@ -2,19 +2,21 @@
   "schema": 1,
   "id": "bdsr-rnaseq",
   "title": "Count-based differential expression analysis of RNA-seq data",
-  "summary": "A complete BioLang companion to BDSR chapter 12: count matrices, all fourteen exercises, the intentionally naive fold-change workflow, independently validated historical DESeq2 results, count plots, MA and volcano plots, VST, PCA, clustered heatmaps, reproducibility, and pathway-analysis inputs.",
+  "summary": "A source-faithful BioLang port of BDSR chapter 12 using the exact airway data, all fourteen exercises, independently regenerated historical DESeq2 results, and BioLang-generated analytical plots.",
   "entry": "lesson.bln",
   "runtime": "browser",
   "estimatedMemoryMb": 96,
   "attribution": "ATTRIBUTION.md",
+  "sourceMap": "SOURCE_MAP.md",
   "source": {
     "title": "Stephen D. Turner, Ph.D. — Biological Data Science with R: Count-Based Differential Expression Analysis of RNA-seq Data",
     "url": "https://bdsr.stephenturner.us/rnaseq.html",
     "repository": "https://github.com/stephenturner/bdsr",
+    "revision": "f16caf3d3df4ac27297b87f50c37c7c024471208",
     "copyright": "© 2019 Stephen D. Turner, Ph.D.",
     "licence": "CC BY-NC 4.0",
     "licenceUrl": "https://github.com/stephenturner/bdsr/blob/main/LICENSE",
-    "note": "Independent OriClabs BioLang companion under MIT. It follows the public topic and exercise order but does not copy or relicense upstream prose, R code, tables, or figures. Dataset and generated oracle files retain their separate terms and attribution. This is not an official BDSR publication or endorsement."
+    "note": "Non-commercial BioLang adaptation under CC BY-NC 4.0. It preserves the source sequence, exercises, exact data and historical DESeq2 outputs while generating every analytical plot in BioLang; no published analytical figure image is copied. Dataset and generated oracle files retain their separate terms and attribution. This is not an official BDSR publication or endorsement."
   },
   "series": {
     "id": "biological-data-science-with-r",

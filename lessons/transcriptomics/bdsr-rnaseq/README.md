@@ -1,9 +1,17 @@
 # Count-based RNA-seq analysis with BioLang
 
-An executable, independently written companion to BDSR chapter 12. It follows
-sections 12.1 through 12.7, includes all fourteen exercises, reproduces the
-chapter's historical DESeq2 result counts, and redraws every analytical figure
-with BioLang.
+An executable, source-faithful BioLang port of BDSR chapter 12 at upstream
+revision `f16caf3d3df4ac27297b87f50c37c7c024471208`. It follows sections 12.1
+through 12.7, includes all fourteen exercises, reproduces the chapter's
+historical DESeq2 result counts, and redraws every analytical plot with
+BioLang from the exact source data or the independently regenerated DESeq2
+oracle artifacts. No synthetic replacement data or copied analytical image is
+used.
+
+The source's generic count-matrix schematic and externally produced IPA pathway
+illustrations are explanatory images rather than analysis outputs. They are not
+copied or represented as BioLang plots. Their source links and the exact
+analytical boundary are recorded in `SOURCE_MAP.md`.
 
 ## Run in Studio
 
