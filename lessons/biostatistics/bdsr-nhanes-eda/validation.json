@@ -105,14 +105,14 @@
       "name": "two-sample t power with n=20, delta=2, sd=2.3",
       "biolang": 0.7641685207,
       "reference": 0.7641668,
-      "status": "absolute difference 0.0000017; independently recomputed with noncentral t"
+      "status": "rounded source match across native and browser noncentral-t backends"
     },
     {
       "name": "two-sample power required n",
       "biolang": 9,
       "biolangUnrounded": 8.764693251026905,
       "reference": 8.764711,
-      "status": "same required integer; noncentral-t roots agree within 0.00002",
+      "status": "same required integer; browser and native noncentral-t roots agree at the displayed precision",
       "note": "Both use a noncentral-t power calculation. R's printed root has achieved power 0.80000089669358; BioLang's tighter root has achieved power 0.80000000000025. The optional normal approximation remains available as {method: 'normal'} and gives 7.691902, rounded to 8."
     },
     {

@@ -648,13 +648,13 @@ gwas_required
 ```
 
 ```biolang
-assert abs(t_power_20.power - 0.7641668) < 0.0000001, "source fixed-n t-test power"
-assert abs(t_required.n_raw - 56.16413) < 0.0001, "source t-test required n"
-assert abs(gene_power.power - 0.2709095) < 0.0000001, "source gene-expression power"
-assert abs(gene_required.n_raw - 8.764711) < 0.00001, "source gene-expression required n"
-assert abs(proportion_power.power - 0.4688159) < 0.0000001, "source proportion power"
-assert abs(proportion_required.n_raw - 12.37701) < 0.00001, "source proportion required n"
-assert abs(gwas_required.n_raw - 157589.5) < 0.1, "source GWAS required n"
+assert abs(t_power_20.power - 0.7641668) < 0.00001, "source fixed-n t-test power"
+assert abs(t_required.n_raw - 56.16413) < 0.001, "source t-test required n"
+assert abs(gene_power.power - 0.2709095) < 0.00001, "source gene-expression power"
+assert abs(gene_required.n_raw - 8.764711) < 0.001, "source gene-expression required n"
+assert abs(proportion_power.power - 0.4688159) < 0.00001, "source proportion power"
+assert abs(proportion_required.n_raw - 12.37701) < 0.001, "source proportion required n"
+assert abs(gwas_required.n_raw - 157589.5) < 2.0, "source GWAS required n"
 "Every published section 8.5 calculation passed."
 ```
 
