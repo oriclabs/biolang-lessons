@@ -15,7 +15,7 @@
     "copyright": "Stephen D. Turner, Ph.D.",
     "licence": "CC BY-NC 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
-    "note": "Adapted for the non-commercial BioLang lesson registry under CC BY-NC 4.0. The exact source-hosted NHANES teaching data are checksum-pinned and downloaded on demand. All analytical figures are generated at runtime by BioLang; no published figure image is copied. The lesson preserves the source's White logistic-regression baseline and R power.t.test default tail convention."
+    "note": "Adapted for the non-commercial BioLang lesson registry under CC BY-NC 4.0. The exact source-hosted NHANES teaching data are checksum-pinned and downloaded on demand. All analytical figures are generated at runtime by BioLang; no published figure image is copied. Mosaic geometry preserves the source analysis while categorical response colours improve Studio legibility. The lesson preserves the source's White logistic-regression baseline and R power.t.test default tail convention."
   },
   "series": {
     "id": "biological-data-science-with-r",

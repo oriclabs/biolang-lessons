@@ -483,12 +483,12 @@ let gender_diabetes_fisher = fisher_exact(gd_no[0], gd_yes[0], gd_no[1], gd_yes[
 {chi_square: gender_diabetes_chi, fisher_exact: gender_diabetes_fisher}
 ```
 
-The source calls unshaded base-R `mosaicplot(xt, main=NA)`. BioLang regenerates its grey count-area geometry, category order, inter-cell gaps, outer labels, and no-title layout from the same table.
+The source calls unshaded base-R `mosaicplot(xt, main=NA)`. BioLang preserves its count-area geometry, category order, inter-cell gaps, outer labels, and no-title layout, while using distinct column colours so the diabetes categories remain visually identifiable in Studio.
 
 ```biolang
 mosaic_plot(gender_diabetes, {
     row: "Gender", layout: "base", title: "", subtitle: "",
-    x_label: "Gender", y_label: "Diabetes", fill: "#BEBEBE",
+    x_label: "Gender", y_label: "Diabetes", shade: "column",
     show_values: false, width: 840, height: 600, format: "svg"
 })
 ```
@@ -537,7 +537,7 @@ let race_insurance_chi = chi_square_contingency(race_insured |> drop_cols("Race"
 ```biolang
 mosaic_plot(race_insured, {
     row: "Race", layout: "base", title: "", subtitle: "",
-    x_label: "Race", y_label: "Insured", fill: "#BEBEBE",
+    x_label: "Race", y_label: "Insured", shade: "column",
     show_values: false, width: 960, height: 600, format: "svg"
 })
 ```

@@ -16,7 +16,7 @@
     "copyright": "Stephen D. Turner, Ph.D.",
     "licence": "CC BY-NC 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
-    "note": "Covers the complete Chapter 8 sequence, sections 8.1-8.7.3, in the original single-page order. The exact source-hosted NHANES teaching data are checksum-pinned and downloaded on demand. All analytical figures are generated at runtime by BioLang; no published figure image or synthetic replacement data is used. Power-analysis checks use source-display precision so native and browser numerical backends validate the same published results."
+    "note": "Covers the complete Chapter 8 sequence, sections 8.1-8.7.3, in the original single-page order. The exact source-hosted NHANES teaching data are checksum-pinned and downloaded on demand. All analytical figures are generated at runtime by BioLang; no published figure image or synthetic replacement data is used. Mosaic areas, order, gaps, and labels preserve the source analysis, with categorical response colours for Studio legibility. Power-analysis checks use source-display precision so native and browser numerical backends validate the same published results."
   },
   "series": {
     "id": "biological-data-science-with-r",

@@ -8,7 +8,7 @@
 | Two-group model equivalence | 8.3.3 | Equal-variance t-test, two-group ANOVA, and indicator OLS over the exact complete BMI rows. |
 | Testosterone models | 8.3.6 | Three nested source formulas reproduced over the exact complete rows. |
 | Gender by diabetes tables and tests | 8.4.1 | Exact counts, margins, overall and row proportions, Yates-corrected chi-square, and Fisher exact test. |
-| Gender by diabetes mosaic | 8.4.1, first `mosaicplot(xt, main=NA)` | BioLang `mosaic_plot(layout: "base")` reproduces unshaded grey count geometry, source category order, gaps, outer labels, and no title. |
+| Gender by diabetes mosaic | 8.4.1, first `mosaicplot(xt, main=NA)` | BioLang `mosaic_plot(layout: "base", shade: "column")` preserves count geometry, source category order, gaps, outer labels, and no title; categorical fills distinguish response columns in Studio. |
 | Race by insurance tables and test | 8.4.1 | Exact counts, margins, row proportions, chi-square result, and expected counts. |
 | Race by insurance mosaic | 8.4.1, second `mosaicplot(xt, main=NA)` | Same source-faithful runtime mosaic treatment at the source's wider aspect ratio. |
 | Insurance logistic models | 8.4.2 | Direct formulas with White pinned as the treatment-contrast reference, matching the source relevel operation. |

@@ -25,8 +25,8 @@
   ],
   "figures": [
     {"sourceChunk": "alcoholhist", "biolang": "histogram", "status": "exact adult AlcoholYear values, 30 ggplot bins, labels, axes, and panel theme"},
-    {"sourceChunk": "first mosaicplot(xt, main=NA)", "biolang": "mosaic_plot layout=base", "status": "exact gender-diabetes table, grey count-area geometry, source order, gaps, outer labels, and no title"},
-    {"sourceChunk": "second mosaicplot(xt, main=NA)", "biolang": "mosaic_plot layout=base", "status": "exact race-insurance table, grey count-area geometry, source order, gaps, outer labels, no title, and wider aspect"},
+    {"sourceChunk": "first mosaicplot(xt, main=NA)", "biolang": "mosaic_plot layout=base shade=column", "status": "exact gender-diabetes table, count-area geometry, source order, gaps, outer labels, and no title; categorical fills distinguish response columns"},
+    {"sourceChunk": "second mosaicplot(xt, main=NA)", "biolang": "mosaic_plot layout=base shade=column", "status": "exact race-insurance table, count-area geometry, source order, gaps, outer labels, no title, wider aspect, and categorical response fills"},
     {"sourceChunk": "augment(fit) residual plot", "biolang": "stats_relationship_plot", "status": "exact full-model male rows, fitted values, residuals, physical-activity colours, age sizes, labels, legends, and ggplot panel"}
   ]
 }

@@ -146,7 +146,7 @@
     },
     {
       "question": "alcohol-use distribution",
-      "biolang": "35-bin histogram",
+      "biolang": "30-bin histogram",
       "status": "same statistical view, independently rendered"
     },
     {
@@ -170,9 +170,14 @@
       "status": "same diagnostic question, independently rendered"
     },
     {
+      "question": "gender and diabetes contingency",
+      "biolang": "native column-coloured mosaic plot over the exact gender-diabetes table",
+      "status": "area-exact geometry, source order, labels, gaps, and distinct No/Yes fills verified"
+    },
+    {
       "question": "race and insurance contingency",
-      "biolang": "native mosaic plot with inspectable count geometry in Asian, Black, Hispanic, Mexican, Other, White order",
-      "status": "area-exact geometry verified on synthetic tables; source row order is pinned and the real-data notebook path executes end to end"
+      "biolang": "native column-coloured mosaic plot with inspectable count geometry in Asian, Black, Hispanic, Mexican, Other, White order",
+      "status": "area-exact geometry, source row order, labels, gaps, and categorical response fills verified with the exact NHANES table"
     }
   ],
   "chapterCoverage": {
